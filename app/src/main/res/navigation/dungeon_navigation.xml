@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dungeon_navigation"
+    app:startDestination="@id/nav_battle">
+
+    <fragment
+        android:id="@+id/nav_battle"
+        android:name="com.example.bikinggame.dungeon.BattleFragment"
+        android:label="Dungeon"
+        tools:layout="@layout/fragment_battle" >
+    </fragment>
+
+</navigation>

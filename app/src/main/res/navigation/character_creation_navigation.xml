@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/nav_class_picker">
+
+
+    <fragment
+        android:id="@+id/nav_class_picker"
+        android:name="com.example.bikinggame.characterCreation.ClassFragment"
+        android:label="Create your Character"
+        tools:layout="@layout/fragment_class" >
+        <action
+            android:id="@+id/action_nav_class_picker_to_nav_skills_picker2"
+            app:destination="@id/nav_skills_picker" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_skills_picker"
+        android:name="com.example.bikinggame.characterCreation.SubClassFragment"
+        android:label="Pick your Sub Class"
+        tools:layout="@layout/fragment_melee_sub_classes" >
+        <action
+            android:id="@+id/action_nav_skills_picker_to_nav_stats_preview"
+            app:destination="@id/nav_stats_preview" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_stats_preview"
+        android:name="com.example.bikinggame.characterCreation.StatsFragment"
+        android:label="Stats:"
+        tools:layout="@layout/fragment_stats_preview">
+    </fragment>
+
+
+
+</navigation>

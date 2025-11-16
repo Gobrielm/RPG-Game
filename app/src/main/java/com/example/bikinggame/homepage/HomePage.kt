@@ -1,0 +1,147 @@
+package com.example.bikinggame.homepage
+
+import android.content.Intent
+import android.os.Bundle
+import android.util.Log
+import androidx.annotation.NonNull
+import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager2.widget.ViewPager2
+import com.example.bikinggame.R
+import com.example.bikinggame.databinding.ActivityHomePageBinding
+import com.example.bikinggame.dungeon.DungeonExplorationActivity
+import com.example.bikinggame.dungeonPrep.DungeonPrepActivity
+import com.example.bikinggame.playerCharacter.CharacterClass
+import com.example.bikinggame.playerCharacter.PlayerCharacter
+import com.example.bikinggame.racing.RaceActivity
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GetTokenResult
+import com.google.firebase.auth.auth
+import kotlinx.coroutines.tasks.await
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.Response
+import okhttp3.ResponseBody
+import okio.IOException
+import org.json.JSONArray
+import org.json.JSONObject
+
+
+class HomePage : AppCompatActivity() {
+
+    private lateinit var binding: ActivityHomePageBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding = ActivityHomePageBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // Find the view pager that will allow the user to swipe between fragments
+        val viewPager = findViewById<ViewPager2>(R.id.homePageViewPager)
+        // Create an adapter that knows which fragment should be shown on each page
+        val adapter = HomePageFragmentAdapter(this)
+        // Set the adapter onto the view pager
+        viewPager.offscreenPageLimit = 3
+        viewPager.adapter = adapter
+        viewPager.currentItem = 1
+
+    }
+
+    fun openRaceScreen() {
+        val intent = Intent(this, RaceActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun openDungeonScreen() {
+        val intent = Intent(this, DungeonExplorationActivity::class.java)
+        intent.putExtra("CHARACTER", PlayerCharacter(JSONArray(intArrayOf(1, 2, 3))).serialize().toString())
+        startActivity(intent)
+    }
+
+    fun openDungeonPrepScreen() {
+        val intent = Intent(this, DungeonPrepActivity::class.java)
+        startActivity(intent)
+    }
+
+}
+
+fun makeRequest(url: String, body: RequestBody, callback: (JSONObject) -> Unit = ::logRes) {
+    val request = Request.Builder()
+        .url(url)
+        .post(body)
+        .build()
+
+    val client = OkHttpClient()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            // Handle error
+            e.printStackTrace()
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            response.use {
+                if (!response.isSuccessful) {
+                    logResErr(response)
+                } else {
+                    if (response.body == null) return
+                    val body: ResponseBody = (response.body) as ResponseBody
+                    val msg = body.string()
+                    val json = JSONObject(msg)
+                    callback.invoke(json)
+                }
+            }
+        }
+    })
+}
+
+
+suspend fun getUserToken(): String? {
+    val mUser = Firebase.auth.currentUser ?: return null
+    return try {
+        val result = mUser.getIdToken(true).await()
+        Log.d("AAA", result.token.toString())
+        result.token
+    } catch (e: Exception) {
+        Log.e("Getting Token", "Failed to get token", e)
+        null
+    }
+}
+
+suspend fun getUserJson(): JSONObject? {
+    val user = Firebase.auth.currentUser ?: return null
+    return try {
+        val json = JSONObject()
+        json.put("email", user.email.toString())
+        val result = user.getIdToken(false).await()
+        json.put("token", result.token)
+        json
+    } catch (e: Exception) {
+        Log.e("Getting User Json", "Failed...", e)
+        null
+    }
+}
+
+fun logRes(json: JSONObject) {
+    Log.d("HTTPS Request", json.toString())
+}
+
+fun logResErr(response: Response) {
+    response.body?.let { body ->
+        val jsonText = body.string()
+        Log.d("HTTPS Request", jsonText)
+        try {
+            val json = JSONObject(jsonText)
+            Log.d("HTTPS Request Error: ", json.get("error").toString())
+            Log.d("HTTPS Request Msg: ", json.get("message").toString())
+        } catch (e: Exception) {
+            Log.d("HTTPS Request", "Could not Reach Server.")
+        }
+    }
+}

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".dungeonPrep.DungeonPrepActivity">
+
+
+    <ImageButton
+        android:id="@+id/imageButton3"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="bottom|start"
+        app:srcCompat="@drawable/truck" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_host_fragment_dungeon_prep_overlay"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="28dp"
+        android:layout_height="35dp"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/dungeon_prep_navigation" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
