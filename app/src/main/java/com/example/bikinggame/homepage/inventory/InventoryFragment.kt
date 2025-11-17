@@ -7,10 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bikinggame.R
+import com.example.bikinggame.dungeonPrep.DungeonPrepViewModel
 import com.example.bikinggame.homepage.getUserJson
 import com.example.bikinggame.homepage.makeRequest
 import com.example.bikinggame.playerCharacter.PlayerCharacter
@@ -22,9 +24,12 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.LinkedList
+import kotlin.getValue
 
-class InventoryFragment(val mode: InventoryMode = InventoryMode.VIEW) : Fragment() {
+class InventoryFragment() : Fragment() {
     enum class InventoryMode { VIEW, PICK }
+
+    var mode: InventoryMode = InventoryMode.VIEW
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,6 +45,9 @@ class InventoryFragment(val mode: InventoryMode = InventoryMode.VIEW) : Fragment
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val status = arguments?.getBoolean("PICK")
+        if (status != null && status) mode = InventoryMode.PICK
 
         recyclerView =  view.findViewById(R.id.recyclerView)
 
@@ -73,11 +81,8 @@ class InventoryFragment(val mode: InventoryMode = InventoryMode.VIEW) : Fragment
     }
 
     fun returnSelectedItem(position: Int) {
-        val result = playerCharacterList[position]
-        val bundle = Bundle().apply { putString("raceResult", result.serialize().toString()) }
-
-        parentFragmentManager.setFragmentResult("raceRequestKey", bundle)
-        parentFragmentManager.popBackStack()
+        val viewModel: DungeonPrepViewModel by activityViewModels()
+        viewModel.selectCharacter(playerCharacterList[position])
     }
 
     fun loadPlayerCharactersReq() {

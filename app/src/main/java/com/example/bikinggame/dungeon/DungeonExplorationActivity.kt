@@ -12,6 +12,7 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
     private lateinit var binding: ActivityDungeonExplorationBinding
     private var character: PlayerCharacter? = null
+    private var dungeon: Dungeon? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,10 +20,13 @@ class DungeonExplorationActivity: AppCompatActivity() {
         binding = ActivityDungeonExplorationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val jsonString = intent.getStringExtra("CHARACTER")
-        if (jsonString != null) {
-            val jsonArray = JSONArray(jsonString)
-            character = PlayerCharacter(jsonArray)
+        val characterJsonString = intent.getStringExtra("CHARACTER")
+        val dungeonJsonString = intent.getStringExtra("DUNGEON")
+        if (characterJsonString != null && dungeonJsonString != null) {
+            val characterJsonArray = JSONArray(characterJsonString)
+            val dungeonJsonArray = JSONArray(dungeonJsonString)
+            character = PlayerCharacter(characterJsonArray)
+            dungeon = Dungeon(dungeonJsonArray)
             Log.d("AAAAAA", character.toString())
             setStats(character!!)
         }

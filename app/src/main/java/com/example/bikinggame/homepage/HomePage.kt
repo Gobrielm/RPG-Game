@@ -12,7 +12,6 @@ import com.example.bikinggame.dungeon.DungeonExplorationActivity
 import com.example.bikinggame.dungeonPrep.DungeonPrepActivity
 import com.example.bikinggame.playerCharacter.CharacterClass
 import com.example.bikinggame.playerCharacter.PlayerCharacter
-import com.example.bikinggame.racing.RaceActivity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
@@ -51,11 +50,6 @@ class HomePage : AppCompatActivity() {
         viewPager.adapter = adapter
         viewPager.currentItem = 1
 
-    }
-
-    fun openRaceScreen() {
-        val intent = Intent(this, RaceActivity::class.java)
-        startActivity(intent)
     }
 
     fun openDungeonScreen() {

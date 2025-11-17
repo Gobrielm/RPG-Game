@@ -26,9 +26,6 @@
             android:label="@string/title_activity_character_creation"
             android:theme="@style/Theme.BikingGame.NoActionBar" />
         <activity
-            android:name=".racing.RaceActivity"
-            android:exported="false" />
-        <activity
             android:name=".homepage.HomePage"
             android:exported="false" />
         <activity

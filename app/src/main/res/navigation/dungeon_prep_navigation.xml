@@ -10,4 +10,12 @@
         android:name="com.example.bikinggame.dungeonPrep.SelectDungeonFragment"
         android:label="fragment_select_dungeon"
         tools:layout="@layout/fragment_select_dungeon" />
+
+    <fragment
+        android:id="@+id/selectPlayerCharacter"
+        android:name="com.example.bikinggame.homepage.inventory.InventoryFragment"
+        android:label="fragment_inventory"
+        tools:layout="@layout/fragment_inventory"
+
+        />
 </navigation>
