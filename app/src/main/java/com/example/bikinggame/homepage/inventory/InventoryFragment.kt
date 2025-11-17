@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.bikinggame.R
 import com.example.bikinggame.dungeonPrep.DungeonPrepViewModel
 import com.example.bikinggame.homepage.getUserJson
+import com.example.bikinggame.homepage.getUserToken
+import com.example.bikinggame.homepage.makeGetRequest
 import com.example.bikinggame.homepage.makeRequest
 import com.example.bikinggame.playerCharacter.PlayerCharacter
 import com.google.firebase.Firebase
@@ -88,21 +90,20 @@ class InventoryFragment() : Fragment() {
     fun loadPlayerCharactersReq() {
         if (user == null) return
         lifecycleScope.launch {
-            val json = getUserJson()
-            if (json == null) return@launch
+            val userData = getUserJson()
+            if (userData == null) return@launch
 
-            val body = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
-            makeRequest(
-                "https://bikinggamebackend.vercel.app/api/characters/getCharacters",
-                body,
+            makeGetRequest(
+                "https://bikinggamebackend.vercel.app/api/characters/${userData.get("email") as String}",
+                userData.get("token") as String,
                 ::loadPlayerCharactersRes
             )
         }
     }
 
     fun loadPlayerCharactersRes(json: JSONObject) {
-        var localList: ArrayList<PlayerCharacter> = ArrayList()
-        var playerCharacterJSON = json.get("characters") as JSONObject
+        val localList: ArrayList<PlayerCharacter> = ArrayList()
+        val playerCharacterJSON = json.get("characters") as JSONObject
 
         for (section: String in (playerCharacterJSON).keys()) {
             try {

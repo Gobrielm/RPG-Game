@@ -17,6 +17,7 @@ import com.example.bikinggame.databinding.ActivityCharacterCreationBinding
 import com.example.bikinggame.R
 import com.example.bikinggame.homepage.HomePage
 import com.example.bikinggame.homepage.getUserJson
+import com.example.bikinggame.homepage.makePostRequest
 import com.example.bikinggame.playerCharacter.CharacterClass
 import com.example.bikinggame.playerCharacter.CharacterMainClass
 import com.example.bikinggame.playerCharacter.CharacterSubClass
@@ -25,6 +26,7 @@ import com.example.bikinggame.homepage.makeRequest
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONArray
 import org.json.JSONObject
 
 private const val TAG = "Character Creation"
@@ -64,7 +66,6 @@ class CharacterCreationActivity : AppCompatActivity() {
                     ), 1
                 )
                 initializeFirstCharacter(playerCharacter)
-                goToHomePage()
             } catch (e: Exception) {
                 Log.d(TAG, e.toString())
             }
@@ -81,16 +82,18 @@ class CharacterCreationActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val json: JSONObject? = getUserJson()
             if (json == null) return@launch
-            json.put("character_info", character.serialize())
+            val characterJSON = character.serialize()
 
-            val body = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
-            makeRequest("https://bikinggamebackend.vercel.app/api/characters/createCharacter", body)
+            val body = characterJSON.toString().toRequestBody("application/json".toMediaTypeOrNull())
+            makePostRequest("https://bikinggamebackend.vercel.app/api/characters", json.get("token") as String, body, ::finishCharacterCreation)
         }
+    }
 
-        // Should always succeed so write to local storage
+    fun finishCharacterCreation(json: JSONObject) {
+        val characterJson = json.get("data") as JSONArray
 
         val filename = "characters_data"
-        val data = character.serialize().toString() + '\n'
+        val data = characterJson.toString() + '\n'
 
         try {
             openFileOutput(filename, Context.MODE_PRIVATE).use {
@@ -100,6 +103,7 @@ class CharacterCreationActivity : AppCompatActivity() {
         } catch (err: Exception) {
             Log.d("PlayerCharacterStorage", err.toString())
         }
+        goToHomePage()
     }
 
     fun goToHomePage() {

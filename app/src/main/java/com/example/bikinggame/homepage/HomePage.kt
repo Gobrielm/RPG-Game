@@ -65,6 +65,51 @@ class HomePage : AppCompatActivity() {
 
 }
 
+fun makePostRequest(url: String, token: String, body: RequestBody, callback: (JSONObject) -> Unit = ::logRes) {
+    val request = Request.Builder()
+        .url(url)
+        .post(body)
+        .addHeader("Authorization", token)
+        .build()
+
+    makeRequestTemp(request, callback)
+}
+
+fun makeGetRequest(url: String, token: String, callback: (JSONObject) -> Unit = ::logRes) {
+    val request = Request.Builder()
+        .url(url)
+        .get()
+        .addHeader("Authorization", token)
+        .build()
+
+    makeRequestTemp(request, callback)
+}
+
+fun makeRequestTemp(request: Request, callback: (JSONObject) -> Unit) {
+    val client = OkHttpClient()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            // Handle error
+            e.printStackTrace()
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            response.use {
+                if (!response.isSuccessful) {
+                    logResErr(response)
+                } else {
+                    if (response.body == null) return
+                    val body: ResponseBody = (response.body) as ResponseBody
+                    val msg = body.string()
+                    val json = JSONObject(msg)
+                    callback.invoke(json)
+                }
+            }
+        }
+    })
+}
+
 fun makeRequest(url: String, body: RequestBody, callback: (JSONObject) -> Unit = ::logRes) {
     val request = Request.Builder()
         .url(url)

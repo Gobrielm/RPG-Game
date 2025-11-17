@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.bikinggame.characterCreation.CharacterCreationActivity
 import com.example.bikinggame.databinding.LoginScreenBinding
 import com.example.bikinggame.homepage.HomePage
 import com.google.firebase.Firebase
@@ -61,6 +62,11 @@ class MainActivity : AppCompatActivity() {
 
     fun goToHomePage() {
         val intent = Intent(this, HomePage::class.java)
+        startActivity(intent)
+    }
+
+    fun goToCharacterCreation() {
+        val intent = Intent(this, CharacterCreationActivity::class.java)
         startActivity(intent)
     }
 
