@@ -50,7 +50,6 @@ class DungeonPrepActivity: AppCompatActivity() {
 
     }
 
-
     fun tryToStartDungeon() {
         if (viewModel.selectedCharacter.value == null || viewModel.selectedDungeon.value == null) {
             return

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.example.bikinggame.databinding.FragmentBattleBinding
 import com.example.bikinggame.databinding.FragmentStatsPreviewBinding
+import com.example.bikinggame.enemy.EnemyCharacter
 import com.example.bikinggame.playerCharacter.CharacterClass
 import com.example.bikinggame.playerCharacter.PlayerCharacter
 
@@ -16,6 +17,8 @@ class BattleFragment : Fragment() {
     private var _binding: FragmentBattleBinding? = null
 
     private val binding get() = _binding!!
+
+    private var enemyCharacter: EnemyCharacter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

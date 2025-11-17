@@ -200,6 +200,10 @@ class CharacterStats {
 
     constructor()
 
+    constructor(pCharacterStats: MutableMap<BasicStats, Int>) {
+        characterStats = pCharacterStats
+    }
+
     constructor(subClass: CharacterSubClass) {
         try {
             characterStats[BasicStats.BaseHealth] = baseHealthMap[subClass]!!

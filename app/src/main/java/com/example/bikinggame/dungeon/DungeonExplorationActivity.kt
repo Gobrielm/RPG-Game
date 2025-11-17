@@ -3,6 +3,9 @@ package com.example.bikinggame.dungeon
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.example.bikinggame.databinding.ActivityDungeonExplorationBinding
 import com.example.bikinggame.playerCharacter.BasicStats
 import com.example.bikinggame.playerCharacter.PlayerCharacter
@@ -39,3 +42,14 @@ class DungeonExplorationActivity: AppCompatActivity() {
         binding.characterUi.staminaProgressbar.progress = (character.currentStats.getStamina().toDouble() / character.baseStats.getStamina() * 100).toInt()
     }
 }
+
+//class DungeonExplorationViewModel: ViewModel() {
+//    private val mutableSelectedCharacter = MutableLiveData<PlayerCharacter>()
+//
+//    val selectedCharacter: LiveData<PlayerCharacter> get() = mutableSelectedCharacter
+//
+//    fun selectCharacter(pCharacter: PlayerCharacter) {
+//        mutableSelectedCharacter.value = pCharacter
+//    }
+//
+//}
