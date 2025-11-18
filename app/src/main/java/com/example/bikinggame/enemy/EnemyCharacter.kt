@@ -1,5 +1,6 @@
 package com.example.bikinggame.enemy
 
+import com.example.bikinggame.playerCharacter.Attack
 import com.example.bikinggame.playerCharacter.CharacterStats
 import kotlin.math.abs
 import kotlin.random.Random
@@ -9,20 +10,37 @@ class EnemyCharacter {
     var baseStats: CharacterStats = CharacterStats()
     var currentStats: CharacterStats = CharacterStats()
 
+    var attacks: Array<Attack?> = arrayOfNulls(4)
+
     // Used for creating the first character
-    constructor(pId: Int, pBaseStats: CharacterStats) {
+    constructor(pId: Int, pBaseStats: CharacterStats, attacks: ArrayList<Attack>) {
         id = pId
         baseStats = pBaseStats
         currentStats = baseStats
+        attacks.forEachIndexed { index, attack ->
+            attacks[index] = attack
+        }
     }
 
-    constructor(pBaseStats: CharacterStats) {
+    constructor(pBaseStats: CharacterStats, attacks: ArrayList<Attack>) {
         id = abs(Random.nextInt())
         baseStats = pBaseStats
         currentStats = baseStats
+        attacks.forEachIndexed { index, attack ->
+            attacks[index] = attack
+        }
     }
 
     override fun toString(): String {
         return "$id: $currentStats"
+    }
+
+    fun choiceRandAttack(): Attack {
+        var numValidAttacks = 0
+        for (attack in attacks) {
+            if (attack != null) numValidAttacks++
+        }
+
+        return attacks[Random.nextInt(0, numValidAttacks)]!!
     }
 }

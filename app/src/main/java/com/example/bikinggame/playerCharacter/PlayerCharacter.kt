@@ -8,6 +8,8 @@ import kotlin.math.min
 import kotlin.math.pow
 import kotlin.random.Random
 
+class IntWrapper(var value: Int)
+
 private const val TAG = "CharacterCreation"
 
 class PlayerCharacter {
@@ -15,28 +17,54 @@ class PlayerCharacter {
     var playerClass: CharacterClass
     var baseStats: CharacterStats = CharacterStats()
     var currentStats: CharacterStats = CharacterStats()
+
+    var attacks: Array<Attack?> = arrayOfNulls<Attack>(4)
     var currentEquipment = arrayOfNulls<Equipment>(EquipmentSlot.entries.size)
 
-    // Used for creating the first character
+
     constructor(pPlayerClass: CharacterClass, pId: Int) {
         id = pId
         playerClass = pPlayerClass
         baseStats = CharacterStats(pPlayerClass.subClass)
         currentStats = baseStats
+        attacks[0] = Attack(10, currentStats.characterStats[BasicStats.Strength] as Int, 0, 90)
     }
 
+    // Used for local creation
     constructor(pPlayerClass: CharacterClass) {
-        id = abs(Random.nextInt())
+        id = -1
         playerClass = pPlayerClass
         baseStats = CharacterStats(pPlayerClass.subClass)
         currentStats = baseStats
+        attacks[0] = Attack(10, currentStats.characterStats[BasicStats.Strength] as Int, 0, 90)
     }
 
     constructor(jsonArray: JSONArray) {
-        id = jsonArray.get(0) as Int
-        playerClass = CharacterClass(jsonArray, 1)
+        var offset = IntWrapper(0)
+        id = jsonArray.get(offset.value++) as Int
+        playerClass = CharacterClass(jsonArray, offset) // uses 1 & 2
         baseStats = CharacterStats(playerClass.subClass)
         currentStats = baseStats
+
+        for (i in 0 until EquipmentSlot.entries.size) {
+            currentEquipment[i] = if (jsonArray.isNull(offset.value)) {
+                offset.value++
+                null
+            } else {
+                // TODO: GET EQUIPMENT WITH THE ID
+                val id = jsonArray[offset.value++]
+                null
+            }
+        }
+
+        for (i in 0 until 4) {
+            if (jsonArray.isNull(offset.value)) {
+                offset.value++
+                attacks[i] = null
+            } else {
+                attacks[i] = Attack(jsonArray, offset)
+            }
+        }
     }
 
 
@@ -46,6 +74,13 @@ class PlayerCharacter {
         playerClass.serialize(jsonArray)
         for (i in 0 until EquipmentSlot.entries.size) {
             jsonArray.put(if (currentEquipment[i] == null) null else currentEquipment[i]!!.id)
+        }
+        for (i in 0 until 4) {
+            if (attacks[i] == null) {
+                jsonArray.put(null)
+            } else {
+                attacks[i]!!.serialize(jsonArray)
+            }
         }
         return jsonArray
     }
@@ -115,10 +150,10 @@ class CharacterClass {
         subClass = p_subClass
     }
 
-    constructor(jsonArray: JSONArray, offset: Int) {
+    constructor(jsonArray: JSONArray, offset: IntWrapper) {
         try {
-            mainClass = CharacterMainClass.fromInt(jsonArray[offset] as Int)!!
-            subClass = CharacterSubClass.fromInt(jsonArray[offset + 1] as Int)!!
+            mainClass = CharacterMainClass.fromInt(jsonArray[offset.value++] as Int)!!
+            subClass = CharacterSubClass.fromInt(jsonArray[offset.value++] as Int)!!
         } catch (e: Exception) {
             Log.d(TAG, e.toString())
         }
@@ -131,6 +166,10 @@ class CharacterClass {
 
     override fun toString(): String {
         return "$mainClass-$subClass"
+    }
+
+    companion object {
+        val SERIALIZED_OFFSET = 2
     }
 }
 
@@ -175,16 +214,43 @@ enum class BasicStats {
 
 class CharacterStats {
 
+    /**
+     *  @return Whether or not this character has gone below 0 health
+     */
+    fun getAttacked(attack: Attack): Boolean {
+        var health: Int = getHealth()
+        health -= attack.getMomentum()
+        return if (health < 0) {
+            setHealth(0)
+            true
+        } else {
+            setHealth(health)
+            false
+        }
+    }
+
     fun getHealth(): Int {
-        return if (characterStats.contains(BasicStats.BaseHealth)) characterStats[BasicStats.BaseHealth]!! else 0
+        return characterStats[BasicStats.BaseHealth] ?: 0
+    }
+
+    fun setHealth(value: Int) {
+        characterStats[BasicStats.BaseHealth] = value
     }
 
     fun getMana(): Int {
-        return if (characterStats.contains(BasicStats.BaseMana)) characterStats[BasicStats.BaseMana]!! else 0
+        return characterStats[BasicStats.BaseMana] ?: 0
+    }
+
+    fun setMana(value: Int) {
+        characterStats[BasicStats.BaseMana] = value
     }
 
     fun getStamina(): Int {
-        return if (characterStats.contains(BasicStats.BaseStamina)) characterStats[BasicStats.BaseStamina]!! else 0
+        return characterStats[BasicStats.BaseStamina] ?: 0
+    }
+
+    fun setStamina(value: Int) {
+        characterStats[BasicStats.BaseStamina] = value
     }
 
     var characterStats: MutableMap<BasicStats, Int> = mutableMapOf(

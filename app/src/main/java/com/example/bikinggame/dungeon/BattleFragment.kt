@@ -6,19 +6,22 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.fragment.app.activityViewModels
 import com.example.bikinggame.databinding.FragmentBattleBinding
 import com.example.bikinggame.databinding.FragmentStatsPreviewBinding
 import com.example.bikinggame.enemy.EnemyCharacter
+import com.example.bikinggame.playerCharacter.Attack
 import com.example.bikinggame.playerCharacter.CharacterClass
 import com.example.bikinggame.playerCharacter.PlayerCharacter
+import kotlin.getValue
 
 class BattleFragment : Fragment() {
     private var _binding: FragmentBattleBinding? = null
 
     private val binding get() = _binding!!
 
-    private var enemyCharacter: EnemyCharacter? = null
+    private val viewModel: DungeonExplorationViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,13 +29,33 @@ class BattleFragment : Fragment() {
     ): View? {
         _binding = FragmentBattleBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
+        setStats()
         return root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    fun simulateRound(playerAttack: Attack) {
+        val enemyCharacter = viewModel.getEnemy()!!
+
+        enemyCharacter
+    }
+
+    fun setStats() {
+        try {
+            val enemyCharacter = viewModel.getEnemy()!!
+            binding.healthProgressbar.progress = (enemyCharacter.currentStats.getHealth()
+                .toDouble() / enemyCharacter.baseStats.getHealth() * 100).toInt()
+            binding.manaProgressbar.progress = (enemyCharacter.currentStats.getMana()
+                .toDouble() / enemyCharacter.baseStats.getMana() * 100).toInt()
+            binding.staminaProgressbar.progress = (enemyCharacter.currentStats.getStamina()
+                .toDouble() / enemyCharacter.baseStats.getStamina() * 100).toInt()
+        } catch (e: Exception) {
+            Log.d("Battle Fragment", e.toString())
+        }
     }
 
 }

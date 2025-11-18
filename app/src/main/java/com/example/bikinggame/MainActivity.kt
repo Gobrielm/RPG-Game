@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
         if (currentUser != null) {
 //            Firebase.auth.signOut()
             goToHomePage()
+//            goToCharacterCreation()
         }
 
         binding = LoginScreenBinding.inflate(layoutInflater)

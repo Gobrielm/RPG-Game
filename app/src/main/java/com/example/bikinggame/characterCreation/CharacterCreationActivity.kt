@@ -96,7 +96,7 @@ class CharacterCreationActivity : AppCompatActivity() {
         val data = characterJson.toString() + '\n'
 
         try {
-            openFileOutput(filename, Context.MODE_PRIVATE).use {
+            openFileOutput(filename, MODE_PRIVATE).use {
                 it.write(data.toByteArray())
             }
 

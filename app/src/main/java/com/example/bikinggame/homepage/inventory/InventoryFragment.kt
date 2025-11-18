@@ -94,7 +94,7 @@ class InventoryFragment() : Fragment() {
             if (userData == null) return@launch
 
             makeGetRequest(
-                "https://bikinggamebackend.vercel.app/api/characters/${userData.get("email") as String}",
+                "https://bikinggamebackend.vercel.app/api/characters/",
                 userData.get("token") as String,
                 ::loadPlayerCharactersRes
             )

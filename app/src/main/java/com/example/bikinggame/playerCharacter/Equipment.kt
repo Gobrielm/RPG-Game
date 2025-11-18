@@ -35,26 +35,24 @@ class Equipment {
         attack = pAbility
     }
 
-    constructor(jsonArray: JSONArray, offset: Int) {
-        var currentInd = offset
-        id = jsonArray.get(currentInd++) as Int
-        slot = EquipmentSlot.entries[jsonArray.get(currentInd++) as Int]
-        val size = jsonArray.get(currentInd++) as Int
+    constructor(jsonArray: JSONArray, offset: IntWrapper) {
+        id = jsonArray.get(offset.value++) as Int
+        slot = EquipmentSlot.entries[jsonArray.get(offset.value++) as Int]
+        val size = jsonArray.get(offset.value++) as Int
 
         statBoost = Array(size) { i ->
-            val statIndex = jsonArray.get(2 * i + currentInd) as Int
-            val boostValue = jsonArray.get(2 * i + currentInd + 1) as Int
+            val statIndex = jsonArray.get(offset.value++) as Int
+            val boostValue = jsonArray.get(offset.value++) as Int
 
             Pair(BasicStats.entries[statIndex], boostValue)
         }
-        currentInd += size * 2 + 1
 
-        attack = if (currentInd != jsonArray.length()) {
-            Attack(jsonArray, currentInd)
-        } else {
+        attack = if (jsonArray[offset.value] == null) {
+            offset.value++
             null
+        } else {
+            Attack(jsonArray, offset)
         }
-
     }
 
     fun serialize(jsonArray: JSONArray) {
@@ -65,6 +63,11 @@ class Equipment {
             jsonArray.put(index.ordinal)
             jsonArray.put(value)
         }
-        attack?.serialize(jsonArray)
+        if (attack == null) {
+            jsonArray.put(null)
+        } else {
+            attack.serialize(jsonArray)
+        }
+
     }
 }

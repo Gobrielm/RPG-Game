@@ -16,11 +16,11 @@ class Attack {
         accuracy = pAccuracy
     }
 
-    constructor(jsonArray: JSONArray, offset: Int) {
-        mass = jsonArray.get(offset) as Int
-        velocity = jsonArray.get(offset + 1) as Int
-        pierce = jsonArray.get(offset + 2) as Int
-        accuracy = jsonArray.get(offset + 3) as Int
+    constructor(jsonArray: JSONArray, offset: IntWrapper) {
+        mass = jsonArray.get(offset.value++) as Int
+        velocity = jsonArray.get(offset.value++) as Int
+        pierce = jsonArray.get(offset.value++) as Int
+        accuracy = jsonArray.get(offset.value++) as Int
     }
 
     fun serialize(jsonArray: JSONArray) {

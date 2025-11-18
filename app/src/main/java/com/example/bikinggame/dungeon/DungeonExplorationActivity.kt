@@ -2,20 +2,24 @@ package com.example.bikinggame.dungeon
 
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.bikinggame.characterCreation.ClassChoiceViewModel
 import com.example.bikinggame.databinding.ActivityDungeonExplorationBinding
+import com.example.bikinggame.enemy.EnemyCharacter
 import com.example.bikinggame.playerCharacter.BasicStats
 import com.example.bikinggame.playerCharacter.PlayerCharacter
 import org.json.JSONArray
+import kotlin.getValue
 
 class DungeonExplorationActivity: AppCompatActivity() {
 
     private lateinit var binding: ActivityDungeonExplorationBinding
-    private var character: PlayerCharacter? = null
-    private var dungeon: Dungeon? = null
+
+    private val viewModel: DungeonExplorationViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,10 +32,10 @@ class DungeonExplorationActivity: AppCompatActivity() {
         if (characterJsonString != null && dungeonJsonString != null) {
             val characterJsonArray = JSONArray(characterJsonString)
             val dungeonJsonArray = JSONArray(dungeonJsonString)
-            character = PlayerCharacter(characterJsonArray)
-            dungeon = Dungeon(dungeonJsonArray)
-            Log.d("AAAAAA", character.toString())
-            setStats(character!!)
+            viewModel.setSelectedCharacter(PlayerCharacter(characterJsonArray))
+            viewModel.setDungeon(Dungeon(dungeonJsonArray))
+            viewModel.setEnemy(viewModel.getDungeon()!!.rollRandomEnemy(1))
+            setStats(viewModel.getSelectedCharacter()!!)
         }
 
     }
@@ -43,13 +47,36 @@ class DungeonExplorationActivity: AppCompatActivity() {
     }
 }
 
-//class DungeonExplorationViewModel: ViewModel() {
-//    private val mutableSelectedCharacter = MutableLiveData<PlayerCharacter>()
-//
-//    val selectedCharacter: LiveData<PlayerCharacter> get() = mutableSelectedCharacter
-//
-//    fun selectCharacter(pCharacter: PlayerCharacter) {
-//        mutableSelectedCharacter.value = pCharacter
-//    }
-//
-//}
+class DungeonExplorationViewModel : ViewModel() {
+    private val mutableSelectedCharacter = MutableLiveData<PlayerCharacter>()
+    private val mutableEnemy = MutableLiveData<EnemyCharacter>()
+    private val mutableDungeon = MutableLiveData<Dungeon>()
+
+    val selectedCharacter: LiveData<PlayerCharacter> get() = mutableSelectedCharacter
+    val enemy: LiveData<EnemyCharacter> get() = mutableEnemy
+    val dungeon: LiveData<Dungeon> get() = mutableDungeon
+
+    fun setSelectedCharacter(character: PlayerCharacter) {
+        mutableSelectedCharacter.value = character
+    }
+
+    fun setEnemy(enemy: EnemyCharacter) {
+        mutableEnemy.value = enemy
+    }
+
+    fun setDungeon(dungeon: Dungeon) {
+        mutableDungeon.value = dungeon
+    }
+
+    fun getSelectedCharacter(): PlayerCharacter? {
+        return mutableSelectedCharacter.value
+    }
+
+    fun getEnemy(): EnemyCharacter? {
+        return mutableEnemy.value
+    }
+
+    fun getDungeon(): Dungeon? {
+        return mutableDungeon.value
+    }
+}
