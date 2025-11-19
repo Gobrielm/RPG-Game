@@ -13,20 +13,20 @@ class EnemyCharacter {
     var attacks: Array<Attack?> = arrayOfNulls(4)
 
     // Used for creating the first character
-    constructor(pId: Int, pBaseStats: CharacterStats, attacks: ArrayList<Attack>) {
+    constructor(pId: Int, pBaseStats: CharacterStats, pAttacks: ArrayList<Attack>) {
         id = pId
         baseStats = pBaseStats
         currentStats = baseStats
-        attacks.forEachIndexed { index, attack ->
+        pAttacks.forEachIndexed { index, attack ->
             attacks[index] = attack
         }
     }
 
-    constructor(pBaseStats: CharacterStats, attacks: ArrayList<Attack>) {
+    constructor(pBaseStats: CharacterStats, pAttacks: ArrayList<Attack>) {
         id = abs(Random.nextInt())
         baseStats = pBaseStats
         currentStats = baseStats
-        attacks.forEachIndexed { index, attack ->
+        pAttacks.forEachIndexed { index, attack ->
             attacks[index] = attack
         }
     }
@@ -35,7 +35,14 @@ class EnemyCharacter {
         return "$id: $currentStats"
     }
 
-    fun choiceRandAttack(): Attack {
+    /**
+     *  @return Whether or not this character has gone below 0 health
+     */
+    fun takeAttack(attack: Attack): Boolean {
+        return currentStats.getAttacked(attack)
+    }
+
+    fun chooseRandAttack(): Attack {
         var numValidAttacks = 0
         for (attack in attacks) {
             if (attack != null) numValidAttacks++

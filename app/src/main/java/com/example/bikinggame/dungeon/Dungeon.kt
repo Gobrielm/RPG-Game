@@ -1,6 +1,7 @@
 package com.example.bikinggame.dungeon
 
 import com.example.bikinggame.enemy.EnemyCharacter
+import com.example.bikinggame.playerCharacter.Attack
 import com.example.bikinggame.playerCharacter.BasicStats
 import com.example.bikinggame.playerCharacter.CharacterStats
 import org.json.JSONArray
@@ -41,7 +42,8 @@ class Dungeon {
             BasicStats.Dexterity to (7 * modifier).toInt()
         ))
 
-        return EnemyCharacter(characterStats)
+
+        return EnemyCharacter(characterStats, arrayListOf(Attack(10, 5, 0, 100)))
     }
 
 }

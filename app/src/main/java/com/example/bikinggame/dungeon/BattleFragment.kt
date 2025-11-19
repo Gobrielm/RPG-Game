@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import com.example.bikinggame.databinding.FragmentBattleBinding
 import com.example.bikinggame.databinding.FragmentStatsPreviewBinding
 import com.example.bikinggame.enemy.EnemyCharacter
@@ -30,6 +31,9 @@ class BattleFragment : Fragment() {
         _binding = FragmentBattleBinding.inflate(inflater, container, false)
         val root: View = binding.root
         setStats()
+        viewModel.attack.observe(viewLifecycleOwner, Observer { attack ->
+            simulateRound(attack)
+        })
         return root
     }
 
@@ -40,8 +44,16 @@ class BattleFragment : Fragment() {
 
     fun simulateRound(playerAttack: Attack) {
         val enemyCharacter = viewModel.getEnemy()!!
+        val playerCharacter = viewModel.getSelectedCharacter()!!
 
-        enemyCharacter
+        val isAlive = enemyCharacter.takeAttack(playerAttack)
+
+        if (!isAlive) return
+
+        val enemyAttack: Attack = enemyCharacter.chooseRandAttack()
+
+        playerCharacter.takeAttack(enemyAttack)
+        setStats()
     }
 
     fun setStats() {

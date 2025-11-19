@@ -19,6 +19,7 @@ class PlayerCharacter {
     var currentStats: CharacterStats = CharacterStats()
 
     var attacks: Array<Attack?> = arrayOfNulls<Attack>(4)
+//    var shields:
     var currentEquipment = arrayOfNulls<Equipment>(EquipmentSlot.entries.size)
 
 
@@ -107,6 +108,13 @@ class PlayerCharacter {
         }
         currentEquipment[slot.ordinal] = null
 
+    }
+
+    /**
+     *  @return Whether or not this character has gone below 0 health
+     */
+    fun takeAttack(attack: Attack): Boolean {
+        return currentStats.getAttacked(attack)
     }
 }
 
