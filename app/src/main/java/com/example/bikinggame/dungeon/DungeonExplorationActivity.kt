@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import com.example.bikinggame.characterCreation.ClassChoiceViewModel
 import com.example.bikinggame.databinding.ActivityDungeonExplorationBinding
 import com.example.bikinggame.enemy.EnemyCharacter
+import com.example.bikinggame.homepage.inventory.playerInventory
 import com.example.bikinggame.playerCharacter.Attack
 import com.example.bikinggame.playerCharacter.BasicStats
 import com.example.bikinggame.playerCharacter.PlayerCharacter
@@ -29,12 +30,11 @@ class DungeonExplorationActivity: AppCompatActivity() {
         binding = ActivityDungeonExplorationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val characterJsonString = intent.getStringExtra("CHARACTER")
+        val characterID = intent.getIntExtra("CHARACTER", 0)
         val dungeonJsonString = intent.getStringExtra("DUNGEON")
-        if (characterJsonString != null && dungeonJsonString != null) {
-            val characterJsonArray = JSONArray(characterJsonString)
+        if (dungeonJsonString != null) {
             val dungeonJsonArray = JSONArray(dungeonJsonString)
-            viewModel.setSelectedCharacter(PlayerCharacter(characterJsonArray))
+            viewModel.setSelectedCharacter(playerInventory.getCharacter(characterID)!!)
             viewModel.setDungeon(Dungeon(dungeonJsonArray))
             viewModel.setEnemy(viewModel.getDungeon()!!.rollRandomEnemy(1))
             setStats(viewModel.getSelectedCharacter()!!)

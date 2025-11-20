@@ -11,7 +11,6 @@ import com.example.bikinggame.databinding.ActivityHomePageBinding
 import com.example.bikinggame.dungeon.DungeonExplorationActivity
 import com.example.bikinggame.dungeonPrep.DungeonPrepActivity
 import com.example.bikinggame.playerCharacter.PlayerCharacter
-import com.example.bikinggame.playerCharacter.createEquipment
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
@@ -48,12 +47,6 @@ class HomePage : AppCompatActivity() {
         viewPager.offscreenPageLimit = 3
         viewPager.adapter = adapter
         viewPager.currentItem = 1
-    }
-
-    fun openDungeonScreen() {
-        val intent = Intent(this, DungeonExplorationActivity::class.java)
-        intent.putExtra("CHARACTER", PlayerCharacter(JSONArray(intArrayOf(1, 2, 3))).serialize().toString())
-        startActivity(intent)
     }
 
     fun openDungeonPrepScreen() {

@@ -32,8 +32,8 @@ class Equipment {
     val id: Int
     val slot: EquipmentSlot
     val statBoost: Array<Pair<BasicStats, Int>>
-    var attack: Attack? = null
-    var shield: Shield? = null
+    val attack: Attack?
+    val shield: Shield?
 
     constructor(pId: Int, pSlot: EquipmentSlot, pStatBoost: Array<Pair<BasicStats, Int>>) {
         id = pId
@@ -70,6 +70,23 @@ class Equipment {
 
             Pair(BasicStats.entries[statIndex], boostValue)
         }
+        attack = null
+        shield = null
+    }
+
+    constructor(jsonArray: JSONArray, offset: IntWrapper, pAttack: Attack?, pShield: Shield?) {
+        id = jsonArray.get(offset.value++) as Int
+        slot = EquipmentSlot.entries[jsonArray.get(offset.value++) as Int]
+        val size = jsonArray.get(offset.value++) as Int
+
+        statBoost = Array(size) { i ->
+            val statIndex = jsonArray.get(offset.value++) as Int
+            val boostValue = jsonArray.get(offset.value++) as Int
+
+            Pair(BasicStats.entries[statIndex], boostValue)
+        }
+        attack = pAttack
+        shield = pShield
     }
 
     fun serialize(jsonArray: JSONArray) {
@@ -93,28 +110,43 @@ class Equipment {
     }
 }
 
-suspend fun createEquipment(id: Int): Equipment? {
-    val userData: JSONObject? = getUserJson()
-    if (userData == null) return null
+suspend fun getEquipment(id: Int): Equipment? {
+    if (id == -1) return null
+    try {
+        val userData: JSONObject? = getUserJson()
+        if (userData == null) return null
 
-    val equipmentJSON = makeGetRequest("https://bikinggamebackend.vercel.app/api/equipment/${id}", userData.get("token") as String)
+        val equipmentJSON = makeGetRequest(
+            "https://bikinggamebackend.vercel.app/api/equipment/${id}",
+            userData.get("token") as String
+        )
 
-    val equipment = Equipment(equipmentJSON, IntWrapper(0))
+        val attackID = equipmentJSON.get(equipmentJSON.length() - 2) as Int
+        val shieldID = equipmentJSON.get(equipmentJSON.length() - 1) as Int
 
-    val attackID = equipmentJSON.get(equipmentJSON.length() - 2) as Int
-    val shieldID = equipmentJSON.get(equipmentJSON.length() - 1) as Int
+        var attack: Attack? = null
+        var shield: Shield? = null
 
-    if (attackID != -1) {
-        val attackJSON = makeGetRequest("https://bikinggamebackend.vercel.app/api/attacks/${attackID}", userData.get("token") as String)
-        val attack = Attack(attackJSON, IntWrapper(0))
-        equipment.attack = attack
+        if (attackID != -1) {
+            val attackJSON = makeGetRequest(
+                "https://bikinggamebackend.vercel.app/api/attacks/${attackID}",
+                userData.get("token") as String
+            )
+            attack = Attack(attackJSON, IntWrapper(0))
+        }
+
+        if (shieldID != -1) {
+            val shieldJSON = makeGetRequest(
+                "https://bikinggamebackend.vercel.app/api/shields/${attackID}",
+                userData.get("token") as String
+            )
+            shield = Shield(shieldJSON, IntWrapper(0))
+        }
+
+        val equipment = Equipment(equipmentJSON, IntWrapper(0), attack, shield)
+
+        return equipment
+    } catch (e: Exception) {
+        return null
     }
-
-    if (shieldID != -1) {
-        val shieldJSON = makeGetRequest("https://bikinggamebackend.vercel.app/api/shields/${attackID}", userData.get("token") as String)
-        val shield = Shield(shieldJSON, IntWrapper(0))
-        equipment.shield = shield
-    }
-
-   return equipment
 }
