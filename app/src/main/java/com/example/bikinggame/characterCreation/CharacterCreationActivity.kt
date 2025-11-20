@@ -1,20 +1,19 @@
 package com.example.bikinggame.characterCreation
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
-import androidx.navigation.findNavController
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.example.bikinggame.databinding.ActivityCharacterCreationBinding
 import com.example.bikinggame.R
+import com.example.bikinggame.databinding.ActivityCharacterCreationBinding
 import com.example.bikinggame.homepage.HomePage
 import com.example.bikinggame.homepage.getUserJson
 import com.example.bikinggame.homepage.makePostRequest
@@ -22,7 +21,6 @@ import com.example.bikinggame.playerCharacter.CharacterClass
 import com.example.bikinggame.playerCharacter.CharacterMainClass
 import com.example.bikinggame.playerCharacter.CharacterSubClass
 import com.example.bikinggame.playerCharacter.PlayerCharacter
-import com.example.bikinggame.homepage.makeRequest
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody

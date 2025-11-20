@@ -3,21 +3,19 @@ package com.example.bikinggame.homepage
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.ActivityHomePageBinding
 import com.example.bikinggame.dungeon.DungeonExplorationActivity
 import com.example.bikinggame.dungeonPrep.DungeonPrepActivity
-import com.example.bikinggame.playerCharacter.CharacterClass
 import com.example.bikinggame.playerCharacter.PlayerCharacter
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
+import com.example.bikinggame.playerCharacter.createEquipment
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GetTokenResult
 import com.google.firebase.auth.auth
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import okhttp3.Call
 import okhttp3.Callback
@@ -29,6 +27,7 @@ import okhttp3.ResponseBody
 import okio.IOException
 import org.json.JSONArray
 import org.json.JSONObject
+import kotlin.coroutines.resumeWithException
 
 
 class HomePage : AppCompatActivity() {
@@ -49,7 +48,6 @@ class HomePage : AppCompatActivity() {
         viewPager.offscreenPageLimit = 3
         viewPager.adapter = adapter
         viewPager.currentItem = 1
-
     }
 
     fun openDungeonScreen() {
@@ -84,6 +82,52 @@ fun makeGetRequest(url: String, token: String, callback: (JSONObject) -> Unit = 
 
     makeRequestTemp(request, callback)
 }
+
+suspend fun makeGetRequest(url: String, token: String): JSONArray {
+    val request = Request.Builder()
+        .url(url)
+        .get()
+        .addHeader("Authorization", token)
+        .build()
+
+    return makeRequestTemp(request)
+}
+
+suspend fun makeRequestTemp(request: Request): JSONArray =
+    suspendCancellableCoroutine { cont ->
+        val client = OkHttpClient()
+        val call = client.newCall(request)
+
+        // Enqueue the async call
+        call.enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                // Resume coroutine with exception
+                if (!cont.isCompleted) cont.resumeWithException(e)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                try {
+                    response.use {
+                        if (!response.isSuccessful) {
+                            // You can throw an exception or handle error as needed
+                            if (!cont.isCompleted) cont.resumeWithException(IOException("Unexpected code $response"))
+                        } else {
+                            val body = response.body ?: throw IOException("Empty response body")
+                            val json = JSONObject(body.string())
+                            val jsonArray: JSONArray = json.get("data") as JSONArray
+                            if (!cont.isCompleted) cont.resume(jsonArray) { cause, _, _ -> (cause) }
+                        }
+                    }
+                } catch (e: Exception) {
+                    if (!cont.isCompleted) cont.resumeWithException(e)
+                }
+            }
+        })
+
+        // Optional: handle cancellation
+        cont.invokeOnCancellation { call.cancel() }
+    }
+
 
 fun makeRequestTemp(request: Request, callback: (JSONObject) -> Unit) {
     val client = OkHttpClient()
