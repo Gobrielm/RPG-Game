@@ -19,7 +19,7 @@ class PlayerCharacter {
     var currentStats: CharacterStats = CharacterStats()
 
     var attacks: Array<Attack?> = arrayOfNulls<Attack>(4)
-//    var shields:
+    var shields: ArrayList<Shield?> = arrayListOf<Shield?>()
     var currentEquipment = arrayOfNulls<Equipment>(EquipmentSlot.entries.size)
 
 
@@ -28,7 +28,7 @@ class PlayerCharacter {
         playerClass = pPlayerClass
         baseStats = CharacterStats(pPlayerClass.subClass)
         currentStats = baseStats
-        attacks[0] = Attack(10, currentStats.characterStats[BasicStats.Strength] as Int, 0, 90)
+        attacks[0] = Attack(-1, 10, currentStats.characterStats[BasicStats.Strength] as Int, 0, 90)
     }
 
     // Used for local creation
@@ -37,7 +37,7 @@ class PlayerCharacter {
         playerClass = pPlayerClass
         baseStats = CharacterStats(pPlayerClass.subClass)
         currentStats = baseStats
-        attacks[0] = Attack(10, currentStats.characterStats[BasicStats.Strength] as Int, 0, 90)
+        attacks[0] = Attack(-1, 10, currentStats.characterStats[BasicStats.Strength] as Int, 0, 90)
     }
 
     constructor(jsonArray: JSONArray) {
@@ -59,12 +59,20 @@ class PlayerCharacter {
         }
 
         for (i in 0 until 4) {
-            if (jsonArray.isNull(offset.value)) {
+            attacks[i] = if (jsonArray.isNull(offset.value)) {
                 offset.value++
-                attacks[i] = null
+                null
             } else {
-                attacks[i] = Attack(jsonArray, offset)
+                // TODO: GET ATTACK WITH THE ID
+                val id = jsonArray[offset.value++]
+                null
             }
+        }
+        val shieldsSize = jsonArray.get(offset.value++) as Int
+        shields.ensureCapacity(shieldsSize)
+        for (i in 0 until shieldsSize) {
+            // TODO: GET SHIELD WITH THE ID
+            val id = jsonArray[offset.value++]
         }
     }
 
@@ -80,8 +88,12 @@ class PlayerCharacter {
             if (attacks[i] == null) {
                 jsonArray.put(null)
             } else {
-                attacks[i]!!.serialize(jsonArray)
+                jsonArray.put(attacks[i]!!.id)
             }
+        }
+        jsonArray.put(shields.size)
+        for (i in 0 until shields.size) {
+            jsonArray.put(shields[i]!!.id)
         }
         return jsonArray
     }

@@ -4,12 +4,14 @@ import org.json.JSONArray
 import kotlin.random.Random
 
 class Attack {
+    val id: Int
     val mass: Int
     val velocity: Int
     val pierce: Int
     val accuracy: Int // Chance to do direct hit, 0 - 100
 
-    constructor(pMass: Int, pVelocity: Int, pPierce: Int, pAccuracy: Int) {
+    constructor(pId: Int, pMass: Int, pVelocity: Int, pPierce: Int, pAccuracy: Int) {
+        id = pId
         mass = pMass
         velocity = pVelocity
         pierce = pPierce
@@ -17,18 +19,20 @@ class Attack {
     }
 
     constructor(jsonArray: JSONArray, offset: IntWrapper) {
+        id = jsonArray.get(offset.value++) as Int
         mass = jsonArray.get(offset.value++) as Int
         velocity = jsonArray.get(offset.value++) as Int
         pierce = jsonArray.get(offset.value++) as Int
         accuracy = jsonArray.get(offset.value++) as Int
     }
 
-    fun serialize(jsonArray: JSONArray) {
-        jsonArray.put(mass)
-        jsonArray.put(velocity)
-        jsonArray.put(pierce)
-        jsonArray.put(accuracy)
-    }
+//    fun serialize(jsonArray: JSONArray) {
+//        jsonArray.put(id)
+//        jsonArray.put(mass)
+//        jsonArray.put(velocity)
+//        jsonArray.put(pierce)
+//        jsonArray.put(accuracy)
+//    }
 
     fun getMomentum(): Int {
         return velocity * mass

@@ -10,15 +10,13 @@ enum class EquipmentSlot {
     LEGS,
     FEET,
     BACK,
-    L_HAND,
-    R_HAND,
+    OFF_HAND,
+    MAIN_HAND,
 
     // Trinkets
     NECK,
-    L_WRIST,
-    R_WRIST,
-    L_RING,
-    R_RING,
+    WRIST,
+    RING,
 }
 
 
@@ -69,14 +67,18 @@ class Equipment {
             offset.value++
             null
         } else {
-            Attack(jsonArray, offset)
+            // TODO: GET ATTACK WITH THE ID
+            val id = jsonArray[offset.value++]
+            null
         }
 
         shield = if (jsonArray[offset.value] == null) {
             offset.value++
             null
         } else {
-            Shield(jsonArray, offset)
+            // TODO: GET SHIELD WITH THE ID
+            val id = jsonArray[offset.value++]
+            null
         }
     }
 
@@ -91,12 +93,12 @@ class Equipment {
         if (attack == null) {
             jsonArray.put(null)
         } else {
-            attack.serialize(jsonArray)
+            jsonArray.put(attack.id)
         }
         if (shield == null) {
             jsonArray.put(null)
         } else {
-            shield.serialize(jsonArray)
+            jsonArray.put(shield.id)
         }
     }
 }
