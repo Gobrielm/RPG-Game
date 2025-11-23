@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/character_viewer_navigation"
+    app:startDestination="@id/editCharacterFragment">
+
+    <fragment
+        android:id="@+id/editCharacterFragment"
+        android:name="com.example.bikinggame.characterViewer.EditCharacterFragment"
+        android:label="EditCharacterFragment" />
+
+    <fragment
+        android:id="@+id/editEquipmentFragment"
+        android:name="com.example.bikinggame.characterViewer.EditEquipmentFragment"
+        android:label="EditEquipmentFragmnet"/>
+</navigation>

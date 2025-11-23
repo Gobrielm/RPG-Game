@@ -9,8 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.bikinggame.characterCreation.CharacterCreationActivity
 import com.example.bikinggame.databinding.ActivityPasswordSetupBinding
-import com.example.bikinggame.homepage.getUserJson
-import com.example.bikinggame.homepage.makeRequest
+import com.example.bikinggame.requests.getUserJson
+import com.example.bikinggame.requests.makeRequest
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth

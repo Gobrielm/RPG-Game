@@ -6,12 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".dungeonPrep.DungeonPrepActivity">
 
-<!--    <View-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="150dp"-->
-<!--        android:layout_gravity="bottom|start"-->
-<!--        android:background="#6A373737"/>-->
-
     <ImageButton
         android:id="@+id/characterButton"
         android:layout_width="100dp"

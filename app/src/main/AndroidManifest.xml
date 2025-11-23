@@ -29,6 +29,9 @@
             android:name=".homepage.HomePage"
             android:exported="false" />
         <activity
+            android:name=".characterViewer.CharacterViewerActivity"
+            android:exported="false"/>
+        <activity
             android:name=".PasswordSetup"
             android:exported="false" />
         <activity

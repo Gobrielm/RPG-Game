@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:contentDescription="Go Back Button"
+        android:src="@android:drawable/btn_dialog"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/helmetButton"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="144dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="144dp"
+        android:contentDescription="Helmet Button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/helmetslot" />
+
+    <ImageButton
+        android:id="@+id/neckButton"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="144dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="144dp"
+        android:contentDescription="Neck Button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/helmetButton"
+        app:srcCompat="@drawable/neckslot" />
+
+    <ImageButton
+        android:id="@+id/chestButton"
+        android:layout_width="100dp"
+        android:layout_height="135dp"
+        android:layout_marginStart="144dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="144dp"
+        android:contentDescription="Chest Button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/neckButton"
+        app:srcCompat="@drawable/chestslot" />
+
+    <ImageButton
+        android:id="@+id/beltButton"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="144dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="144dp"
+        android:contentDescription="Belt Button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chestButton"
+        app:srcCompat="@drawable/beltslot" />
+
+    <ImageButton
+        android:id="@+id/legButton"
+        android:layout_width="100dp"
+        android:layout_height="135dp"
+        android:layout_marginStart="144dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="144dp"
+        android:contentDescription="Leg Button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/beltButton"
+        app:srcCompat="@drawable/legsslot" />
+
+    <ImageButton
+        android:id="@+id/bootButton"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="144dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="144dp"
+        android:contentDescription="Boots Button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/legButton"
+        app:srcCompat="@drawable/bootslot" />
+
+    <ImageButton
+        android:id="@+id/mainHandButton"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="9dp"
+        android:layout_marginTop="239dp"
+        android:layout_marginEnd="9dp"
+        android:contentDescription="Main Hand Button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/chestButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/mainhandslot" />
+
+    <ImageButton
+        android:id="@+id/offHandButton"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="9dp"
+        android:layout_marginTop="239dp"
+        android:layout_marginEnd="9dp"
+        android:contentDescription="Off Hand Button"
+        app:layout_constraintEnd_toStartOf="@+id/chestButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/offhandslot" />
+
+    <ImageButton
+        android:id="@+id/ringButton"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="9dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="9dp"
+        android:contentDescription="Ring Button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/beltButton"
+        app:layout_constraintTop_toBottomOf="@+id/mainHandButton"
+        app:srcCompat="@drawable/ringslot" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/equipmentList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="460dp"
+        android:background="#5D5D5D"
+        android:visibility="gone">
+
+
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/closeListButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:text="Close"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/equipmentList">
+
+    </Button>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -62,8 +62,4 @@ class CharacterClass {
     override fun toString(): String {
         return "$mainClass-$subClass"
     }
-
-    companion object {
-        val SERIALIZED_OFFSET = 2
-    }
 }

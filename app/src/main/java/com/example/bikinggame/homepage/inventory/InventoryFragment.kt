@@ -1,24 +1,28 @@
 package com.example.bikinggame.homepage.inventory
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.runtime.key
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bikinggame.R
+import com.example.bikinggame.databinding.FragmentInventoryBinding
 import com.example.bikinggame.dungeonPrep.DungeonPrepViewModel
-import com.example.bikinggame.homepage.getUserJson
-import com.example.bikinggame.homepage.getUserToken
-import com.example.bikinggame.homepage.inventory.playerInventory.characters
-import com.example.bikinggame.homepage.makeGetRequest
-import com.example.bikinggame.homepage.makeRequest
+import com.example.bikinggame.homepage.HomePageViewModel
+import com.example.bikinggame.homepage.inventory.PlayerInventory.playerCharacters
+import com.example.bikinggame.homepage.inventory.PlayerInventory.playerEquipment
+import com.example.bikinggame.playerCharacter.Equipment
+import com.example.bikinggame.playerCharacter.EquipmentSlot
 import com.example.bikinggame.playerCharacter.PlayerCharacter
+import com.example.bikinggame.requests.getUserJson
+import com.example.bikinggame.requests.makeGetRequest
+import com.example.bikinggame.requests.makePutRequest
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
@@ -29,27 +33,29 @@ import org.json.JSONObject
 import java.util.LinkedList
 import kotlin.getValue
 
-object playerInventory {
-    val characters: ArrayList<PlayerCharacter> = ArrayList()
-
-    fun getCharacter(id: Int): PlayerCharacter? {
-        characters.forEach { character ->
-            if (character.id == id) return character
-        }
-        return null
-    }
-}
-
 class InventoryFragment() : Fragment() {
     enum class InventoryMode { VIEW, PICK }
 
     var mode: InventoryMode = InventoryMode.VIEW
 
+    private var _binding: FragmentInventoryBinding? = null
+    private val viewModel: HomePageViewModel by activityViewModels()
+
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_inventory, container, false)
+        _binding = FragmentInventoryBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+
+        return root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private val user = Firebase.auth.currentUser
@@ -67,14 +73,19 @@ class InventoryFragment() : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         recyclerView.adapter = InventoryManager(inventoryList, ::playerCharacterClicked)
+
 //        loadPlayerCharactersLocally()
-        loadPlayerCharactersReq()
+
+        if (inventoryList.isEmpty()) {
+            loadPlayerCharactersReq()
+            loadPlayerEquipment()
+        }
+
     }
 
     fun refreshInventoryScreen() {
         inventoryList.clear()
-        characters.forEach { playerCharacter ->
-            Log.d("TTT", "HHHHH")
+        playerCharacters.forEach { playerCharacter ->
             inventoryList.add(Item(R.drawable.truck, playerCharacter.toString()))
         }
         requireActivity().runOnUiThread {
@@ -84,19 +95,19 @@ class InventoryFragment() : Fragment() {
 
     fun playerCharacterClicked(position: Int) {
         if (mode == InventoryMode.VIEW) {
-            showItemDetails(position)
+            editCharacter(position)
         } else {
-            returnSelectedItem(position)
+            selectCharacter(position)
         }
     }
 
-    fun showItemDetails(position: Int) {
-        Log.d("showItemDetails", position.toString())
+    fun editCharacter(position: Int) {
+        viewModel.selectCharacter(position)
     }
 
-    fun returnSelectedItem(position: Int) {
+    fun selectCharacter(position: Int) {
         val viewModel: DungeonPrepViewModel by activityViewModels()
-        viewModel.selectCharacter(characters[position])
+        viewModel.selectCharacter(playerCharacters[position])
     }
 
     fun loadPlayerCharactersReq() {
@@ -113,6 +124,34 @@ class InventoryFragment() : Fragment() {
         }
     }
 
+    fun tempGiveEquipment() {
+        if (user == null) return
+        lifecycleScope.launch {
+            val userData = getUserJson()
+            if (userData == null) return@launch
+            val body = "1".toRequestBody("application/json".toMediaTypeOrNull())
+            makePutRequest("https://bikinggamebackend.vercel.app/api/equipment/1",
+                userData.get("token") as String,
+                body
+            )
+        }
+    }
+
+    fun loadPlayerEquipment() {
+        if (user == null) return
+        lifecycleScope.launch {
+            val userData = getUserJson()
+            if (userData == null) return@launch
+            val res = makeGetRequest("https://bikinggamebackend.vercel.app/api/equipment/",
+                userData.get("token") as String
+            )
+
+            res.keys().forEach { key ->
+                playerEquipment[key.toInt()] = res[key] as Int
+            }
+        }
+    }
+
     fun loadPlayerCharactersRes(json: JSONObject) {
         lifecycleScope.launch {
             val localList: ArrayList<PlayerCharacter> = ArrayList()
@@ -121,7 +160,7 @@ class InventoryFragment() : Fragment() {
             for (section: String in (playerCharacterJSON).keys()) {
                 try {
                     val playerCharacterArray = playerCharacterJSON.get(section) as JSONArray
-                    val playerCharacter = PlayerCharacter.createCharacter(playerCharacterArray)
+                    val playerCharacter = PlayerCharacter(playerCharacterArray)
                     localList.add(playerCharacter)
                 } catch (e: Exception) {
                     Log.d("LoadPlayerCharacters", e.toString())
@@ -130,8 +169,8 @@ class InventoryFragment() : Fragment() {
             }
 
 //        savePlayerCharactersLocally(localList)
-            characters.clear()
-            characters.addAll(localList)
+            playerCharacters.clear()
+            playerCharacters.addAll(localList)
             refreshInventoryScreen()
         }
     }

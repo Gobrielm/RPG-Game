@@ -43,7 +43,7 @@ class Dungeon {
         ))
 
 
-        return EnemyCharacter(characterStats, arrayListOf(Attack(-1, 10, 5, 0, 100)))
+        return EnemyCharacter(characterStats, arrayListOf(Attack(-1, "AAAA", 10, 5, 0, 100)))
     }
 
 }

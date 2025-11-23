@@ -6,8 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".homepage.inventory.InventoryFragment">
 
-
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
@@ -20,14 +18,5 @@
         android:layout_width="wrap_content"
         android:layout_height="84dp"
         android:background="#65624D98" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="15dp"
-        android:layout_marginBottom="20dp"
-        android:text="Button" />
 
 </FrameLayout>

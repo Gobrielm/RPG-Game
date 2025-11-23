@@ -17,13 +17,10 @@ class PlayerCharacter {
     val playerClass: CharacterClass
     val baseStats: CharacterStats
     val currentStats: CharacterStats
-
-    val attackIDs: IntArray = IntArray(4) { -1 }
-    val shieldIDs: ArrayList<Int> = ArrayList()
+    val skillTree: CharacterSkillTree
     val attacks: Array<Attack?> = arrayOfNulls(4)
-    val shields: ArrayList<Shield?> = arrayListOf()
+    val shields: ArrayList<Shield> = arrayListOf()
 
-    val currentEquipmentIDs: IntArray = IntArray(EquipmentSlot.entries.size) { -1 }
     val currentEquipment = arrayOfNulls<Equipment>(EquipmentSlot.entries.size)
 
 
@@ -32,6 +29,9 @@ class PlayerCharacter {
         playerClass = pPlayerClass
         baseStats = CharacterStats(pPlayerClass.subClass)
         currentStats = baseStats
+        skillTree = CharacterSkillTree()
+        val skill = Skill.getSkill(pPlayerClass.subClass.ordinal)
+        skillTree.skillsUnlocked.add(skill!!)
     }
 
     // Used for local creation
@@ -40,38 +40,43 @@ class PlayerCharacter {
         playerClass = pPlayerClass
         baseStats = CharacterStats(pPlayerClass.subClass)
         currentStats = baseStats
+        skillTree = CharacterSkillTree()
     }
 
-    private constructor(jsonArray: JSONArray) {
+    constructor(jsonArray: JSONArray) {
         var offset = IntWrapper(0)
         id = jsonArray.get(offset.value++) as Int
-        playerClass = CharacterClass(jsonArray, offset) // uses 1 & 2
+        playerClass = CharacterClass(jsonArray, offset)
         baseStats = CharacterStats(playerClass.subClass)
         currentStats = baseStats
+        skillTree = CharacterSkillTree(jsonArray, offset)
 
         for (i in 0 until EquipmentSlot.entries.size) {
-            currentEquipmentIDs[i] = if (jsonArray.isNull(offset.value)) {
+            currentEquipment[i] = if (jsonArray.isNull(offset.value)) {
                 offset.value++
-                -1
+                null
             } else {
                 val id = jsonArray[offset.value++] as Int
-                id
+                Equipment.getEquipment(id)
             }
         }
 
         for (i in 0 until 4) {
-            attackIDs[i] = if (jsonArray.isNull(offset.value)) {
+            if (jsonArray.isNull(offset.value)) {
                 offset.value++
-                -1
+                attacks[i] = null
             } else {
-                val id = jsonArray[offset.value++] as Int
-                id
+                val id = jsonArray.get(offset.value++) as Int
+                val attack = Attack.getAttack(id)
+                attacks[i] = attack
             }
+
         }
         val shieldsSize = jsonArray.get(offset.value++) as Int
         for (i in 0 until shieldsSize) {
             val id = jsonArray[offset.value++] as Int
-            shieldIDs.add(id)
+            val shield = Shield.getShield(id)
+            if (shield != null) shields.add(shield)
         }
     }
 
@@ -80,25 +85,28 @@ class PlayerCharacter {
         val jsonArray = JSONArray()
         jsonArray.put(id)
         playerClass.serialize(jsonArray)
+        skillTree.serialize(jsonArray)
+
         for (i in 0 until EquipmentSlot.entries.size) {
-            jsonArray.put(if (currentEquipment[i] == null) null else currentEquipment[i]!!.id)
+            jsonArray.put(if (currentEquipment[i] == null) -1 else currentEquipment[i]!!.id)
         }
+
         for (i in 0 until 4) {
-            if (attackIDs[i] == -1) {
-                jsonArray.put(null)
+            if (attacks[i] == null) {
+                jsonArray.put(-1)
             } else {
-                jsonArray.put(attackIDs[i])
+                jsonArray.put(attacks[i]!!.id)
             }
         }
-        jsonArray.put(shieldIDs.size)
-        for (i in 0 until shieldIDs.size) {
-            jsonArray.put(shieldIDs[i])
+        jsonArray.put(shields.size)
+        for (i in 0 until shields.size) {
+            jsonArray.put(shields[i].id)
         }
         return jsonArray
     }
 
     override fun toString(): String {
-        return "$id: $playerClass \n $currentStats"
+        return "$playerClass \n $currentStats"
     }
 
     fun addEquipment(slot: EquipmentSlot, equipment: Equipment) {
@@ -128,61 +136,22 @@ class PlayerCharacter {
         return currentStats.getAttacked(attack)
     }
 
-    fun fetchAttacksAndShields() { // TODO: Currently only attacks/shields are from equipment, no skills
-        for (i in 0 until currentEquipmentIDs.size) {
-            val equipment = currentEquipment[i]
-            if (equipment != null) {
-                if (equipment.attack != null) addAttack(equipment.attack)
-                if (equipment.shield != null) addShield(equipment.shield)
+    fun getAvailableAttacks(attackSlotToExclude: Int): ArrayList<Attack> {
+        val attacksToReturn = ArrayList<Attack>()
+        val idToAvoid: Int = attacks[attackSlotToExclude]?.id ?: -1
+
+        currentEquipment.forEach { equipment ->
+            if (equipment != null && equipment.attack != null && equipment.attack.id != idToAvoid) {
+                attacksToReturn.add(equipment.attack)
             }
         }
-    }
 
-    fun addAttack(attack: Attack) {
-        for (i in 0 until 4) {
-            if (attackIDs[i] == attack.id) {
-                attacks[i] = attack
+        skillTree.skillsUnlocked.forEach { skill ->
+            if (skill.attack != null && skill.attack!!.id != idToAvoid) {
+                attacksToReturn.add(skill.attack!!)
             }
         }
-    }
 
-    fun addShield(shield: Shield) {
-        for (i in 0 until shieldIDs.size) {
-            if (shieldIDs[i] == shield.id) {
-                shields.add(shield)
-            }
-        }
-    }
-
-    suspend fun fetchEquipment() {
-        for (i in 0 until currentEquipmentIDs.size) {
-            currentEquipment[i] = getEquipment(currentEquipmentIDs[i])
-        }
-        fetchAttacksAndShields()
-    }
-
-    companion object {
-        suspend fun createCharacter(jsonArray: JSONArray): PlayerCharacter {
-            val playerCharacter: PlayerCharacter = PlayerCharacter(jsonArray)
-            playerCharacter.fetchEquipment()
-            return playerCharacter
-        }
-    }
-}
-
-class CharacterSkillTree {
-    var exp: Int = 0
-
-    companion object {
-        fun getCurrentLevel(exp: Int): Int {
-            val exp = min(exp, getExpRequiredForLevel(30))
-
-            return floor((exp / 28).toDouble().pow(0.625)).toInt()
-        }
-
-        fun getExpRequiredForLevel(level: Int): Int {
-            val level = min(level, 30)
-            return (level.toDouble().pow(1.6) * 28).toInt()
-        }
+        return attacksToReturn
     }
 }

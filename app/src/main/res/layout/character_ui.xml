@@ -6,6 +6,32 @@
     android:layout_height="match_parent"
     tools:context=".dungeon.DungeonExplorationActivity">
 
+    <TextView
+        android:id="@+id/failText"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center"
+        android:text="Fail"
+        android:textColor="#FF0000"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/finishText"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center"
+        android:text="Suceed"
+        android:textColor="#00FF00"
+        android:visibility="gone"/>
+
+    <View
+        android:id="@+id/blurRect"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="#80FFFFFF"
+        android:visibility="gone"/>
+
     <ProgressBar
         android:id="@+id/health_progressbar"
         style="@style/Widget.ProgressBar.Vertical"

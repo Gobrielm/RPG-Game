@@ -14,6 +14,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.FragmentHomePageBinding
+import com.example.bikinggame.requests.getUserJson
+import com.example.bikinggame.requests.makeRequest
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch

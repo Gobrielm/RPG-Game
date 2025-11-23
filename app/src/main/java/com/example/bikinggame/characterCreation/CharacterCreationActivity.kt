@@ -15,12 +15,12 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.ActivityCharacterCreationBinding
 import com.example.bikinggame.homepage.HomePage
-import com.example.bikinggame.homepage.getUserJson
-import com.example.bikinggame.homepage.makePostRequest
 import com.example.bikinggame.playerCharacter.CharacterClass
 import com.example.bikinggame.playerCharacter.CharacterMainClass
 import com.example.bikinggame.playerCharacter.CharacterSubClass
 import com.example.bikinggame.playerCharacter.PlayerCharacter
+import com.example.bikinggame.requests.getUserJson
+import com.example.bikinggame.requests.makePostRequest
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
