@@ -66,6 +66,11 @@ class EditCharacterFragment: Fragment() {
             navController.navigate(R.id.editEquipmentFragment)
         }
 
+        binding.skillsButton.setOnClickListener {
+            val navController = findNavController()
+            navController.navigate(R.id.skillTreeFragment)
+        }
+
         return root
     }
 

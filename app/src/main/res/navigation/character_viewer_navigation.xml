@@ -13,5 +13,12 @@
     <fragment
         android:id="@+id/editEquipmentFragment"
         android:name="com.example.bikinggame.characterViewer.EditEquipmentFragment"
-        android:label="EditEquipmentFragmnet"/>
+        android:label="EditEquipmentFragment"/>
+
+    <fragment
+        android:id="@+id/skillTreeFragment"
+        android:name="com.example.bikinggame.characterViewer.SkillTreeFragment"
+        android:label="SkillTreeFragment"/>
+
+
 </navigation>

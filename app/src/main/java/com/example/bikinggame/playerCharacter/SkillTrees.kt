@@ -1,11 +1,8 @@
 package com.example.bikinggame.playerCharacter
 
 import android.util.Log
-import com.example.bikinggame.playerCharacter.Shield.Companion.shieldIDToShield
-import com.example.bikinggame.requests.getUserJson
-import com.example.bikinggame.requests.makeGetRequest
+import androidx.compose.ui.geometry.Offset
 import org.json.JSONArray
-import org.json.JSONObject
 import kotlin.math.floor
 import kotlin.math.min
 import kotlin.math.pow
@@ -49,11 +46,18 @@ class CharacterSkillTree {
 }
 
 object SkillTrees {
-    var skillTrees: Map<CharacterSubClass, Array<Int>> = mapOf()
+    var skillTrees: Map<CharacterSubClass, Array<Pair<Int, Offset>>> = mapOf(
+        CharacterSubClass.Knight to arrayOf(
+            3 to Offset(0f, 0f),
 
-    suspend fun fetchSkillTrees() {
+            7 to Offset(0f, -1f),
+            8 to Offset(0.71f, 0.71f),
+            9 to Offset(-0.71f, 0.71f),
 
-    }
+            10 to Offset(0f, -2f),
+            11 to Offset(1.42f, 1.42f),
+        )
+    )
 }
 
 
@@ -90,6 +94,13 @@ class Skill {
             // Start of Knight Tree
             3 to Skill(3, emptyMap(), emptyArray(), 1, -1),
 
+            7 to Skill(7, mapOf(BasicStats.Strength to 1), arrayOf(3), -1, -1),
+            8 to Skill(8, mapOf(BasicStats.Constitution to 1), arrayOf(3), -1, -1),
+            9 to Skill(9, mapOf(BasicStats.BaseHealth to 2), arrayOf(3), -1, -1),
+
+            10 to Skill(10, emptyMap(), arrayOf(7), -1, -1),
+            11 to Skill(11, mapOf(BasicStats.BaseHealth to 2), arrayOf(8), -1, -1),
+
             // Start of North Tree
             4 to Skill(4, emptyMap(), emptyArray(), 1, -1),
 
@@ -98,6 +109,8 @@ class Skill {
 
             // Start of NonTraditionalRanged Tree
             6 to Skill(6, emptyMap(), emptyArray(), 3, -1)
+
+
         )
 
         init {
