@@ -146,9 +146,7 @@ class InventoryFragment() : Fragment() {
                 userData.get("token") as String
             )
 
-            res.keys().forEach { key ->
-                playerEquipment[key.toInt()] = res[key] as Int
-            }
+            PlayerInventory.updatePlayerEquipment(res)
         }
     }
 

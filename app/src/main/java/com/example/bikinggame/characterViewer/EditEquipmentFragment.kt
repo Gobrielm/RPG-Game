@@ -146,29 +146,22 @@ class EditEquipmentFragment: Fragment() {
 
         if (character == null) return
 
-        var equipmentIDs = arrayListOf<Int>()
-
         // Represents first item being X
         if (ind == 0) {
-            equipmentIDs.add(unassignEquipment(character))
+            unassignEquipment(character)
 
         } else {
 
             // -1 b/c everything was pushed one back for X
             val pieceOfEquipment = equipmentToChooseFrom[ind - 1].first
-            equipmentIDs.add(pieceOfEquipment.id)
 
-            equipmentIDs.add(unassignEquipment(character))
+            unassignEquipment(character)
 
             character.addEquipment(slotOpen!!, pieceOfEquipment)
             PlayerInventory.usePieceOfEquipment(pieceOfEquipment.id)
         }
 
         lifecycleScope.launch {
-            for (id in equipmentIDs) {
-                if (id == -1) continue
-                updateEquipmentCount(id)
-            }
             saveCharacter(characterID)
         }
 
@@ -176,13 +169,11 @@ class EditEquipmentFragment: Fragment() {
         closeEquipmentList()
     }
 
-    fun unassignEquipment(character: PlayerCharacter): Int {
+    fun unassignEquipment(character: PlayerCharacter) {
         if (character.currentEquipment[slotOpen!!.ordinal] != null) {
             val equipmentID = character.currentEquipment[slotOpen!!.ordinal]!!.id
             PlayerInventory.addPieceOfEquipment(equipmentID)
             character.removeEquipment(slotOpen!!)
-            return equipmentID
         }
-        return -1
     }
 }

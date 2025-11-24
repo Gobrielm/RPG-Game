@@ -126,7 +126,10 @@ class PlayerCharacter {
             }
         }
         currentEquipment[slot.ordinal] = null
+    }
 
+    fun getEquipment(slot: EquipmentSlot): Equipment? {
+        return currentEquipment[slot.ordinal]
     }
 
     /**
