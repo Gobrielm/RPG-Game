@@ -48,16 +48,16 @@ class SkillTreeFragment: Fragment() {
             zoomContainer.addView(button)
         }
 
-        zoomContainer.viewTreeObserver.addOnGlobalLayoutListener {
-            for ((id, pt) in skillTree) {
-                val button = nodeButtons[id]!!
-                val skill = Skill.getSkill(id)!!
-                for (preReqID in skill.prerequisites) {
-                    val button2 = nodeButtons[preReqID]!!
-                    zoomContainer.addLine(button to button2)
-                }
-            }
-        }
+//        zoomContainer.viewTreeObserver.addOnGlobalLayoutListener {
+//            for ((id, pt) in skillTree) {
+//                val button = nodeButtons[id]!!
+//                val skill = Skill.getSkill(id)!!
+//                for (preReqID in skill.prerequisites) {
+//                    val button2 = nodeButtons[preReqID]!!
+//                    binding.root.addLine(button to button2)
+//                }
+//            }
+//        }
 
         return root
     }
