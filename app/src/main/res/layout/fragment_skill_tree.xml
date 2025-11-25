@@ -16,7 +16,7 @@
         android:layout_width="300dp"
         android:layout_height="200dp"
         android:background="#5D5D5D"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/zoomContainer"
         app:layout_constraintEnd_toEndOf="@+id/zoomContainer"
         app:layout_constraintStart_toStartOf="@+id/zoomContainer"
