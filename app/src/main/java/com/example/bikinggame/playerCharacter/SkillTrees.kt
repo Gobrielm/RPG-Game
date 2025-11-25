@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import org.json.JSONArray
 import kotlin.math.floor
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
 
@@ -29,6 +30,11 @@ class CharacterSkillTree {
         skillsUnlocked.forEach { skill ->
             jsonArray.put(skill.id)
         }
+    }
+
+    fun getAvailableSkillPoints(): Int {
+        val level: Int = getCurrentLevel(exp)
+        return max(0, (level + 1) - skillsUnlocked.size) // Gets one skill for free
     }
 
     companion object {
@@ -96,7 +102,7 @@ class Skill {
 
         if (prerequisites.isEmpty()) toReturn += " None"
 
-        toReturn.trimEnd { it == ',' }
+        toReturn = toReturn.trimEnd { it == ',' }
         toReturn += '\n'
 
         for ((stat, increase) in statIncrease) {

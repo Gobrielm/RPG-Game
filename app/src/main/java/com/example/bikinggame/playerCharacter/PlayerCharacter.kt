@@ -50,6 +50,7 @@ class PlayerCharacter {
         baseStats = CharacterStats(playerClass.subClass)
         currentStats = baseStats
         skillTree = CharacterSkillTree(jsonArray, offset)
+        // TODO: Gets stats from skills
 
         for (i in 0 until EquipmentSlot.entries.size) {
             currentEquipment[i] = if (jsonArray.isNull(offset.value)) {
@@ -130,6 +131,26 @@ class PlayerCharacter {
 
     fun getEquipment(slot: EquipmentSlot): Equipment? {
         return currentEquipment[slot.ordinal]
+    }
+
+    fun addSkill(skillID: Int) {
+        val skill = Skill.getSkill(skillID)
+        if (skill == null || skillTree.skillsUnlocked.contains(skill)) return
+        skillTree.skillsUnlocked.add(skill)
+
+        // TODO: Doesn't raise the stats
+        for ((stat, amount) in skill.statIncrease) {
+            currentStats.raiseStat(stat, amount)
+        }
+    }
+
+    fun hasSkill(skillID: Int): Boolean {
+        for (skill in skillTree.skillsUnlocked) {
+            if (skill.id == skillID) {
+                return true
+            }
+        }
+        return false
     }
 
     /**

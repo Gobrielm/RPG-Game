@@ -11,6 +11,15 @@
 
     </com.example.bikinggame.gui.ZoomPanLayout>
 
+    <TextView
+        android:id="@+id/skillPointsCount"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="Pts Avail: "
+        android:textColor="#000000"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/skillMenu"
         android:layout_width="300dp"
@@ -43,6 +52,19 @@
             android:src="@android:drawable/ic_menu_close_clear_cancel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
+
+        <Button
+            android:id="@+id/unlockSkillButton"
+            android:layout_width="180dp"
+            android:layout_height="50dp"
+            android:text="Unlock Skill"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeMaxTextSize="24sp"
+            android:autoSizeStepGranularity="1sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

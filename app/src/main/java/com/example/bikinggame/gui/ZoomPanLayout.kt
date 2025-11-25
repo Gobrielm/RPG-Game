@@ -30,18 +30,18 @@ class ZoomPanLayout @JvmOverloads constructor(
         isFocusable = true
     }
 
-    private var scaleFactor = 1f
+    private var scaleFactor = 0.7f
 
-    val offsetX = 80f
-    val offsetY = 60f
-    var posX = 0f
-    var posY = 0f
+    val offsetX = 160f
+    val offsetY = 120f
+    var posX = 300f / scaleFactor
+    var posY = 500f / scaleFactor
     private var lastX = 0f
     private var lastY = 0f
     private var isDragging = false
     private val lines = mutableListOf<Pair<Button, Button>>()
 
-    private val paint = Paint().apply { strokeWidth = 5f }
+    private val paint = Paint().apply { strokeWidth = 10f }
 
     private val scaleDetector = ScaleGestureDetector(context, ScaleListener())
 

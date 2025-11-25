@@ -64,6 +64,10 @@ class CharacterStats {
         characterStats[BasicStats.BaseStamina] = value
     }
 
+    fun raiseStat(stat: BasicStats, amount: Int) {
+        characterStats[stat] = characterStats[stat]!! + amount
+    }
+
     var characterStats: MutableMap<BasicStats, Int> = mutableMapOf(
         BasicStats.BaseHealth to 0,
         BasicStats.BaseMana to 0,
