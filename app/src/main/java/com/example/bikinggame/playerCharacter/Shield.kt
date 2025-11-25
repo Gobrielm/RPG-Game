@@ -25,18 +25,17 @@ class Shield {
         regeneration = jsonArray.get(offset.value++) as Int
     }
 
-//    fun serialize(jsonArray: JSONArray) {
-//        jsonArray.put(id)
-//        jsonArray.put(deflection)
-//        jsonArray.put(fortitude)
-//        jsonArray.put(regeneration)
-//    }
+    override fun toString(): String {
+        return "$name --- Deflection: $deflection  Fortitude: $fortitude  Regeneration: $regeneration"
+    }
 
     companion object {
         val shieldIDToShield = hashMapOf<Int, Shield>(
             1 to Shield(1, "Basic Shield", 10, 8, 0),
 
-            2 to Shield(2, "Basic Magic Shield", 10, 4, 1)
+            2 to Shield(2, "Basic Magic Shield", 10, 4, 1),
+
+            3 to Shield(3, "Improvised Block", 2, 2, 0)
         )
 
         fun getShield(shieldID: Int): Shield? {

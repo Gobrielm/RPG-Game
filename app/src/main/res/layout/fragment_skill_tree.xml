@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,16 +11,39 @@
 
     </com.example.bikinggame.gui.ZoomPanLayout>
 
-    <View
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/skillMenu"
         android:layout_width="300dp"
         android:layout_height="200dp"
         android:background="#5D5D5D"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/zoomContainer"
         app:layout_constraintEnd_toEndOf="@+id/zoomContainer"
         app:layout_constraintStart_toStartOf="@+id/zoomContainer"
         app:layout_constraintTop_toBottomOf="@+id/zoomContainer">
 
-    </View>
+        <TextView
+            android:id="@+id/skillText"
+            android:layout_width="250dp"
+            android:layout_height="150dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="25dp"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/closeMenuButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

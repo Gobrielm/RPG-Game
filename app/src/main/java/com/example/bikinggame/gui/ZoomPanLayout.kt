@@ -31,20 +31,19 @@ class ZoomPanLayout @JvmOverloads constructor(
     }
 
     private var scaleFactor = 1f
+
+    val offsetX = 80f
+    val offsetY = 60f
     var posX = 0f
     var posY = 0f
     private var lastX = 0f
     private var lastY = 0f
     private var isDragging = false
-
-    private var mIsScrolling = false
-
     private val lines = mutableListOf<Pair<Button, Button>>()
 
     private val paint = Paint().apply { strokeWidth = 5f }
 
-//    private val scaleDetector = ScaleGestureDetector(context, ScaleListener())
-    private val gestureDetector = GestureDetector(context, GestureListener())
+    private val scaleDetector = ScaleGestureDetector(context, ScaleListener())
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         // If the user is moving → we want to pan
@@ -56,8 +55,18 @@ class ZoomPanLayout @JvmOverloads constructor(
 
     override fun dispatchDraw(canvas: Canvas) {
         canvas.withTranslation(posX, posY) {
-            super.dispatchDraw(this)
+            scale(scaleFactor, scaleFactor)
+            canvas.withTranslation(offsetX, offsetY) {
+                for (linePair in lines) {
+                    drawLine(linePair.first.x, linePair.first.y,
+                        linePair.second.x, linePair.second.y,
+                        paint
+                    )
+                }
+            }
+            super.dispatchDraw(canvas)
         }
+
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
@@ -66,6 +75,11 @@ class ZoomPanLayout @JvmOverloads constructor(
 
         // Shift coordinates *opposite* of the canvas translation
         transformed.offsetLocation(-posX, -posY)
+
+        val matrix = Matrix().apply {
+            setScale(1f / scaleFactor, 1f / scaleFactor)
+        }
+        transformed.transform(matrix)
 
         // Dispatch the modified event to children
         val handled = super.dispatchTouchEvent(transformed)
@@ -80,6 +94,13 @@ class ZoomPanLayout @JvmOverloads constructor(
         val x = event.rawX
         val y = event.rawY
 
+        scaleDetector.onTouchEvent(event)
+
+        if (event.pointerCount != 1) {
+            isDragging = false
+            return true
+        }
+
         when (event.actionMasked) {
 
             MotionEvent.ACTION_DOWN -> {
@@ -89,6 +110,11 @@ class ZoomPanLayout @JvmOverloads constructor(
             }
 
             MotionEvent.ACTION_MOVE -> {
+                if (!isDragging) {
+                    isDragging = true
+                    lastX = x
+                    lastY = y
+                }
                 val dx = x - lastX
                 val dy = y - lastY
 
@@ -105,29 +131,20 @@ class ZoomPanLayout @JvmOverloads constructor(
                 isDragging = false
             }
         }
+
         return true
     }
 
 
-//    inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-//        override fun onScale(detector: ScaleGestureDetector): Boolean {
-//            scaleFactor *= detector.scaleFactor
-//            scaleFactor = scaleFactor.coerceIn(0.3f, 3.5f)
-//            invalidate()
-//            return true
-//        }
-//    }
-
-    inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
-        override fun onScroll(
-            e1: MotionEvent?, e2: MotionEvent, dx: Float, dy: Float
-        ): Boolean {
-            Log.d("AAA", "AAA")
-            posX -= dx
-            posY -= dy
-
+    inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+        override fun onScale(detector: ScaleGestureDetector): Boolean {
+            val before = scaleFactor
+            scaleFactor *= detector.scaleFactor
+            if (before == scaleFactor) {
+                return false
+            }
+            scaleFactor = scaleFactor.coerceIn(0.3f, 3.5f)
             invalidate()
-
             return true
         }
     }

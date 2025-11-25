@@ -54,8 +54,8 @@ object SkillTrees {
             8 to Offset(0.71f, 0.71f),
             9 to Offset(-0.71f, 0.71f),
 
-            10 to Offset(0f, -2f),
-            11 to Offset(1.42f, 1.42f),
+            10 to Offset(1.576f, 1.21f),
+            11 to Offset(1.21f, 1.576f),
         )
     )
 }
@@ -64,6 +64,7 @@ object SkillTrees {
 class Skill {
 
     val id: Int
+    val name: String
     val statIncrease: MutableMap<BasicStats, Int> = mutableMapOf()
     val prerequisites: ArrayList<Int> = arrayListOf()
     private val attackID: Int
@@ -71,8 +72,9 @@ class Skill {
     var attack: Attack? = null
     var shield: Shield? = null
 
-    private constructor(pID: Int, pStatIncrease: Map<BasicStats, Int>, pPrerequisites: Array<Int>, pAttackID: Int, pShieldID: Int) {
+    private constructor(pID: Int, pName: String, pStatIncrease: Map<BasicStats, Int>, pPrerequisites: Array<Int>, pAttackID: Int, pShieldID: Int) {
         id = pID
+        name = pName
         pStatIncrease.forEach { stat, amount ->
             statIncrease[stat] = amount
         }
@@ -83,32 +85,57 @@ class Skill {
         shieldID = pShieldID
     }
 
+    override fun toString(): String {
+        var toReturn = "$name: \n"
+
+        toReturn += "Prerequisites:"
+        for (id in prerequisites) {
+            toReturn += " "
+            toReturn += getSkill(id)!!.name + ","
+        }
+
+        if (prerequisites.isEmpty()) toReturn += " None"
+
+        toReturn.trimEnd { it == ',' }
+        toReturn += '\n'
+
+        for ((stat, increase) in statIncrease) {
+            toReturn += "$stat: $increase"
+        }
+        toReturn += '\n'
+
+        if (attack != null) toReturn += "Attack: $attack\n"
+        if (shield != null) toReturn += "Shield: $shield\n"
+
+        return toReturn
+    }
+
     companion object {
         val skillIDtoSkill = hashMapOf<Int, Skill>(
             // Start of TraditionalMagic Tree
-            1 to Skill(1, emptyMap(), emptyArray(), 2, -1),
+            1 to Skill(1, "Humble Beginnings", emptyMap(), emptyArray(), 2, -1),
 
             // Start of RitualMagic Tree
-            2 to Skill(2, emptyMap(), emptyArray(), 2, -1),
+            2 to Skill(2, "Humble Beginnings", emptyMap(), emptyArray(), 2, -1),
 
             // Start of Knight Tree
-            3 to Skill(3, emptyMap(), emptyArray(), 1, -1),
+            3 to Skill(3, "Humble Beginnings", emptyMap(), emptyArray(), 1, -1),
 
-            7 to Skill(7, mapOf(BasicStats.Strength to 1), arrayOf(3), -1, -1),
-            8 to Skill(8, mapOf(BasicStats.Constitution to 1), arrayOf(3), -1, -1),
-            9 to Skill(9, mapOf(BasicStats.BaseHealth to 2), arrayOf(3), -1, -1),
+            7 to Skill(7, "Path of Strength", mapOf(BasicStats.Strength to 1), arrayOf(3), -1, -1),
+            8 to Skill(8, "Path of Fortitude", mapOf(BasicStats.Constitution to 1), arrayOf(3), -1, -1),
+            9 to Skill(9, "Path of Heartiness", mapOf(BasicStats.BaseHealth to 2), arrayOf(3), -1, -1),
 
-            10 to Skill(10, emptyMap(), arrayOf(7), -1, -1),
-            11 to Skill(11, mapOf(BasicStats.BaseHealth to 2), arrayOf(8), -1, -1),
+            10 to Skill(10, "Improvised Block", emptyMap(), arrayOf(8), -1, 3),
+            11 to Skill(11, "Improved Heartiness", mapOf(BasicStats.BaseHealth to 2), arrayOf(8), -1, -1),
 
             // Start of North Tree
-            4 to Skill(4, emptyMap(), emptyArray(), 1, -1),
+            4 to Skill(4, "Humble Beginnings", emptyMap(), emptyArray(), 1, -1),
 
             // Start of TraditionalRanged Tree
-            5 to Skill(5, emptyMap(), emptyArray(), 3, -1),
+            5 to Skill(5, "Humble Beginnings", emptyMap(), emptyArray(), 3, -1),
 
             // Start of NonTraditionalRanged Tree
-            6 to Skill(6, emptyMap(), emptyArray(), 3, -1)
+            6 to Skill(6, "Humble Beginnings", emptyMap(), emptyArray(), 3, -1)
 
 
         )
