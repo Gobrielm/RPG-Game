@@ -8,19 +8,14 @@ import org.json.JSONArray
 
 class Dungeon {
     val id: Int
+    val difficulty: Int
+    val dungeonLayout: DungeonLayout
 
-    constructor(pId: Int) {
+
+    constructor(pId: Int, pDifficulty: Int, pDungeonLayout: DungeonLayout) {
         id = pId
-    }
-
-    constructor(jsonArray: JSONArray) {
-        id = jsonArray.get(0) as Int
-    }
-
-    fun serialize(): JSONArray {
-        val jsonArray = JSONArray()
-        jsonArray.put(id)
-        return jsonArray
+        difficulty = pDifficulty
+        dungeonLayout = pDungeonLayout
     }
 
     /**
@@ -44,6 +39,21 @@ class Dungeon {
 
 
         return EnemyCharacter(characterStats, arrayListOf(Attack(-1, "AAAA", 10, 5, 0, 100)))
+    }
+
+    companion object {
+
+        val dungeons = mapOf(
+            // Forest Dungeon
+            1 to Dungeon(1, 1, DungeonLayout(5, 0, 0.15f)),
+
+            // Cave Dungeon
+            2 to Dungeon(2, 2, DungeonLayout(7, 1, 0.15f)),
+        )
+
+        fun getDungeon(dungeonID: Int): Dungeon? {
+            return dungeons[dungeonID]
+        }
     }
 
 }

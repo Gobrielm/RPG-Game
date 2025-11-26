@@ -1,4 +1,4 @@
-package com.example.bikinggame.dungeon
+package com.example.bikinggame.dungeonExploration
 
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.example.bikinggame.databinding.ActivityDungeonExplorationBinding
+import com.example.bikinggame.dungeon.Dungeon
 import com.example.bikinggame.enemy.EnemyCharacter
 import com.example.bikinggame.homepage.inventory.PlayerInventory
 import com.example.bikinggame.playerCharacter.Attack
@@ -30,14 +31,13 @@ class DungeonExplorationActivity: AppCompatActivity() {
         setContentView(binding.root)
 
         val characterID = intent.getIntExtra("CHARACTER", 0)
-        val dungeonJsonString = intent.getStringExtra("DUNGEON")
-        if (dungeonJsonString != null) {
-            val dungeonJsonArray = JSONArray(dungeonJsonString)
-            viewModel.setSelectedCharacter(PlayerInventory.getCharacter(characterID)!!)
-            viewModel.setDungeon(Dungeon(dungeonJsonArray))
-            viewModel.setEnemy(viewModel.getDungeon()!!.rollRandomEnemy(1))
-            setStats(viewModel.getSelectedCharacter()!!)
-        }
+        val dungeonID = intent.getIntExtra("DUNGEON", 0)
+
+        viewModel.setSelectedCharacter(PlayerInventory.getCharacter(characterID)!!)
+        viewModel.setDungeon(Dungeon.getDungeon(dungeonID)!!)
+        viewModel.setEnemy(viewModel.getDungeon()!!.rollRandomEnemy(1))
+        setStats(viewModel.getSelectedCharacter()!!)
+
 
         binding.characterUi.mv1Button.setOnClickListener {
             chooseAttack(0)
@@ -53,9 +53,7 @@ class DungeonExplorationActivity: AppCompatActivity() {
         }
 
         viewModel.readyForNextRoom.observe(this, Observer {
-            Log.d("AAAA", "Ready for next Room")
-            binding.characterUi.failText.visibility = VISIBLE
-            binding.characterUi.blurRect.visibility = VISIBLE
+
         })
 
         viewModel.partyDied.observe(this, Observer {
@@ -88,9 +86,6 @@ class DungeonExplorationViewModel : ViewModel() {
     private val mutableReadyForNextRoom = MutableLiveData<Boolean>()
     private val mutablePartyDied = MutableLiveData<Boolean>()
 
-    val selectedCharacter: LiveData<PlayerCharacter> get() = mutableSelectedCharacter
-    val enemy: LiveData<EnemyCharacter> get() = mutableEnemy
-    val dungeon: LiveData<Dungeon> get() = mutableDungeon
     val attack: LiveData<Attack> get() = mutablePlayerAttack
     val readyForNextRoom: LiveData<Boolean> get() = mutableReadyForNextRoom
     val partyDied: LiveData<Boolean> get() = mutablePartyDied

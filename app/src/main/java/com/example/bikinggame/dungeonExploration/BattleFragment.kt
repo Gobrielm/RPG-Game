@@ -1,4 +1,4 @@
-package com.example.bikinggame.dungeon
+package com.example.bikinggame.dungeonExploration
 
 import android.os.Bundle
 import android.util.Log
@@ -6,15 +6,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.viewModels
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.example.bikinggame.databinding.FragmentBattleBinding
-import com.example.bikinggame.databinding.FragmentStatsPreviewBinding
-import com.example.bikinggame.enemy.EnemyCharacter
 import com.example.bikinggame.playerCharacter.Attack
-import com.example.bikinggame.playerCharacter.CharacterClass
-import com.example.bikinggame.playerCharacter.PlayerCharacter
 import kotlin.getValue
 
 class BattleFragment : Fragment() {

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/nav_battle"
-        android:name="com.example.bikinggame.dungeon.BattleFragment"
+        android:name="com.example.bikinggame.dungeonExploration.BattleFragment"
         android:label="Dungeon"
         tools:layout="@layout/fragment_battle" >
     </fragment>

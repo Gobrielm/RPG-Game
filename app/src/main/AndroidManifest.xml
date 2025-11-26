@@ -16,7 +16,7 @@
         android:exported="false"
         android:theme="@style/Theme.BikingGame.NoActionBar" />
         <activity
-            android:name=".dungeon.DungeonExplorationActivity"
+            android:name=".dungeonExploration.DungeonExplorationActivity"
             android:exported="false"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.BikingGame.NoActionBar" />

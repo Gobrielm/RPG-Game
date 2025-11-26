@@ -2,7 +2,6 @@ package com.example.bikinggame.dungeonPrep
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 
 import androidx.appcompat.app.AppCompatActivity
@@ -14,9 +13,8 @@ import androidx.navigation.findNavController
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.ActivityDungeonPrepBinding
 import com.example.bikinggame.dungeon.Dungeon
-import com.example.bikinggame.dungeon.DungeonExplorationActivity
+import com.example.bikinggame.dungeonExploration.DungeonExplorationActivity
 import com.example.bikinggame.playerCharacter.PlayerCharacter
-import org.json.JSONArray
 import kotlin.getValue
 
 class DungeonPrepActivity: AppCompatActivity() {
@@ -39,7 +37,7 @@ class DungeonPrepActivity: AppCompatActivity() {
             navController.navigate(R.id.selectPlayerCharacter, bundle)
         }
 
-        viewModel.selectedDungeon.observe(this, Observer {
+        viewModel.selectedDungeonID.observe(this, Observer {
             tryToStartDungeon()
         })
 
@@ -51,33 +49,33 @@ class DungeonPrepActivity: AppCompatActivity() {
     }
 
     fun tryToStartDungeon() {
-        if (viewModel.selectedCharacter.value == null || viewModel.selectedDungeon.value == null) {
+        if (viewModel.selectedCharacter.value == null || viewModel.selectedDungeonID.value == null) {
             return
         }
 
         val playerCharacter: PlayerCharacter = viewModel.selectedCharacter.value!!
-        val dungeon: Dungeon = viewModel.selectedDungeon.value!!
+        val dungeonID: Int = viewModel.selectedDungeonID.value!!
 
         val intent = Intent(this, DungeonExplorationActivity::class.java)
         intent.putExtra("CHARACTER", playerCharacter.id)
-        intent.putExtra("DUNGEON", dungeon.serialize().toString())
+        intent.putExtra("DUNGEON", dungeonID)
         startActivity(intent)
     }
 }
 
 class DungeonPrepViewModel: ViewModel() {
     private val mutableSelectedCharacter = MutableLiveData<PlayerCharacter>()
-    private val mutableSelectedDungeon = MutableLiveData<Dungeon>()
+    private val mutableSelectedDungeonID = MutableLiveData<Int>()
 
     val selectedCharacter: LiveData<PlayerCharacter> get() = mutableSelectedCharacter
-    val selectedDungeon: LiveData<Dungeon> get() = mutableSelectedDungeon
+    val selectedDungeonID: LiveData<Int> get() = mutableSelectedDungeonID
 
     fun selectCharacter(pCharacter: PlayerCharacter) {
         mutableSelectedCharacter.value = pCharacter
     }
 
-    fun selectDungeon(pDungeon: Dungeon) {
-        mutableSelectedDungeon.value = pDungeon
+    fun selectDungeon(pDungeonID: Int) {
+        mutableSelectedDungeonID.value = pDungeonID
     }
 
 }

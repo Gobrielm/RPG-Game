@@ -50,7 +50,7 @@ class SelectDungeonFragment : Fragment() {
     }
 
     fun selectDungeon(id: Int) {
-        viewModel.selectDungeon(Dungeon(id))
+        viewModel.selectDungeon(id)
     }
 
 }
