@@ -9,17 +9,28 @@
         android:id="@+id/forestButton"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/forest"
         android:layout_gravity="start|top"
         android:layout_marginStart="50dp"
-        android:layout_marginTop="50dp"/>
+        android:layout_marginTop="50dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/forest" />
 
     <ImageButton
         android:id="@+id/caveButton"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/cave"
         android:layout_gravity="end|top"
+        android:layout_marginTop="50dp"
         android:layout_marginEnd="50dp"
-        android:layout_marginTop="50dp"/>
+        android:scaleType="fitCenter"
+        android:src="@drawable/cave" />
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:contentDescription="Go Back Button"
+        android:src="@android:drawable/btn_dialog" />
+
+
 </FrameLayout>

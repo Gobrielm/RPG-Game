@@ -49,8 +49,13 @@ class PlayerCharacter {
         playerClass = CharacterClass(jsonArray, offset)
         baseStats = CharacterStats(playerClass.subClass)
         currentStats = baseStats
-        skillTree = CharacterSkillTree(jsonArray, offset)
-        // TODO: Gets stats from skills
+
+        skillTree = CharacterSkillTree()
+        skillTree.exp = jsonArray[offset.value++] as Int
+        val skillsUnlocked = jsonArray[offset.value++] as Int
+        for (i in 0 until skillsUnlocked) {
+            addSkill(jsonArray[offset.value++] as Int)
+        }
 
         for (i in 0 until EquipmentSlot.entries.size) {
             currentEquipment[i] = if (jsonArray.isNull(offset.value)) {
@@ -107,7 +112,7 @@ class PlayerCharacter {
     }
 
     override fun toString(): String {
-        return "$playerClass \n $currentStats"
+        return "${playerClass.subClass} \nLevel: ${CharacterSkillTree.getCurrentLevel(skillTree.exp)} \nExp: ${skillTree.exp} \n$currentStats"
     }
 
     fun addEquipment(slot: EquipmentSlot, equipment: Equipment) {
@@ -138,7 +143,6 @@ class PlayerCharacter {
         if (skill == null || skillTree.skillsUnlocked.contains(skill)) return
         skillTree.skillsUnlocked.add(skill)
 
-        // TODO: Doesn't raise the stats
         for ((stat, amount) in skill.statIncrease) {
             currentStats.raiseStat(stat, amount)
         }
@@ -160,19 +164,25 @@ class PlayerCharacter {
         return currentStats.getAttacked(attack)
     }
 
-    fun getAvailableAttacks(attackSlotToExclude: Int): ArrayList<Attack> {
-        val attacksToReturn = ArrayList<Attack>()
+    fun getAvailableAttacks(attackSlotToExclude: Int): ArrayList<Pair<Attack, Boolean>> {
+        val attacksToReturn = ArrayList<Pair<Attack, Boolean>>()
+        val idsThatReassign = arrayListOf<Int>()
+        for (i in 0 until 3) {
+            if (attackSlotToExclude != i && attacks[i] != null) {
+                idsThatReassign.add(attacks[i]!!.id)
+            }
+        }
         val idToAvoid: Int = attacks[attackSlotToExclude]?.id ?: -1
 
         currentEquipment.forEach { equipment ->
             if (equipment != null && equipment.attack != null && equipment.attack.id != idToAvoid) {
-                attacksToReturn.add(equipment.attack)
+                attacksToReturn.add(Pair(equipment.attack, idsThatReassign.contains(equipment.attack.id)))
             }
         }
 
         skillTree.skillsUnlocked.forEach { skill ->
             if (skill.attack != null && skill.attack!!.id != idToAvoid) {
-                attacksToReturn.add(skill.attack!!)
+                attacksToReturn.add(Pair(skill.attack!!, idsThatReassign.contains(skill.attack!!.id)))
             }
         }
 

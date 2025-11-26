@@ -10,13 +10,6 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="top"
-        android:layout_marginTop="84dp" />
-
-    <View
-        android:id="@+id/topbar"
-        android:layout_width="wrap_content"
-        android:layout_height="84dp"
-        android:background="#65624D98" />
+        android:layout_gravity="top" />
 
 </FrameLayout>

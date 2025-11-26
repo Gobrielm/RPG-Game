@@ -12,7 +12,7 @@ class CharacterSkillTree {
     var exp: Int = 0
     val skillsUnlocked: ArrayList<Skill> = arrayListOf()
 
-    constructor()
+    constructor() {}
 
     constructor(jsonArray: JSONArray, offset: IntWrapper) {
         exp = jsonArray.get(offset.value++) as Int

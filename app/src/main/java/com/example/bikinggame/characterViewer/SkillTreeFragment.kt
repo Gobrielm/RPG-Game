@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.FragmentSkillTreeBinding
 import com.example.bikinggame.homepage.inventory.PlayerInventory
@@ -93,8 +94,13 @@ class SkillTreeFragment: Fragment() {
         binding.unlockSkillButton.setOnClickListener {
             unlockSkill()
         }
-        updateSkillPointerCount()
 
+        binding.backButton.setOnClickListener {
+            val navController = findNavController()
+            navController.navigate(R.id.editCharacterFragment)
+        }
+
+        updateSkillPointerCount()
         return root
     }
 

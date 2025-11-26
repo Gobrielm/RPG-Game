@@ -14,46 +14,15 @@
         android:scaleType="centerCrop"
         android:src="@drawable/pxl_20230622_090309257" />
 
-    <View
-        android:id="@+id/view"
-        android:layout_width="wrap_content"
-        android:layout_height="84dp"
-        android:background="#65624D98" />
-
-    <TextView
-        android:id="@+id/pointsText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right|top"
-        android:layout_marginTop="35dp"
-        android:layout_marginRight="48dp"
-        android:gravity="center"
-        android:text="3000000"
-        android:textAlignment="center"
-        android:textColor="#000000"
-        android:textSize="16sp" />
-
-    <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right|top"
-        android:layout_marginTop="30dp"
-        android:layout_marginRight="15dp"
-        android:src="@android:drawable/btn_star_big_on" />
-
     <Button
-        android:id="@+id/raceButton"
+        android:id="@+id/dungeonButton"
         android:layout_width="163dp"
         android:layout_height="80dp"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginBottom="100dp"
         android:background="#624D98"
         android:clickable="true"
-        android:text="Race"
+        android:text="Dungeon"
         android:textSize="16sp" />
-
-
-
 
 </FrameLayout>

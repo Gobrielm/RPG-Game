@@ -41,12 +41,9 @@ class HomePageFragment : Fragment() {
 
         blurBackground()
 
-        binding.raceButton.setOnClickListener {
+        binding.dungeonButton.setOnClickListener {
             openRaceScreen()
         }
-
-        loadPointsLocally()
-        loadPointsReq()
     }
 
     fun blurBackground() {
@@ -61,57 +58,5 @@ class HomePageFragment : Fragment() {
 
     fun openRaceScreen() {
         (requireActivity() as HomePage).openDungeonPrepScreen()
-    }
-
-    fun loadPointsLocally() {
-        val filename = "user_data"
-        var points = "0"
-        try {
-            requireContext().openFileInput(filename).bufferedReader().useLines { lines ->
-                points = (lines.elementAt(0) as String)
-            }
-
-        } catch (err: Exception) {
-            Log.d("PointsStorage", err.toString())
-        }
-
-        try {
-            requireActivity().runOnUiThread {
-                view?.findViewById<TextView>(R.id.pointsText)?.text = points
-            }
-        } catch (err: Exception) {
-            Log.d("PointsStorage", err.toString())
-        }
-    }
-
-    fun storePointsLocally(points: Int) {
-        val filename = "user_data"
-        try {
-            if (context == null) return
-            requireContext().openFileOutput(filename, Context.MODE_PRIVATE).use {
-                it.write(points.toString().toByteArray())
-            }
-        } catch (err: Exception) {
-            Log.d("PointsStorage", err.toString())
-        }
-    }
-
-    fun loadPointsReq() {
-        if (user == null) return
-        lifecycleScope.launch {
-            val json = getUserJson()
-            if (json == null) return@launch
-
-            val body = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
-            makeRequest("https://bikinggamebackend.vercel.app/api/getPoints", body, ::loadPointsRes)
-        }
-    }
-
-    fun loadPointsRes(json: JSONObject) {
-        val points = json.get("points") as Int
-        requireActivity().runOnUiThread {
-            view?.findViewById<TextView>(R.id.pointsText)?.text = points.toString()
-        }
-        storePointsLocally(points)
     }
 }

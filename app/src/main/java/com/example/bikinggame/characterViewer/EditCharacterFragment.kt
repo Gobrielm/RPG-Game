@@ -17,6 +17,7 @@ import com.example.bikinggame.databinding.FragmentEditCharacterBinding
 import com.example.bikinggame.homepage.inventory.InventoryManager
 import com.example.bikinggame.homepage.inventory.Item
 import com.example.bikinggame.homepage.inventory.PlayerInventory.playerCharacters
+import com.example.bikinggame.homepage.inventory.saveCharacter
 import com.example.bikinggame.playerCharacter.Attack
 import com.example.bikinggame.requests.getUserJson
 import com.example.bikinggame.requests.makePostRequest
@@ -35,7 +36,7 @@ class EditCharacterFragment: Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: CharacterViewerViewModel by activityViewModels()
-    private var attacksToChooseFrom: ArrayList<Attack> = arrayListOf()
+    private var attacksToChooseFrom: ArrayList<Pair<Attack, Boolean>> = arrayListOf()
     private var attackSlot: Int = -1
     private val inventoryList: LinkedList<Item> = LinkedList<Item>()
 
@@ -69,6 +70,10 @@ class EditCharacterFragment: Fragment() {
         binding.skillsButton.setOnClickListener {
             val navController = findNavController()
             navController.navigate(R.id.skillTreeFragment)
+        }
+
+        binding.closeMenuButton.setOnClickListener {
+            unShowAttackChooser()
         }
 
         return root
@@ -106,13 +111,16 @@ class EditCharacterFragment: Fragment() {
         val character = playerCharacters[characterID]
         binding.equipmentButton.visibility = View.GONE
         binding.skillsButton.visibility = View.GONE
+        binding.closeMenuButton.visibility = View.VISIBLE
         binding.attackList.visibility = View.VISIBLE
 
         attacksToChooseFrom = character.getAvailableAttacks(attackSlot)
 
         inventoryList.clear()
-        attacksToChooseFrom.forEach { attack ->
-            inventoryList.add(Item(R.drawable.truck, attack.toString()))
+        attacksToChooseFrom.forEach { (attack, isReassigned) ->
+            var text = attack.toString()
+            if (isReassigned) text = "(Reassigned) $text"
+            inventoryList.add(Item(R.drawable.truck, text))
         }
     }
 
@@ -124,13 +132,13 @@ class EditCharacterFragment: Fragment() {
             Log.d("Selecting Attack", "Invalid Attack Slot")
         } else {
             val characterAttacks = character.attacks
-            val idToRemove = attacksToChooseFrom[ind].id
+            val idToRemove = attacksToChooseFrom[ind].first.id
             for (slot in 0 until 4) {
                 if (characterAttacks[slot] != null && characterAttacks[slot]!!.id == idToRemove) {
                     characterAttacks[slot] = null
                 }
             }
-            characterAttacks[attackSlot] = attacksToChooseFrom[ind]
+            characterAttacks[attackSlot] = attacksToChooseFrom[ind].first
 
         }
 
@@ -140,16 +148,7 @@ class EditCharacterFragment: Fragment() {
         updateInfo()
         unShowAttackChooser()
         lifecycleScope.launch {
-            val userData: JSONObject? = getUserJson()
-            if (userData == null) return@launch
-            val characterJSON = character.serialize()
-
-            val body = characterJSON.toString().toRequestBody("application/json".toMediaTypeOrNull())
-            makePutRequest(
-                "https://bikinggamebackend.vercel.app/api/characters/$characterID",
-                userData.get("token") as String,
-                body
-            )
+            saveCharacter(characterID)
         }
 
     }
@@ -158,5 +157,6 @@ class EditCharacterFragment: Fragment() {
         binding.equipmentButton.visibility = View.VISIBLE
         binding.skillsButton.visibility = View.VISIBLE
         binding.attackList.visibility = View.GONE
+        binding.closeMenuButton.visibility = View.GONE
     }
 }

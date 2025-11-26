@@ -66,6 +66,16 @@
 
     </androidx.recyclerview.widget.RecyclerView>
 
+    <ImageButton
+        android:id="@+id/closeMenuButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:visibility="gone"
+        android:layout_marginTop="460dp"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/equipmentButton"
         android:layout_width="wrap_content"

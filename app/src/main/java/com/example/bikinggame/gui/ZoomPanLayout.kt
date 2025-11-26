@@ -88,16 +88,31 @@ class ZoomPanLayout @JvmOverloads constructor(
         return handled
     }
 
+    private fun MotionEvent.toRaw(): MotionEvent {
+        val newEvent = MotionEvent.obtain(this)
+
+        val matrix = Matrix().apply {
+            setScale(scaleFactor, scaleFactor)
+        }
+        newEvent.transform(matrix)
+
+        newEvent.offsetLocation(posX, posY)
+
+        return newEvent
+    }
 
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val x = event.rawX
         val y = event.rawY
 
-        scaleDetector.onTouchEvent(event)
+
 
         if (event.pointerCount != 1) {
+            val raw = event.toRaw()
+            scaleDetector.onTouchEvent(raw)
             isDragging = false
+            raw.recycle()
             return true
         }
 

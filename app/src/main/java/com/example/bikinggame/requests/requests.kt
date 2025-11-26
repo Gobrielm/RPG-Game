@@ -184,7 +184,6 @@ suspend fun getUserToken(): String? {
     val mUser = Firebase.auth.currentUser ?: return null
     return try {
         val result = mUser.getIdToken(true).await()
-        Log.d("AAA", result.token.toString())
         result.token
     } catch (e: Exception) {
         Log.e("Getting Token", "Failed to get token", e)

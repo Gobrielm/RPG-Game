@@ -1,13 +1,16 @@
 package com.example.bikinggame.dungeonPrep
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import com.example.bikinggame.characterViewer.CharacterViewerActivity
 import com.example.bikinggame.databinding.FragmentSelectDungeonBinding
 import com.example.bikinggame.dungeon.Dungeon
+import com.example.bikinggame.homepage.HomePage
 import kotlin.getValue
 
 
@@ -31,6 +34,11 @@ class SelectDungeonFragment : Fragment() {
 
         binding.caveButton.setOnClickListener {
             selectDungeon(2)
+        }
+
+        binding.backButton.setOnClickListener {
+            val intent = Intent(requireContext(), HomePage::class.java)
+            startActivity(intent)
         }
 
         return root
