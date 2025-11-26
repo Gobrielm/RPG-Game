@@ -30,7 +30,7 @@ class DungeonLayout(
         }
 
         // Place Remaining Rooms
-        val regularRooms = arrayListOf(0)
+        val regularRooms = arrayListOf<Int>()
         for (i in 1 until totalRooms) {
             if (layout[i] == DungeonRooms.REGULAR && layout[i - 1] != DungeonRooms.REGULAR) {
                 regularRooms.add(i)
@@ -55,13 +55,7 @@ class DungeonLayout(
         return layout
     }
 
-    fun randomPlaceRoomAmongRooms(room: DungeonRooms, rooms: ArrayList<Int>, numberOfRooms: Int, r: Random) {
-        for (i in 0 until numberOfRooms) {
-            val value = r.nextInt(rooms.size + 1)
-            val roomInd = rooms[value]
-            rooms.removeAt(value)
-
-            layout[roomInd] = room
-        }
+    fun getRoom(roomInd: Int): DungeonRooms {
+        return layout[roomInd]
     }
 }

@@ -18,12 +18,19 @@ class Dungeon {
         dungeonLayout = pDungeonLayout
     }
 
+    fun getRoom(roomInd: Int): DungeonRooms? {
+        if (dungeonLayout.totalRooms > roomInd && roomInd >= 0) {
+            return dungeonLayout.getRoom(roomInd)
+        }
+        return null
+    }
+
     /**
      *
      * @param difficulty Number 0..5 inclusive to determine enemies to return
      *
     */
-    fun rollRandomEnemy(difficulty: Int): EnemyCharacter {
+    fun rollRandomEnemy(): EnemyCharacter {
         val modifier: Float = difficulty / 3.0f
 
         val characterStats = CharacterStats(mutableMapOf(

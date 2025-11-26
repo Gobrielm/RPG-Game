@@ -164,6 +164,10 @@ class PlayerCharacter {
         return currentStats.getAttacked(attack)
     }
 
+    fun getAttack(slot: Int): Attack? {
+        return attacks[slot]
+    }
+
     fun getAvailableAttacks(attackSlotToExclude: Int): ArrayList<Pair<Attack, Boolean>> {
         val attacksToReturn = ArrayList<Pair<Attack, Boolean>>()
         val idsThatReassign = arrayListOf<Int>()

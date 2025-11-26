@@ -14,4 +14,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <include
+        android:id="@+id/loot_earned_ui"
+        layout="@layout/loot_earned_ui"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </androidx.drawerlayout.widget.DrawerLayout>

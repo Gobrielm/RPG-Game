@@ -2,15 +2,22 @@ package com.example.bikinggame.dungeonExploration
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.View.VISIBLE
+import android.view.ViewGroup
+import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import com.example.bikinggame.R
 import com.example.bikinggame.databinding.ActivityDungeonExplorationBinding
 import com.example.bikinggame.dungeon.Dungeon
+import com.example.bikinggame.dungeon.DungeonRooms
 import com.example.bikinggame.enemy.EnemyCharacter
 import com.example.bikinggame.homepage.inventory.PlayerInventory
 import com.example.bikinggame.playerCharacter.Attack
@@ -23,6 +30,7 @@ class DungeonExplorationActivity: AppCompatActivity() {
     private lateinit var binding: ActivityDungeonExplorationBinding
 
     private val viewModel: DungeonExplorationViewModel by viewModels()
+    private var currentRoom: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,8 +43,9 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
         viewModel.setSelectedCharacter(PlayerInventory.getCharacter(characterID)!!)
         viewModel.setDungeon(Dungeon.getDungeon(dungeonID)!!)
-        viewModel.setEnemy(viewModel.getDungeon()!!.rollRandomEnemy(1))
+        viewModel.setEnemy(viewModel.getDungeon()!!.rollRandomEnemy())
         setStats(viewModel.getSelectedCharacter()!!)
+        setAttacks(viewModel.getSelectedCharacter()!!)
 
 
         binding.characterUi.mv1Button.setOnClickListener {
@@ -53,7 +62,7 @@ class DungeonExplorationActivity: AppCompatActivity() {
         }
 
         viewModel.readyForNextRoom.observe(this, Observer {
-
+            moveToNextRoom()
         })
 
         viewModel.partyDied.observe(this, Observer {
@@ -63,10 +72,33 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
     }
 
+    fun showLootUi(lootEarned: ArrayList<Int>) {
+        val container = binding.lootEarnedUi.lootContainer
+        container.visibility = VISIBLE
+        container.maxRowWidthPx = (300 * resources.displayMetrics.density).toInt() // example
+
+        val size = (60 * resources.displayMetrics.density).toInt()
+
+        for (i in 0 until lootEarned.size) {
+            val btn = Button(this).apply {
+                text = i.toString()
+                layoutParams = ViewGroup.LayoutParams(size, size)
+            }
+            container.addView(btn)
+        }
+    }
+
     fun setStats(character: PlayerCharacter) {
         binding.characterUi.healthProgressbar.progress = (character.currentStats.getHealth().toDouble() / character.baseStats.getHealth() * 100).toInt()
         binding.characterUi.manaProgressbar.progress = (character.currentStats.getMana().toDouble() / character.baseStats.getMana() * 100).toInt()
         binding.characterUi.staminaProgressbar.progress = (character.currentStats.getStamina().toDouble() / character.baseStats.getStamina() * 100).toInt()
+    }
+
+    fun setAttacks(character: PlayerCharacter) {
+        binding.characterUi.mv1Button.text = (character.getAttack(0)?.name ?: "None")
+        binding.characterUi.mv2Button.text = (character.getAttack(1)?.name ?: "None")
+        binding.characterUi.mv3Button.text = (character.getAttack(2)?.name ?: "None")
+        binding.characterUi.mv4Button.text = (character.getAttack(3)?.name ?: "None")
     }
 
     fun chooseAttack(mvInd: Int) {
@@ -75,6 +107,22 @@ class DungeonExplorationActivity: AppCompatActivity() {
         if (attack == null) return
 
         viewModel.setPlayerAttack(attack)
+    }
+
+    fun moveToNextRoom() {
+        val roomType = viewModel.getDungeon()!!.getRoom(++currentRoom)!!
+        val navController = findNavController(R.id.dungeon_navigation)
+
+        when (roomType) {
+            DungeonRooms.BOSS ->
+                navController.navigate(R.id.regular_room)
+            DungeonRooms.TREASURE ->
+                navController.navigate(R.id.regular_room)
+            DungeonRooms.REST ->
+                navController.navigate(R.id.regular_room)
+            DungeonRooms.REGULAR ->
+                navController.navigate(R.id.regular_room)
+        }
     }
 }
 

@@ -3,13 +3,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/dungeon_navigation"
-    app:startDestination="@id/nav_battle">
+    app:startDestination="@id/regular_room">
 
     <fragment
-        android:id="@+id/nav_battle"
-        android:name="com.example.bikinggame.dungeonExploration.BattleFragment"
+        android:id="@+id/regular_room"
+        android:name="com.example.bikinggame.dungeonExploration.RegularRoomFragment"
         android:label="Dungeon"
-        tools:layout="@layout/fragment_battle" >
+        tools:layout="@layout/fragment_regular_room" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/boss_room"
+        android:name="com.example.bikinggame.dungeonExploration.BossRoomFragment"
+        android:label="Dungeon"
+        tools:layout="@layout/fragment_boss_room" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/rest_room"
+        android:name="com.example.bikinggame.dungeonExploration.RestRoomFragment"
+        android:label="Dungeon"
+        tools:layout="@layout/fragment_rest_room" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/treasure_room"
+        android:name="com.example.bikinggame.dungeonExploration.TreasureRoomFragment"
+        android:label="Dungeon"
+        tools:layout="@layout/fragment_treasure_room" >
     </fragment>
 
 </navigation>

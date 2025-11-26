@@ -8,12 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import com.example.bikinggame.databinding.FragmentBattleBinding
+import com.example.bikinggame.databinding.FragmentRegularRoomBinding
 import com.example.bikinggame.playerCharacter.Attack
 import kotlin.getValue
 
-class BattleFragment : Fragment() {
-    private var _binding: FragmentBattleBinding? = null
+class RegularRoomFragment : Fragment() {
+    private var _binding: FragmentRegularRoomBinding? = null
 
     private val binding get() = _binding!!
 
@@ -23,7 +23,7 @@ class BattleFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentBattleBinding.inflate(inflater, container, false)
+        _binding = FragmentRegularRoomBinding.inflate(inflater, container, false)
         val root: View = binding.root
         setStats()
         viewModel.attack.observe(viewLifecycleOwner, Observer { attack ->
