@@ -36,7 +36,7 @@ class DungeonPrepActivity: AppCompatActivity() {
             navController.navigate(R.id.selectPlayerCharacter, bundle)
         }
 
-        viewModel.selectedDungeonID.observe(this, Observer {
+        viewModel.startDungeon.observe(this, Observer {
             tryToStartDungeon()
         })
 
@@ -48,33 +48,31 @@ class DungeonPrepActivity: AppCompatActivity() {
     }
 
     fun tryToStartDungeon() {
-        if (viewModel.selectedCharacter.value == null || viewModel.selectedDungeonID.value == null) {
+        if (viewModel.selectedCharacter.value == null) {
             return
         }
 
         val playerCharacter: PlayerCharacter = viewModel.selectedCharacter.value!!
-        val dungeonID: Int = viewModel.selectedDungeonID.value!!
 
         val intent = Intent(this, DungeonExplorationActivity::class.java)
         intent.putExtra("CHARACTER", playerCharacter.id)
-        intent.putExtra("DUNGEON", dungeonID)
         startActivity(intent)
     }
 }
 
 class DungeonPrepViewModel: ViewModel() {
     private val mutableSelectedCharacter = MutableLiveData<PlayerCharacter>()
-    private val mutableSelectedDungeonID = MutableLiveData<Int>()
+    private val mutableStartDungeon = MutableLiveData<Boolean>()
 
     val selectedCharacter: LiveData<PlayerCharacter> get() = mutableSelectedCharacter
-    val selectedDungeonID: LiveData<Int> get() = mutableSelectedDungeonID
+    val startDungeon: LiveData<Boolean> get() = mutableStartDungeon
 
     fun selectCharacter(pCharacter: PlayerCharacter) {
         mutableSelectedCharacter.value = pCharacter
     }
 
-    fun selectDungeon(pDungeonID: Int) {
-        mutableSelectedDungeonID.value = pDungeonID
+    fun startDungeon() {
+        mutableStartDungeon.value = true
     }
 
 }

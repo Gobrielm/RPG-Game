@@ -1,6 +1,7 @@
 package com.example.bikinggame.dungeonExploration
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
@@ -16,6 +17,7 @@ import com.example.bikinggame.databinding.ActivityDungeonExplorationBinding
 import com.example.bikinggame.dungeon.Dungeon
 import com.example.bikinggame.dungeon.FiniteDungeon
 import com.example.bikinggame.dungeon.DungeonRooms
+import com.example.bikinggame.dungeon.InfiniteDungeon
 import com.example.bikinggame.enemy.EnemyCharacter
 import com.example.bikinggame.homepage.inventory.PlayerInventory
 import com.example.bikinggame.playerCharacter.Attack
@@ -36,10 +38,9 @@ class DungeonExplorationActivity: AppCompatActivity() {
         setContentView(binding.root)
 
         val characterID = intent.getIntExtra("CHARACTER", 0)
-        val dungeonID = intent.getIntExtra("DUNGEON", 0)
 
         viewModel.setSelectedCharacter(PlayerInventory.getCharacter(characterID)!!)
-        viewModel.setDungeon(Dungeon.getDungeon(dungeonID)!!)
+        viewModel.setDungeon(InfiniteDungeon())
         viewModel.setEnemy(viewModel.getDungeon()!!.rollRandomEnemy())
         updateStats()
         setAttacks(viewModel.getSelectedCharacter()!!)
@@ -59,6 +60,7 @@ class DungeonExplorationActivity: AppCompatActivity() {
         }
 
         viewModel.readyForNextRoom.observe(this, Observer {
+            Log.d("BBB", "Move to Next Room")
             moveToNextRoom()
         })
 
@@ -67,6 +69,10 @@ class DungeonExplorationActivity: AppCompatActivity() {
             binding.characterUi.blurRect.visibility = VISIBLE
         })
 
+        viewModel.partyDone.observe(this, Observer {
+            binding.characterUi.finishText.visibility = VISIBLE
+            binding.characterUi.blurRect.visibility = VISIBLE
+        })
     }
 
     fun showLootUi(lootEarned: ArrayList<Int>) {
@@ -109,16 +115,16 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
     fun moveToNextRoom() {
         val roomType = viewModel.getDungeon()!!.getRoom(++currentRoom)!!
-        val navController = findNavController(R.id.dungeon_navigation)
+        val navController = findNavController(R.id.nav_host_fragment_character_ui)
 
         when (roomType) {
             DungeonRooms.BOSS ->
-                navController.navigate(R.id.regular_room)
+                navController.navigate(R.id.boss_room)
             DungeonRooms.TREASURE ->
-                navController.navigate(R.id.regular_room)
+                navController.navigate(R.id.treasure_room)
             DungeonRooms.REST ->
-                navController.navigate(R.id.regular_room)
-            DungeonRooms.REGULAR ->
+                navController.navigate(R.id.rest_room)
+            else ->
                 navController.navigate(R.id.regular_room)
         }
     }
@@ -127,14 +133,17 @@ class DungeonExplorationActivity: AppCompatActivity() {
 class DungeonExplorationViewModel : ViewModel() {
     private val mutableSelectedCharacter = MutableLiveData<PlayerCharacter>()
     private val mutableEnemy = MutableLiveData<EnemyCharacter>()
-    private val mutableDungeon = MutableLiveData<FiniteDungeon>()
+    private val mutableDungeon = MutableLiveData<Dungeon>()
     private val mutablePlayerAttack = MutableLiveData<Attack>()
     private val mutableReadyForNextRoom = MutableLiveData<Boolean>()
     private val mutablePartyDied = MutableLiveData<Boolean>()
+    private val mutablePartyDone = MutableLiveData<Boolean>()
 
     val attack: LiveData<Attack> get() = mutablePlayerAttack
     val readyForNextRoom: LiveData<Boolean> get() = mutableReadyForNextRoom
     val partyDied: LiveData<Boolean> get() = mutablePartyDied
+    val partyDone: LiveData<Boolean> get() = mutablePartyDone
+    val enemy: LiveData<EnemyCharacter> get() = mutableEnemy
 
     fun setSelectedCharacter(character: PlayerCharacter) {
         mutableSelectedCharacter.value = character
@@ -144,8 +153,8 @@ class DungeonExplorationViewModel : ViewModel() {
         mutableEnemy.value = enemy
     }
 
-    fun setDungeon(finiteDungeon: FiniteDungeon) {
-        mutableDungeon.value = finiteDungeon
+    fun setDungeon(dungeon: Dungeon) {
+        mutableDungeon.value = dungeon
     }
 
     fun setPlayerAttack(attack: Attack) {
@@ -160,6 +169,10 @@ class DungeonExplorationViewModel : ViewModel() {
         mutablePartyDied.value = true
     }
 
+    fun setPartyIsDone() {
+        mutablePartyDone.value = true
+    }
+
     fun getSelectedCharacter(): PlayerCharacter? {
         return mutableSelectedCharacter.value
     }
@@ -168,7 +181,7 @@ class DungeonExplorationViewModel : ViewModel() {
         return mutableEnemy.value
     }
 
-    fun getDungeon(): FiniteDungeon? {
+    fun getDungeon(): Dungeon? {
         return mutableDungeon.value
     }
 

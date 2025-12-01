@@ -8,14 +8,15 @@ import java.util.Random
 
 class InfiniteDungeon: Dungeon {
 
-    var difficulty: Int
-    var lastRoom: DungeonRooms? = null
+    var difficulty: Float = 1.0f
+    var lastRoom: DungeonRooms = DungeonRooms.REST
 
-    constructor(pDifficulty: Int) {
-        difficulty = pDifficulty
-    }
+    constructor()
 
     override fun getRoom(roomInd: Int): DungeonRooms? {
+        if (roomInd % 10 == 0 && roomInd != 0) {
+            difficulty += 0.5f
+        }
         val currentRoom: DungeonRooms = when (lastRoom) {
             DungeonRooms.BOSS -> DungeonRooms.TREASURE
             DungeonRooms.TREASURE -> DungeonRooms.REST
@@ -32,7 +33,7 @@ class InfiniteDungeon: Dungeon {
     }
 
     override fun rollRandomEnemy(): EnemyCharacter {
-        val modifier: Float = difficulty / 3.0f
+        val modifier: Float = difficulty
 
         val characterStats = CharacterStats(mutableMapOf(
             BasicStats.BaseHealth to (15 * modifier).toInt(),
@@ -45,7 +46,7 @@ class InfiniteDungeon: Dungeon {
             BasicStats.Dexterity to (7 * modifier).toInt()
         ))
 
-        return EnemyCharacter(characterStats, arrayListOf(Attack(-1, "AAAA", 10, 5, 0, 100)))
+        return EnemyCharacter(characterStats, arrayListOf(Attack(-1, "AAAA", 1, 5, 0, 100)))
     }
 
 }

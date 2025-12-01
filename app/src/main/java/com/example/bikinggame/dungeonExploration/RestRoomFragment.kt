@@ -25,6 +25,17 @@ class RestRoomFragment : Fragment() {
     ): View? {
         _binding = FragmentRestRoomBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        binding.restButton.setOnClickListener {
+            // TODO: Heal character
+            viewModel.getSelectedCharacter()!!.healCharacter(0.25)
+            viewModel.setReadyForNextRoom()
+        }
+
+        binding.exitButton.setOnClickListener {
+            viewModel.setPartyIsDone()
+        }
+
         return root
     }
 

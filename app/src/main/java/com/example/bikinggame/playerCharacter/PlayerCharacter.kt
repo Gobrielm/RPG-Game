@@ -192,4 +192,10 @@ class PlayerCharacter {
 
         return attacksToReturn
     }
+
+    fun healCharacter(percentage: Double) {
+        val amtToHeal = (baseStats.getHealth() * percentage).toInt()
+        val newHealth = min(currentStats.getHealth() + amtToHeal, currentStats.getHealth())
+        currentStats.setHealth(newHealth)
+    }
 }

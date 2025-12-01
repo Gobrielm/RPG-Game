@@ -26,12 +26,8 @@ class SelectDungeonFragment : Fragment() {
         _binding = FragmentSelectDungeonBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        binding.forestButton.setOnClickListener {
-            selectDungeon(1)
-        }
-
-        binding.caveButton.setOnClickListener {
-            selectDungeon(2)
+        binding.dungeonButton.setOnClickListener {
+            viewModel.startDungeon()
         }
 
         binding.backButton.setOnClickListener {
@@ -46,9 +42,4 @@ class SelectDungeonFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-    fun selectDungeon(id: Int) {
-        viewModel.selectDungeon(id)
-    }
-
 }

@@ -25,7 +25,11 @@ class RegularRoomFragment : Fragment() {
     ): View? {
         _binding = FragmentRegularRoomBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        updateStats()
+
+        viewModel.enemy.observe(viewLifecycleOwner, Observer {
+            updateStats()
+        })
+
         viewModel.attack.observe(viewLifecycleOwner, Observer { attack ->
             simulateRound(attack)
         })
@@ -41,15 +45,24 @@ class RegularRoomFragment : Fragment() {
         val enemyCharacter = viewModel.getEnemy()!!
         val playerCharacter = viewModel.getSelectedCharacter()!!
 
-        val isDead = enemyCharacter.takeAttack(playerAttack)
+        val enemyIsDead = enemyCharacter.takeAttack(playerAttack)
 
-        if (isDead) return
+        updateStats()
+
+        if (enemyIsDead) {
+            viewModel.setReadyForNextRoom()
+            return
+        }
 
         val enemyAttack: Attack = enemyCharacter.chooseRandAttack()
 
-        playerCharacter.takeAttack(enemyAttack)
-        updateStats()
+        val isPlayerDead = playerCharacter.takeAttack(enemyAttack)
+
         (requireActivity() as DungeonExplorationActivity).updateStats()
+
+        if (isPlayerDead) {
+            viewModel.setPartyHasDied()
+        }
     }
 
     fun updateStats() {
