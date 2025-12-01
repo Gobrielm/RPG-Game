@@ -22,6 +22,13 @@ class TreasureRoomFragment : Fragment() {
     ): View? {
         _binding = FragmentTreasureRoomBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        binding.openChestButton.setOnClickListener {
+            val loot = viewModel.getDungeon()!!.rollRandomLoot()
+            (requireActivity() as DungeonExplorationActivity).showLootUi(loot)
+            // TODO: Do stuff with loot
+        }
+
         return root
     }
 

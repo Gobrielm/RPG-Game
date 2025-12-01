@@ -49,4 +49,17 @@ class InfiniteDungeon: Dungeon {
         return EnemyCharacter(characterStats, arrayListOf(Attack(-1, "AAAA", 1, 5, 0, 100)))
     }
 
+    override fun rollRandomBoss(): EnemyCharacter {
+        val modifier: Float = difficulty.toFloat()
+
+        val boss: EnemyCharacter = Dungeon.bosses.random()
+
+
+        return boss
+    }
+
+    override fun rollRandomLoot(): ArrayList<Int> {
+        return arrayListOf(1) // TODO: Loot generation
+    }
+
 }

@@ -26,9 +26,9 @@ class RegularRoomFragment : Fragment() {
         _binding = FragmentRegularRoomBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        viewModel.enemy.observe(viewLifecycleOwner, Observer {
-            updateStats()
-        })
+        viewModel.setEnemy(viewModel.getDungeon()!!.rollRandomEnemy())
+
+        updateStats()
 
         viewModel.attack.observe(viewLifecycleOwner, Observer { attack ->
             simulateRound(attack)

@@ -15,7 +15,6 @@ import androidx.navigation.findNavController
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.ActivityDungeonExplorationBinding
 import com.example.bikinggame.dungeon.Dungeon
-import com.example.bikinggame.dungeon.FiniteDungeon
 import com.example.bikinggame.dungeon.DungeonRooms
 import com.example.bikinggame.dungeon.InfiniteDungeon
 import com.example.bikinggame.enemy.EnemyCharacter
@@ -41,7 +40,6 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
         viewModel.setSelectedCharacter(PlayerInventory.getCharacter(characterID)!!)
         viewModel.setDungeon(InfiniteDungeon())
-        viewModel.setEnemy(viewModel.getDungeon()!!.rollRandomEnemy())
         updateStats()
         setAttacks(viewModel.getSelectedCharacter()!!)
 
