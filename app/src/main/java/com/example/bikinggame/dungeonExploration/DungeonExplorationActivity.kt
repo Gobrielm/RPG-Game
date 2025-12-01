@@ -1,8 +1,6 @@
 package com.example.bikinggame.dungeonExploration
 
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
@@ -13,16 +11,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.ActivityDungeonExplorationBinding
 import com.example.bikinggame.dungeon.Dungeon
+import com.example.bikinggame.dungeon.FiniteDungeon
 import com.example.bikinggame.dungeon.DungeonRooms
 import com.example.bikinggame.enemy.EnemyCharacter
 import com.example.bikinggame.homepage.inventory.PlayerInventory
 import com.example.bikinggame.playerCharacter.Attack
 import com.example.bikinggame.playerCharacter.PlayerCharacter
-import org.json.JSONArray
 import kotlin.getValue
 
 class DungeonExplorationActivity: AppCompatActivity() {
@@ -44,7 +41,7 @@ class DungeonExplorationActivity: AppCompatActivity() {
         viewModel.setSelectedCharacter(PlayerInventory.getCharacter(characterID)!!)
         viewModel.setDungeon(Dungeon.getDungeon(dungeonID)!!)
         viewModel.setEnemy(viewModel.getDungeon()!!.rollRandomEnemy())
-        setStats(viewModel.getSelectedCharacter()!!)
+        updateStats()
         setAttacks(viewModel.getSelectedCharacter()!!)
 
 
@@ -88,10 +85,11 @@ class DungeonExplorationActivity: AppCompatActivity() {
         }
     }
 
-    fun setStats(character: PlayerCharacter) {
-        binding.characterUi.healthProgressbar.progress = (character.currentStats.getHealth().toDouble() / character.baseStats.getHealth() * 100).toInt()
-        binding.characterUi.manaProgressbar.progress = (character.currentStats.getMana().toDouble() / character.baseStats.getMana() * 100).toInt()
-        binding.characterUi.staminaProgressbar.progress = (character.currentStats.getStamina().toDouble() / character.baseStats.getStamina() * 100).toInt()
+    fun updateStats() {
+        val character = viewModel.getSelectedCharacter()!!
+        binding.characterUi.healthProgressbar.progress = (character.currentStats.getHealth().toDouble() / character.baseStats.getHealth() * 100.0).toInt()
+        binding.characterUi.manaProgressbar.progress = (character.currentStats.getMana().toDouble() / character.baseStats.getMana() * 100.0).toInt()
+        binding.characterUi.staminaProgressbar.progress = (character.currentStats.getStamina().toDouble() / character.baseStats.getStamina() * 100.0).toInt()
     }
 
     fun setAttacks(character: PlayerCharacter) {
@@ -129,7 +127,7 @@ class DungeonExplorationActivity: AppCompatActivity() {
 class DungeonExplorationViewModel : ViewModel() {
     private val mutableSelectedCharacter = MutableLiveData<PlayerCharacter>()
     private val mutableEnemy = MutableLiveData<EnemyCharacter>()
-    private val mutableDungeon = MutableLiveData<Dungeon>()
+    private val mutableDungeon = MutableLiveData<FiniteDungeon>()
     private val mutablePlayerAttack = MutableLiveData<Attack>()
     private val mutableReadyForNextRoom = MutableLiveData<Boolean>()
     private val mutablePartyDied = MutableLiveData<Boolean>()
@@ -146,8 +144,8 @@ class DungeonExplorationViewModel : ViewModel() {
         mutableEnemy.value = enemy
     }
 
-    fun setDungeon(dungeon: Dungeon) {
-        mutableDungeon.value = dungeon
+    fun setDungeon(finiteDungeon: FiniteDungeon) {
+        mutableDungeon.value = finiteDungeon
     }
 
     fun setPlayerAttack(attack: Attack) {
@@ -170,7 +168,7 @@ class DungeonExplorationViewModel : ViewModel() {
         return mutableEnemy.value
     }
 
-    fun getDungeon(): Dungeon? {
+    fun getDungeon(): FiniteDungeon? {
         return mutableDungeon.value
     }
 

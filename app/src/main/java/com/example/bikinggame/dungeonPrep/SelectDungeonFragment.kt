@@ -7,9 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import com.example.bikinggame.characterViewer.CharacterViewerActivity
 import com.example.bikinggame.databinding.FragmentSelectDungeonBinding
-import com.example.bikinggame.dungeon.Dungeon
 import com.example.bikinggame.homepage.HomePage
 import kotlin.getValue
 

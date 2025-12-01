@@ -26,7 +26,7 @@ enum class BasicStats {
 class CharacterStats {
 
     /**
-     *  @return Whether or not this character has gone below 0 health
+     *  @return Whether true if character has gone below 0 health
      */
     fun getAttacked(attack: Attack): Boolean {
         var health: Int = getHealth()
@@ -84,6 +84,8 @@ class CharacterStats {
     constructor(pCharacterStats: MutableMap<BasicStats, Int>) {
         characterStats = pCharacterStats
     }
+
+    constructor(pOtherCharacterStats: CharacterStats): this((pOtherCharacterStats.characterStats).toMutableMap())
 
     constructor(subClass: CharacterSubClass) {
         try {

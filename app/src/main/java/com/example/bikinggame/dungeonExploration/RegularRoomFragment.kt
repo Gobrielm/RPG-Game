@@ -25,7 +25,7 @@ class RegularRoomFragment : Fragment() {
     ): View? {
         _binding = FragmentRegularRoomBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        setStats()
+        updateStats()
         viewModel.attack.observe(viewLifecycleOwner, Observer { attack ->
             simulateRound(attack)
         })
@@ -41,25 +41,26 @@ class RegularRoomFragment : Fragment() {
         val enemyCharacter = viewModel.getEnemy()!!
         val playerCharacter = viewModel.getSelectedCharacter()!!
 
-        val isAlive = enemyCharacter.takeAttack(playerAttack)
+        val isDead = enemyCharacter.takeAttack(playerAttack)
 
-        if (!isAlive) return
+        if (isDead) return
 
         val enemyAttack: Attack = enemyCharacter.chooseRandAttack()
 
         playerCharacter.takeAttack(enemyAttack)
-        setStats()
+        updateStats()
+        (requireActivity() as DungeonExplorationActivity).updateStats()
     }
 
-    fun setStats() {
+    fun updateStats() {
         try {
             val enemyCharacter = viewModel.getEnemy()!!
-            binding.healthProgressbar.progress = (enemyCharacter.currentStats.getHealth()
-                .toDouble() / enemyCharacter.baseStats.getHealth() * 100).toInt()
-            binding.manaProgressbar.progress = (enemyCharacter.currentStats.getMana()
-                .toDouble() / enemyCharacter.baseStats.getMana() * 100).toInt()
-            binding.staminaProgressbar.progress = (enemyCharacter.currentStats.getStamina()
-                .toDouble() / enemyCharacter.baseStats.getStamina() * 100).toInt()
+            binding.healthProgressbar.progress = (enemyCharacter.currentStats.getHealth().toDouble()
+                    / enemyCharacter.baseStats.getHealth().toDouble() * 100.0).toInt()
+            binding.manaProgressbar.progress = (enemyCharacter.currentStats.getMana().toDouble()
+                    / enemyCharacter.baseStats.getMana().toDouble() * 100.0).toInt()
+            binding.staminaProgressbar.progress = (enemyCharacter.currentStats.getStamina().toDouble()
+                    / enemyCharacter.baseStats.getStamina().toDouble() * 100.0).toInt()
         } catch (e: Exception) {
             Log.d("Battle Fragment", e.toString())
         }

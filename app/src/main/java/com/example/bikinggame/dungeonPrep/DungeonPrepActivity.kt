@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.findNavController
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.ActivityDungeonPrepBinding
-import com.example.bikinggame.dungeon.Dungeon
 import com.example.bikinggame.dungeonExploration.DungeonExplorationActivity
 import com.example.bikinggame.playerCharacter.PlayerCharacter
 import kotlin.getValue

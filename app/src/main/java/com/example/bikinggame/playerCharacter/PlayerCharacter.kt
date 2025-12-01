@@ -28,7 +28,7 @@ class PlayerCharacter {
         id = pId
         playerClass = pPlayerClass
         baseStats = CharacterStats(pPlayerClass.subClass)
-        currentStats = baseStats
+        currentStats = CharacterStats(baseStats)
         skillTree = CharacterSkillTree()
         val skill = Skill.getSkill(pPlayerClass.subClass.ordinal)
         skillTree.skillsUnlocked.add(skill!!)
@@ -39,7 +39,7 @@ class PlayerCharacter {
         id = -1
         playerClass = pPlayerClass
         baseStats = CharacterStats(pPlayerClass.subClass)
-        currentStats = baseStats
+        currentStats = CharacterStats(baseStats)
         skillTree = CharacterSkillTree()
     }
 
@@ -48,7 +48,7 @@ class PlayerCharacter {
         id = jsonArray.get(offset.value++) as Int
         playerClass = CharacterClass(jsonArray, offset)
         baseStats = CharacterStats(playerClass.subClass)
-        currentStats = baseStats
+        currentStats = CharacterStats(baseStats)
 
         skillTree = CharacterSkillTree()
         skillTree.exp = jsonArray[offset.value++] as Int

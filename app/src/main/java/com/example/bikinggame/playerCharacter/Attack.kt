@@ -51,13 +51,13 @@ class Attack {
 
     companion object {
         val attackIDToAttack = hashMapOf<Int, Attack>(
-            1 to Attack(1, "Basic Hit", 3, 5, 1, 90),
+            1 to Attack(1, "Basic Hit", 2, 5, 1, 90),
 
-            2 to Attack(2, "Mana Blast", 2, 8, 2, 80),
+            2 to Attack(2, "Mana Blast", 1, 8, 2, 80),
 
-            3 to Attack(3, "Normal Shot", 2, 7, 3, 85),
+            3 to Attack(3, "Normal Shot", 1, 7, 3, 85),
 
-            4 to Attack(4, "Intermediate Hit", 5, 5, 1, 90)
+            4 to Attack(4, "Intermediate Hit", 4, 5, 1, 90)
         )
 
 

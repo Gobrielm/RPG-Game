@@ -16,7 +16,7 @@ class EnemyCharacter {
     constructor(pId: Int, pBaseStats: CharacterStats, pAttacks: ArrayList<Attack>) {
         id = pId
         baseStats = pBaseStats
-        currentStats = baseStats
+        currentStats = CharacterStats(baseStats)
         pAttacks.forEachIndexed { index, attack ->
             attacks[index] = attack
         }
@@ -25,7 +25,7 @@ class EnemyCharacter {
     constructor(pBaseStats: CharacterStats, pAttacks: ArrayList<Attack>) {
         id = abs(Random.nextInt())
         baseStats = pBaseStats
-        currentStats = baseStats
+        currentStats = CharacterStats(baseStats)
         pAttacks.forEachIndexed { index, attack ->
             attacks[index] = attack
         }
