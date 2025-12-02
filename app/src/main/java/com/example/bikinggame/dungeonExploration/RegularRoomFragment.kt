@@ -51,6 +51,8 @@ class RegularRoomFragment : Fragment() {
 
         if (enemyIsDead) {
             viewModel.setReadyForNextRoom()
+            val exp = viewModel.getDungeon()!!.getExpForEnemy()
+            viewModel.addExpEarned(exp)
             return
         }
 

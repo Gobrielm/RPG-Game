@@ -15,6 +15,10 @@ interface Dungeon {
 
     fun rollRandomLoot(): ArrayList<Int>
 
+    fun getExpForEnemy(): Int
+
+    fun getExpForBoss(): Int
+
     companion object {
 
 //        val dungeons = mapOf(

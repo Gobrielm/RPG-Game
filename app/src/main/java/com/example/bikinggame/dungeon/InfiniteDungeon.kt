@@ -5,6 +5,7 @@ import com.example.bikinggame.playerCharacter.Attack
 import com.example.bikinggame.playerCharacter.BasicStats
 import com.example.bikinggame.playerCharacter.CharacterStats
 import java.util.Random
+import kotlin.math.round
 
 class InfiniteDungeon: Dungeon {
 
@@ -60,6 +61,14 @@ class InfiniteDungeon: Dungeon {
 
     override fun rollRandomLoot(): ArrayList<Int> {
         return arrayListOf(1) // TODO: Loot generation
+    }
+
+    override fun getExpForEnemy(): Int {
+        return round(10 * difficulty).toInt()
+    }
+
+    override fun getExpForBoss(): Int {
+        return round(40 * difficulty).toInt()
     }
 
 }

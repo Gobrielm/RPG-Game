@@ -51,6 +51,8 @@ class BossRoomFragment : Fragment() {
 
         if (enemyIsDead) {
             viewModel.setReadyForNextRoom()
+            val exp = viewModel.getDungeon()!!.getExpForBoss()
+            viewModel.addExpEarned(exp)
             return
         }
 

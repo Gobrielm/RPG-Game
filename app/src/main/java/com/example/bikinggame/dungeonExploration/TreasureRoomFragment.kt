@@ -36,7 +36,6 @@ class TreasureRoomFragment : Fragment() {
 
             (requireActivity() as DungeonExplorationActivity).showLootUi(loot)
 
-
             binding.openChestButton.setImageResource(R.drawable.openchest)
 
             lifecycleScope.launch {

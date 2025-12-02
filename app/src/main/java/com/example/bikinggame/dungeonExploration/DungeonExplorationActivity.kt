@@ -1,5 +1,6 @@
 package com.example.bikinggame.dungeonExploration
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -20,6 +21,7 @@ import com.example.bikinggame.dungeon.Dungeon
 import com.example.bikinggame.dungeon.DungeonRooms
 import com.example.bikinggame.dungeon.InfiniteDungeon
 import com.example.bikinggame.enemy.EnemyCharacter
+import com.example.bikinggame.homepage.HomePage
 import com.example.bikinggame.homepage.inventory.PlayerInventory
 import com.example.bikinggame.playerCharacter.Attack
 import com.example.bikinggame.playerCharacter.PlayerCharacter
@@ -73,7 +75,7 @@ class DungeonExplorationActivity: AppCompatActivity() {
             stopped = true
             lifecycleScope.launch {
                 delay(2000)
-                moveToEndingScreen()
+                moveToMainMenu()
             }
         })
 
@@ -149,12 +151,26 @@ class DungeonExplorationActivity: AppCompatActivity() {
     }
 
     fun moveToEndingScreen() {
+        unShowLootUi()
+        binding.characterUi.mv1Button.visibility = View.GONE
+        binding.characterUi.mv2Button.visibility = View.GONE
+        binding.characterUi.mv3Button.visibility = View.GONE
+        binding.characterUi.mv4Button.visibility = View.GONE
+
+        binding.characterUi.healthProgressbar.visibility = View.GONE
+        binding.characterUi.staminaProgressbar.visibility = View.GONE
+        binding.characterUi.manaProgressbar.visibility = View.GONE
+
+        binding.characterUi.finishText.visibility = View.GONE
+        binding.characterUi.blurRect.visibility = View.GONE
+
         val navController = findNavController(R.id.nav_host_fragment_character_ui)
         navController.navigate(R.id.finish_screen)
     }
 
     fun moveToMainMenu() {
-
+        val intent = Intent(this, HomePage::class.java)
+        startActivity(intent)
     }
 }
 
@@ -166,8 +182,7 @@ class DungeonExplorationViewModel : ViewModel() {
     private val mutableReadyForNextRoom = MutableLiveData<Boolean>()
     private val mutablePartyDied = MutableLiveData<Boolean>()
     private val mutablePartyDone = MutableLiveData<Boolean>()
-
-    private val lootEarned = arrayListOf<Int>()
+    private val lootEarned = MutableLiveData<ArrayList<Int>>(arrayListOf<Int>(0))
 
     val attack: LiveData<Attack> get() = mutablePlayerAttack
     val readyForNextRoom: LiveData<Boolean> get() = mutableReadyForNextRoom
@@ -202,14 +217,17 @@ class DungeonExplorationViewModel : ViewModel() {
         mutablePartyDone.value = true
     }
 
+    fun addExpEarned(exp: Int) {
+        lootEarned.value!![0] += exp
+    }
     fun addLootEarned(lootToAdd: ArrayList<Int>) {
         lootToAdd.forEach { lootID ->
-            lootEarned.add(lootID)
+            lootEarned.value!!.add(lootID)
         }
     }
 
     fun getLootEarned(): ArrayList<Int> {
-        return lootEarned
+        return lootEarned.value!!
     }
 
     fun getSelectedCharacter(): PlayerCharacter? {
