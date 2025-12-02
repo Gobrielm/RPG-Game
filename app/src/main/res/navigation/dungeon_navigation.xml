@@ -33,4 +33,10 @@
         tools:layout="@layout/fragment_treasure_room" >
     </fragment>
 
+    <fragment
+        android:id="@+id/finish_screen"
+        android:name="com.example.bikinggame.dungeonExploration.DungeonFinishFragment"
+        android:label="DungeonFinishFragment"
+        tools:layout="@layout/fragment_dungeon_finish"/>
+
 </navigation>

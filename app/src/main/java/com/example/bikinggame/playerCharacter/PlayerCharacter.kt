@@ -194,8 +194,16 @@ class PlayerCharacter {
     }
 
     fun healCharacter(percentage: Double) {
-        val amtToHeal = (baseStats.getHealth() * percentage).toInt()
-        val newHealth = min(currentStats.getHealth() + amtToHeal, currentStats.getHealth())
+        val amt1 = (baseStats.getHealth() * percentage).toInt()
+        val newHealth = min(currentStats.getHealth() + amt1, currentStats.getHealth())
         currentStats.setHealth(newHealth)
+
+        val amt2 = (baseStats.getStamina() * percentage).toInt()
+        val newStamina = min(currentStats.getStamina() + amt2, currentStats.getStamina())
+        currentStats.setStamina(newStamina)
+
+        val amt3 = (baseStats.getMana() * percentage).toInt()
+        val newMana = min(currentStats.getMana() + amt3, currentStats.getMana())
+        currentStats.setMana(newMana)
     }
 }

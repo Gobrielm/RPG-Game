@@ -29,6 +29,7 @@ class InventoryManager(private val items: List<Item>, private val onItemClick: (
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = items[position]
         holder.imageButton.setImageResource(item.imageResId)
+        holder.imageButton.scaleType = ImageView.ScaleType.CENTER_CROP
         holder.text.text = item.text
         holder.imageButton.setOnClickListener {
             onItemClick(position)

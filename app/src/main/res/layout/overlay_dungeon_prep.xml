@@ -10,6 +10,7 @@
         android:id="@+id/characterButton"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:scaleType="centerCrop"
         android:layout_gravity="bottom|start"
         android:layout_marginBottom="25dp"
         android:layout_marginStart="25dp"

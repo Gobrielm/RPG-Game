@@ -1,5 +1,8 @@
 package com.example.bikinggame.dungeonExploration
 
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,8 +29,9 @@ class RestRoomFragment : Fragment() {
         _binding = FragmentRestRoomBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        blurBackground()
+
         binding.restButton.setOnClickListener {
-            // TODO: Heal character
             viewModel.getSelectedCharacter()!!.healCharacter(0.25)
             viewModel.setReadyForNextRoom()
         }
@@ -39,10 +43,18 @@ class RestRoomFragment : Fragment() {
         return root
     }
 
-
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    fun blurBackground() {
+        val backgroundImage = binding.background
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val radius = 10f
+            backgroundImage.setRenderEffect(
+                RenderEffect.createBlurEffect(radius, radius, Shader.TileMode.CLAMP)
+            )
+        }
     }
 }
