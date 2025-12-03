@@ -51,9 +51,19 @@ class DungeonExplorationActivity: AppCompatActivity() {
         binding = ActivityDungeonExplorationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val characterID = intent.getIntExtra("CHARACTER", 0)
+        val character1ID = intent.getIntExtra("CHARACTER1", 0)
+        val character2ID = intent.getIntExtra("CHARACTER2", 0)
+        val character3ID = intent.getIntExtra("CHARACTER3", 0)
 
-        viewModel.setSelectedCharacter(PlayerInventory.getCharacter(characterID)!!)
+        viewModel.addSelectedCharacter(PlayerInventory.getCharacter(character1ID)!!)
+        if (character2ID != character1ID) {
+            viewModel.addSelectedCharacter(PlayerInventory.getCharacter(character2ID)!!)
+        }
+        if (character2ID != character3ID && character3ID != character1ID) {
+            viewModel.addSelectedCharacter(PlayerInventory.getCharacter(character3ID)!!)
+        }
+
+
         viewModel.setDungeon(InfiniteDungeon())
         updateStats()
         setAttacks(viewModel.getSelectedCharacter()!!)
@@ -73,6 +83,7 @@ class DungeonExplorationActivity: AppCompatActivity() {
         }
 
         viewModel.readyForNextRoom.observe(this, Observer {
+            viewModel.resetSelectedCharacter()
             moveToNextRoom()
         })
 
@@ -229,7 +240,9 @@ class DungeonExplorationActivity: AppCompatActivity() {
 }
 
 class DungeonExplorationViewModel : ViewModel() {
-    private val mutableSelectedCharacter = MutableLiveData<PlayerCharacter>()
+    private val _currentCharacterInd = MutableLiveData(0)
+    private val currentCharacterInd get() = _currentCharacterInd.value!!
+    private val mutableCharacters = MutableLiveData<ArrayList<PlayerCharacter>>()
     private val mutableEnemy = MutableLiveData<EnemyCharacter>()
     private val mutableDungeon = MutableLiveData<Dungeon>()
     private val mutablePlayerAttack = MutableLiveData(Attack(0, "Temp", 0, 0, 0, 0))
@@ -243,8 +256,8 @@ class DungeonExplorationViewModel : ViewModel() {
     val partyDied: LiveData<Boolean> get() = mutablePartyDied
     val partyDone: LiveData<Boolean> get() = mutablePartyDone
 
-    fun setSelectedCharacter(character: PlayerCharacter) {
-        mutableSelectedCharacter.value = character
+    fun addSelectedCharacter(character: PlayerCharacter) {
+        mutableCharacters.value!!.add(character)
     }
 
     fun setEnemy(enemy: EnemyCharacter) {
@@ -285,7 +298,24 @@ class DungeonExplorationViewModel : ViewModel() {
     }
 
     fun getSelectedCharacter(): PlayerCharacter? {
-        return mutableSelectedCharacter.value
+        return mutableCharacters.value!![currentCharacterInd]
+    }
+
+    fun cycleSelectedCharacter() {
+        _currentCharacterInd.value = (currentCharacterInd + 1) % mutableCharacters.value!!.size
+    }
+
+    fun removeCurrentMember() {
+        mutableCharacters.value!!.removeAt(currentCharacterInd)
+        if (mutableCharacters.value!!.isNotEmpty()) {
+            _currentCharacterInd.value = currentCharacterInd % mutableCharacters.value!!.size
+        } else {
+            setPartyHasDied()
+        }
+    }
+
+    fun resetSelectedCharacter() {
+        _currentCharacterInd.value = 0
     }
 
     fun getEnemy(): EnemyCharacter? {

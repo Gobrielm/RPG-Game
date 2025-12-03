@@ -8,8 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.example.bikinggame.databinding.FragmentRegularRoomBinding
 import com.example.bikinggame.playerCharacter.Attack
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.getValue
 
 class RegularRoomFragment : Fragment() {
@@ -68,7 +71,15 @@ class RegularRoomFragment : Fragment() {
         (requireActivity() as DungeonExplorationActivity).updateStats()
 
         if (isPlayerDead) {
-            viewModel.setPartyHasDied()
+            viewModel.removeCurrentMember()
+        } else {
+            viewModel.cycleSelectedCharacter()
+        }
+
+        // TODO: Block inputs while player watches character get hurt
+        lifecycleScope.launch {
+            delay(1000)
+            (requireActivity() as DungeonExplorationActivity).updateStats()
         }
     }
 

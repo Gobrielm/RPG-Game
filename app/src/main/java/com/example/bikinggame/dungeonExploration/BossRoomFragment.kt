@@ -8,8 +8,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.example.bikinggame.databinding.FragmentBossRoomBinding
 import com.example.bikinggame.playerCharacter.Attack
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class BossRoomFragment : Fragment() {
     private var _binding: FragmentBossRoomBinding? = null
@@ -69,7 +72,14 @@ class BossRoomFragment : Fragment() {
         (requireActivity() as DungeonExplorationActivity).updateStats()
 
         if (isPlayerDead) {
-            viewModel.setPartyHasDied()
+            viewModel.removeCurrentMember()
+        } else {
+            viewModel.cycleSelectedCharacter()
+        }
+
+        lifecycleScope.launch {
+            delay(1000)
+            (requireActivity() as DungeonExplorationActivity).updateStats()
         }
     }
 
