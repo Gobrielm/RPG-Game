@@ -25,8 +25,16 @@ import com.example.bikinggame.homepage.HomePage
 import com.example.bikinggame.homepage.inventory.PlayerInventory
 import com.example.bikinggame.playerCharacter.Attack
 import com.example.bikinggame.playerCharacter.PlayerCharacter
+import com.example.bikinggame.requests.getUserJson
+import com.example.bikinggame.requests.getUserToken
+import com.example.bikinggame.requests.makeGetRequest
+import com.example.bikinggame.requests.makePutRequest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONArray
+import org.json.JSONObject
 import kotlin.getValue
 
 class DungeonExplorationActivity: AppCompatActivity() {
@@ -65,7 +73,6 @@ class DungeonExplorationActivity: AppCompatActivity() {
         }
 
         viewModel.readyForNextRoom.observe(this, Observer {
-            Log.d("BBB", "Move to Next Room")
             moveToNextRoom()
         })
 
@@ -133,20 +140,49 @@ class DungeonExplorationActivity: AppCompatActivity() {
         viewModel.setPlayerAttack(attack)
     }
 
+    fun blurIn() {
+        binding.characterUi.blurRect.apply {
+            alpha = 0f
+            visibility = VISIBLE
+            animate()
+                .alpha(1f)
+                .setDuration(300) // ms
+                .start()
+        }
+    }
+
+    fun blurOut() {
+        binding.characterUi.blurRect.animate()
+            .alpha(0f)
+            .setDuration(300)
+            .withEndAction {
+                binding.characterUi.blurRect.visibility = View.GONE
+            }
+            .start()
+    }
+
     fun moveToNextRoom() {
         if (stopped) return
-        val roomType = viewModel.getDungeon()!!.getRoom(++currentRoom)!!
-        val navController = findNavController(R.id.nav_host_fragment_character_ui)
+        blurIn()
+        lifecycleScope.launch {
+            delay(1000)
+            blurOut()
+            val roomType = viewModel.getDungeon()!!.getRoom(++currentRoom)!!
+            val navController = findNavController(R.id.nav_host_fragment_character_ui)
 
-        when (roomType) {
-            DungeonRooms.BOSS ->
-                navController.navigate(R.id.boss_room)
-            DungeonRooms.TREASURE ->
-                navController.navigate(R.id.treasure_room)
-            DungeonRooms.REST ->
-                navController.navigate(R.id.rest_room)
-            else ->
-                navController.navigate(R.id.regular_room)
+            when (roomType) {
+                DungeonRooms.BOSS ->
+                    navController.navigate(R.id.boss_room)
+
+                DungeonRooms.TREASURE ->
+                    navController.navigate(R.id.treasure_room)
+
+                DungeonRooms.REST ->
+                    navController.navigate(R.id.rest_room)
+
+                else ->
+                    navController.navigate(R.id.regular_room)
+            }
         }
     }
 
@@ -164,6 +200,24 @@ class DungeonExplorationActivity: AppCompatActivity() {
         binding.characterUi.finishText.visibility = View.GONE
         binding.characterUi.blurRect.visibility = View.GONE
 
+
+        lifecycleScope.launch {
+
+            val token = getUserToken()
+            if (token == null) return@launch
+
+            val json = JSONObject()
+            json.put("deepestRoom", currentRoom)
+
+            val body = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
+
+            makePutRequest(
+                "https://bikinggamebackend.vercel.app/api/leaderboard/",
+                token,
+                body
+            )
+        }
+
         val navController = findNavController(R.id.nav_host_fragment_character_ui)
         navController.navigate(R.id.finish_screen)
     }
@@ -178,11 +232,11 @@ class DungeonExplorationViewModel : ViewModel() {
     private val mutableSelectedCharacter = MutableLiveData<PlayerCharacter>()
     private val mutableEnemy = MutableLiveData<EnemyCharacter>()
     private val mutableDungeon = MutableLiveData<Dungeon>()
-    private val mutablePlayerAttack = MutableLiveData<Attack>()
+    private val mutablePlayerAttack = MutableLiveData(Attack(0, "Temp", 0, 0, 0, 0))
     private val mutableReadyForNextRoom = MutableLiveData<Boolean>()
     private val mutablePartyDied = MutableLiveData<Boolean>()
     private val mutablePartyDone = MutableLiveData<Boolean>()
-    private val lootEarned = MutableLiveData<ArrayList<Int>>(arrayListOf<Int>(0))
+    private val lootEarned = MutableLiveData(arrayListOf(0))
 
     val attack: LiveData<Attack> get() = mutablePlayerAttack
     val readyForNextRoom: LiveData<Boolean> get() = mutableReadyForNextRoom

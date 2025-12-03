@@ -157,6 +157,10 @@ class PlayerCharacter {
         return false
     }
 
+    fun addExp(amount: Int) {
+        skillTree.exp += amount
+    }
+
     /**
      *  @return Whether or not this character has gone below 0 health
      */

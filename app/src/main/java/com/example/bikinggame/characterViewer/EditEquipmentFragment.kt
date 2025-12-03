@@ -18,7 +18,6 @@ import com.example.bikinggame.homepage.inventory.InventoryManager
 import com.example.bikinggame.homepage.inventory.Item
 import com.example.bikinggame.homepage.inventory.PlayerInventory
 import com.example.bikinggame.homepage.inventory.saveCharacter
-import com.example.bikinggame.homepage.inventory.updateEquipmentCount
 import com.example.bikinggame.playerCharacter.Equipment
 import com.example.bikinggame.playerCharacter.EquipmentSlot
 import com.example.bikinggame.playerCharacter.PlayerCharacter

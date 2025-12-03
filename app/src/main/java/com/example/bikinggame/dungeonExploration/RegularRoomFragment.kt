@@ -18,6 +18,7 @@ class RegularRoomFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: DungeonExplorationViewModel by activityViewModels()
+    private var firstTime = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,9 +31,13 @@ class RegularRoomFragment : Fragment() {
 
         updateStats()
 
-        viewModel.attack.observe(viewLifecycleOwner, Observer { attack ->
+        viewModel.attack.observe(viewLifecycleOwner) { attack ->
+            if (firstTime) {
+                firstTime = false
+                return@observe
+            }
             simulateRound(attack)
-        })
+        }
         return root
     }
 

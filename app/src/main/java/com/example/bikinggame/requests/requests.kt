@@ -17,44 +17,63 @@ import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.coroutines.resumeWithException
 
-fun makePostRequest(url: String, token: String, body: RequestBody, callback: (JSONObject) -> Unit = ::logRes) {
-    val request = Request.Builder()
-        .url(url)
-        .post(body)
-        .addHeader("Authorization", token)
-        .build()
+const val TAG = "REQUESTS"
 
-    makeRequestTemp(request, callback)
+fun makePostRequest(url: String, token: String, body: RequestBody, callback: (JSONObject) -> Unit = ::logRes) {
+    try {
+        val request = Request.Builder()
+            .url(url)
+            .post(body)
+            .addHeader("Authorization", token)
+            .build()
+
+        makeRequestTemp(request, callback)
+    } catch (e: Exception) {
+        Log.d(TAG, e.toString())
+    }
 }
 
 suspend fun makePutRequest(url: String, token: String, body: RequestBody) {
-    val request = Request.Builder()
-        .url(url)
-        .put(body)
-        .addHeader("Authorization", token)
-        .build()
+    try {
+        val request = Request.Builder()
+            .url(url)
+            .put(body)
+            .addHeader("Authorization", token)
+            .build()
 
-    makeRequestWithoutResponse(request)
+        makeRequestWithoutResponse(request)
+    } catch (e: Exception) {
+        Log.d(TAG, e.toString())
+    }
 }
 
 fun makeGetRequest(url: String, token: String, callback: (JSONObject) -> Unit = ::logRes) {
-    val request = Request.Builder()
-        .url(url)
-        .get()
-        .addHeader("Authorization", token)
-        .build()
+    try {
+        val request = Request.Builder()
+            .url(url)
+            .get()
+            .addHeader("Authorization", token)
+            .build()
 
-    makeRequestTemp(request, callback)
+        makeRequestTemp(request, callback)
+    } catch (e: Exception) {
+        Log.d(TAG, e.toString())
+    }
 }
 
 suspend fun makeGetRequest(url: String, token: String): JSONObject {
-    val request = Request.Builder()
-        .url(url)
-        .get()
-        .addHeader("Authorization", token)
-        .build()
+    try {
+        val request = Request.Builder()
+            .url(url)
+            .get()
+            .addHeader("Authorization", token)
+            .build()
 
-    return makeRequestWithResponse(request)
+        return makeRequestWithResponse(request)
+    } catch (e: Exception) {
+        Log.d(TAG, e.toString())
+        return JSONObject()
+    }
 }
 
 suspend fun makeRequestWithoutResponse(request: Request) =

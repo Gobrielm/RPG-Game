@@ -7,12 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.FragmentDungeonFinishBinding
 import com.example.bikinggame.homepage.inventory.InventoryManager
 import com.example.bikinggame.homepage.inventory.Item
+import com.example.bikinggame.homepage.inventory.PlayerInventory
+import com.example.bikinggame.homepage.inventory.saveCharacter
+import com.example.bikinggame.homepage.inventory.updateEquipmentCount
 import com.example.bikinggame.playerCharacter.Equipment
+import kotlinx.coroutines.launch
 import java.util.LinkedList
 import kotlin.getValue
 
@@ -41,14 +46,24 @@ class DungeonFinishFragment: Fragment() {
 
         loot.removeAt(0)
 
+        // Update with loot locally
         inventoryList.add(Item(R.drawable.truck, "Exp Earned: $exp"))
+        viewModel.getSelectedCharacter()!!.addExp(exp)
 
         loot.forEach { lootID ->
             val equipment = Equipment.getEquipment(lootID)
             inventoryList.add(Item(R.drawable.truck, equipment!!.name))
+            PlayerInventory.addPieceOfEquipment(lootID)
         }
 
-        //TODO: Save Loot and exp here
+        // Update on cloud
+        lifecycleScope.launch {
+            saveCharacter(viewModel.getSelectedCharacter()!!.id)
+
+            loot.forEach { equipmentID ->
+                updateEquipmentCount(equipmentID)
+            }
+        }
 
         val linearLayout = binding.lootEarned
 

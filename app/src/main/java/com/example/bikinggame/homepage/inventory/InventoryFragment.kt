@@ -1,5 +1,6 @@
 package com.example.bikinggame.homepage.inventory
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -74,13 +75,11 @@ class InventoryFragment() : Fragment() {
 
         recyclerView.adapter = InventoryManager(inventoryList, ::playerCharacterClicked)
 
-//        loadPlayerCharactersLocally()
-
         if (inventoryList.isEmpty()) {
+            loadPlayerCharactersLocally()
             loadPlayerCharactersReq()
             loadPlayerEquipment()
         }
-
     }
 
     fun refreshInventoryScreen() {
@@ -124,19 +123,6 @@ class InventoryFragment() : Fragment() {
         }
     }
 
-    fun tempGiveEquipment() {
-        if (user == null) return
-        lifecycleScope.launch {
-            val userData = getUserJson()
-            if (userData == null) return@launch
-            val body = "1".toRequestBody("application/json".toMediaTypeOrNull())
-            makePutRequest("https://bikinggamebackend.vercel.app/api/equipment/1",
-                userData.get("token") as String,
-                body
-            )
-        }
-    }
-
     fun loadPlayerEquipment() {
         if (user == null) return
         lifecycleScope.launch {
@@ -166,46 +152,46 @@ class InventoryFragment() : Fragment() {
                 }
             }
 
-//        savePlayerCharactersLocally(localList)
             playerCharacters.clear()
             playerCharacters.addAll(localList)
+            savePlayerCharactersLocally()
             refreshInventoryScreen()
         }
     }
 
-//    fun loadPlayerCharactersLocally() {
-//        val filename = "characters_data"
-//        var playerCharacters: ArrayList<PlayerCharacter> = ArrayList()
-//        try {
-//            requireContext().openFileInput(filename).bufferedReader().useLines { lines ->
-//                for (line in lines) {
-//                    val jsonArray = JSONArray(line) // parse the String into a JSONArray
-//                    playerCharacters.add(PlayerCharacter(jsonArray))
-//                }
-//            }
-//
-//        } catch (err: Exception) {
-//            Log.d("PlayerCharacterStorage", err.toString())
-//        }
-//        characters.clear()
-//        characters.addAll(playerCharacters)
-//        refreshInventoryScreen()
-//    }
-//
-//    fun savePlayerCharactersLocally(playerCharacters: ArrayList<PlayerCharacter>) {
-//        val filename = "characters_data"
-//        var data = ""
-//        for (playerCharacter in playerCharacters) {
-//            data += playerCharacter.serialize().toString() + '\n'
-//        }
-//
-//        try {
-//            requireContext().openFileOutput(filename, Context.MODE_PRIVATE).use {
-//                it.write(data.toByteArray())
-//            }
-//
-//        } catch (err: Exception) {
-//            Log.d("PlayerCharacterStorage", err.toString())
-//        }
-//    }
+    fun loadPlayerCharactersLocally() {
+        val filename = "characters_data"
+        val localCharacters: ArrayList<PlayerCharacter> = ArrayList()
+        try {
+            requireContext().openFileInput(filename).bufferedReader().useLines { lines ->
+                for (line in lines) {
+                    val jsonArray = JSONArray(line) // parse the String into a JSONArray
+                    localCharacters.add(PlayerCharacter(jsonArray))
+                }
+            }
+
+        } catch (err: Exception) {
+            Log.d("PlayerCharacterStorage", err.toString())
+        }
+        playerCharacters.clear()
+        playerCharacters.addAll(localCharacters)
+        refreshInventoryScreen()
+    }
+
+    fun savePlayerCharactersLocally() {
+        val filename = "characters_data"
+        var data = ""
+        for (playerCharacter in playerCharacters) {
+            data += playerCharacter.serialize().toString() + '\n'
+        }
+
+        try {
+            requireContext().openFileOutput(filename, Context.MODE_PRIVATE).use {
+                it.write(data.toByteArray())
+            }
+
+        } catch (err: Exception) {
+            Log.d("PlayerCharacterStorage", err.toString())
+        }
+    }
 }

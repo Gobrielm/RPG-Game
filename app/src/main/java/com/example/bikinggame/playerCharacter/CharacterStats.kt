@@ -31,7 +31,7 @@ class CharacterStats {
     fun getAttacked(attack: Attack): Boolean {
         var health: Int = getHealth()
         health -= attack.getMomentum()
-        return if (health < 0) {
+        return if (health <= 0) {
             setHealth(0)
             true
         } else {
