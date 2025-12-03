@@ -7,6 +7,7 @@ import android.view.View
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ProgressBar
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
@@ -51,15 +52,23 @@ class DungeonExplorationActivity: AppCompatActivity() {
         binding = ActivityDungeonExplorationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val character1ID = intent.getIntExtra("CHARACTER1", 0)
-        val character2ID = intent.getIntExtra("CHARACTER2", 0)
-        val character3ID = intent.getIntExtra("CHARACTER3", 0)
+        val character1ID = intent.getIntExtra("CHARACTER1", -1)
+        val character2ID = intent.getIntExtra("CHARACTER2", -1)
+        val character3ID = intent.getIntExtra("CHARACTER3", -1)
+
+        if (character1ID == -1) {
+            Log.e("DungeonExplorationActivity", "No Valid Character Chosen")
+            return
+        }
 
         viewModel.addSelectedCharacter(PlayerInventory.getCharacter(character1ID)!!)
-        if (character2ID != character1ID) {
+
+        if (character2ID != character1ID && character2ID != -1) {
+            binding.characterUi.miniCharacter1Container.visibility = VISIBLE
             viewModel.addSelectedCharacter(PlayerInventory.getCharacter(character2ID)!!)
         }
-        if (character2ID != character3ID && character3ID != character1ID) {
+        if (character2ID != character3ID && character3ID != character1ID && character3ID != -1) {
+            binding.characterUi.miniCharacter2Container.visibility = VISIBLE
             viewModel.addSelectedCharacter(PlayerInventory.getCharacter(character3ID)!!)
         }
 
@@ -87,7 +96,8 @@ class DungeonExplorationActivity: AppCompatActivity() {
             moveToNextRoom()
         })
 
-        viewModel.partyDied.observe(this, Observer {
+        viewModel.partyDied.observe(this, Observer { hasDied ->
+            if (!hasDied) return@Observer
             binding.characterUi.failText.visibility = VISIBLE
             binding.characterUi.blurRect.visibility = VISIBLE
             stopped = true
@@ -108,12 +118,18 @@ class DungeonExplorationActivity: AppCompatActivity() {
         })
     }
 
-    fun showLootUi(lootEarned: ArrayList<Int>) {
+    fun showLootUi(lootEarned: ArrayList<Int>, coinsEarned: Int) {
         val container = binding.lootEarnedUi.lootContainer
         container.visibility = VISIBLE
         container.maxRowWidthPx = (300 * resources.displayMetrics.density).toInt() // example
 
         val size = (60 * resources.displayMetrics.density).toInt()
+
+        val btn = Button(this).apply {
+            text = "Coins: $coinsEarned"
+            layoutParams = ViewGroup.LayoutParams(size, size)
+        }
+        container.addView(btn)
 
         for (i in 0 until lootEarned.size) {
             val btn = Button(this).apply {
@@ -129,10 +145,40 @@ class DungeonExplorationActivity: AppCompatActivity() {
     }
 
     fun updateStats() {
+        if (viewModel.partyDied.value!!) return
         val character = viewModel.getSelectedCharacter()!!
-        binding.characterUi.healthProgressbar.progress = (character.currentStats.getHealth().toDouble() / character.baseStats.getHealth() * 100.0).toInt()
-        binding.characterUi.manaProgressbar.progress = (character.currentStats.getMana().toDouble() / character.baseStats.getMana() * 100.0).toInt()
-        binding.characterUi.staminaProgressbar.progress = (character.currentStats.getStamina().toDouble() / character.baseStats.getStamina() * 100.0).toInt()
+
+        updateProgressBars(character,
+            binding.characterUi.healthProgressbar,
+            binding.characterUi.manaProgressbar,
+            binding.characterUi.staminaProgressbar
+        )
+
+        val nextCharacter = viewModel.getNextCharacter()
+
+        if (nextCharacter == null) return
+
+        updateProgressBars(nextCharacter,
+            binding.characterUi.miniCharacterUi1.healthProgressbar,
+            binding.characterUi.miniCharacterUi1.manaProgressbar,
+            binding.characterUi.miniCharacterUi1.staminaProgressbar
+        )
+
+        val nextNextCharacter = viewModel.getNextNextCharacter()
+
+        if (nextNextCharacter == null) return
+
+        updateProgressBars(nextNextCharacter,
+            binding.characterUi.miniCharacterUi2.healthProgressbar,
+            binding.characterUi.miniCharacterUi2.manaProgressbar,
+            binding.characterUi.miniCharacterUi2.staminaProgressbar
+        )
+    }
+
+    fun updateProgressBars(character: PlayerCharacter, healthProgressBar: ProgressBar, manaProgressBar: ProgressBar, staminaProgressBar: ProgressBar) {
+        healthProgressBar.progress = (character.currentStats.getHealth().toDouble() / character.baseStats.getHealth() * 100.0).toInt()
+        manaProgressBar.progress = (character.currentStats.getMana().toDouble() / character.baseStats.getMana() * 100.0).toInt()
+        staminaProgressBar.progress = (character.currentStats.getStamina().toDouble() / character.baseStats.getStamina() * 100.0).toInt()
     }
 
     fun setAttacks(character: PlayerCharacter) {
@@ -199,14 +245,7 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
     fun moveToEndingScreen() {
         unShowLootUi()
-        binding.characterUi.mv1Button.visibility = View.GONE
-        binding.characterUi.mv2Button.visibility = View.GONE
-        binding.characterUi.mv3Button.visibility = View.GONE
-        binding.characterUi.mv4Button.visibility = View.GONE
-
-        binding.characterUi.healthProgressbar.visibility = View.GONE
-        binding.characterUi.staminaProgressbar.visibility = View.GONE
-        binding.characterUi.manaProgressbar.visibility = View.GONE
+        binding.characterUi.mainCharacterUI.visibility = View.GONE
 
         binding.characterUi.finishText.visibility = View.GONE
         binding.characterUi.blurRect.visibility = View.GONE
@@ -242,14 +281,14 @@ class DungeonExplorationActivity: AppCompatActivity() {
 class DungeonExplorationViewModel : ViewModel() {
     private val _currentCharacterInd = MutableLiveData(0)
     private val currentCharacterInd get() = _currentCharacterInd.value!!
-    private val mutableCharacters = MutableLiveData<ArrayList<PlayerCharacter>>()
+    private val mutableCharacters = MutableLiveData(arrayListOf<PlayerCharacter>())
     private val mutableEnemy = MutableLiveData<EnemyCharacter>()
     private val mutableDungeon = MutableLiveData<Dungeon>()
     private val mutablePlayerAttack = MutableLiveData(Attack(0, "Temp", 0, 0, 0, 0))
     private val mutableReadyForNextRoom = MutableLiveData<Boolean>()
-    private val mutablePartyDied = MutableLiveData<Boolean>()
+    private val mutablePartyDied = MutableLiveData<Boolean>(false)
     private val mutablePartyDone = MutableLiveData<Boolean>()
-    private val lootEarned = MutableLiveData(arrayListOf(0))
+    private val lootEarned = MutableLiveData(arrayListOf(0, 0)) // XP first, then gold
 
     val attack: LiveData<Attack> get() = mutablePlayerAttack
     val readyForNextRoom: LiveData<Boolean> get() = mutableReadyForNextRoom
@@ -287,6 +326,11 @@ class DungeonExplorationViewModel : ViewModel() {
     fun addExpEarned(exp: Int) {
         lootEarned.value!![0] += exp
     }
+
+    fun addCoinsEarned(coins: Int) {
+        lootEarned.value!![1] += coins
+    }
+
     fun addLootEarned(lootToAdd: ArrayList<Int>) {
         lootToAdd.forEach { lootID ->
             lootEarned.value!!.add(lootID)
@@ -299,6 +343,18 @@ class DungeonExplorationViewModel : ViewModel() {
 
     fun getSelectedCharacter(): PlayerCharacter? {
         return mutableCharacters.value!![currentCharacterInd]
+    }
+
+    fun getNextCharacter(): PlayerCharacter? {
+        val next = mutableCharacters.value!![(currentCharacterInd + 1) % mutableCharacters.value!!.size]
+        if (next == getSelectedCharacter()) return null
+        return next
+    }
+
+    fun getNextNextCharacter(): PlayerCharacter? {
+        val next = mutableCharacters.value!![(currentCharacterInd + 2) % mutableCharacters.value!!.size]
+        if (next == getSelectedCharacter()) return null
+        return next
     }
 
     fun cycleSelectedCharacter() {

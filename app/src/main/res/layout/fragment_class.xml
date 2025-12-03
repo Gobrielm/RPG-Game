@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".characterCreation.ClassFragment">
 
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:contentDescription="Go Back Button"
+        android:src="@android:drawable/btn_dialog"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/magicButton"
         android:layout_width="wrap_content"

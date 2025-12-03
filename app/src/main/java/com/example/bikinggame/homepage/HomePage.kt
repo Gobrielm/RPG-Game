@@ -14,9 +14,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.example.bikinggame.R
+import com.example.bikinggame.characterCreation.CharacterCreationActivity
 import com.example.bikinggame.characterViewer.CharacterViewerActivity
 import com.example.bikinggame.databinding.ActivityHomePageBinding
 import com.example.bikinggame.dungeonPrep.DungeonPrepActivity
+import com.example.bikinggame.homepage.inventory.PlayerInventory
 import com.example.bikinggame.playerCharacter.PlayerCharacter
 import com.example.bikinggame.requests.getUserJson
 import com.example.bikinggame.requests.makeGetRequest
@@ -72,8 +74,14 @@ class HomePage : AppCompatActivity() {
         startActivity(intent)
     }
 
+    fun openCharacterCreator() {
+        val intent = Intent(this, CharacterCreationActivity::class.java)
+        startActivity(intent)
+    }
+
     fun setPoints(points: String) {
         binding.pointsText.text = points
+        PlayerInventory.setCoins(points.toInt())
     }
 
     fun loadPointsLocally() {

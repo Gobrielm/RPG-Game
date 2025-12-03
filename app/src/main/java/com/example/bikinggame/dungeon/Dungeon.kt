@@ -14,6 +14,7 @@ interface Dungeon {
     fun rollRandomBoss(): EnemyCharacter
 
     fun rollRandomLoot(): ArrayList<Int>
+    fun rollRandomCoins(): Int
 
     fun getExpForEnemy(): Int
 

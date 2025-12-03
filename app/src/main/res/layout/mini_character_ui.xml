@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="100dp"
+    android:layout_height="94dp">
+
+    <ProgressBar
+        android:id="@+id/mana_progressbar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="86dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="7dp"
+        android:layout_marginEnd="7dp"
+        android:progressTint="#251BAF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/stamina_progressbar" />
+
+    <ProgressBar
+        android:id="@+id/stamina_progressbar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="86dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="7dp"
+        android:layout_marginEnd="7dp"
+        android:progressTint="#0BF613"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/health_progressbar" />
+
+    <ProgressBar
+        android:id="@+id/health_progressbar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="86dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="7dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="7dp"
+        android:progressTint="#F80000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="AAAAAAAAAAAAA"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mana_progressbar" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

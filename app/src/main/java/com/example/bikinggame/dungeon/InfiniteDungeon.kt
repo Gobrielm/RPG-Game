@@ -25,7 +25,8 @@ class InfiniteDungeon: Dungeon {
 
             else -> {
                 val odds = arrayOf(DungeonRooms.REGULAR, DungeonRooms.REGULAR, DungeonRooms.REGULAR, DungeonRooms.REGULAR, DungeonRooms.REGULAR, DungeonRooms.REGULAR, DungeonRooms.BOSS, DungeonRooms.TREASURE)
-                odds[Random().nextInt(odds.size)]
+//                odds[Random().nextInt(odds.size)]
+                DungeonRooms.TREASURE
             }
         }
 
@@ -61,6 +62,10 @@ class InfiniteDungeon: Dungeon {
 
     override fun rollRandomLoot(): ArrayList<Int> {
         return arrayListOf(1) // TODO: Loot generation
+    }
+
+    override fun rollRandomCoins(): Int {
+        return (difficulty * (Random().nextInt(30) + 5)).toInt()
     }
 
     override fun getExpForEnemy(): Int {

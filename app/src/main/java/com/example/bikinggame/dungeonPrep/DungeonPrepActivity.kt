@@ -55,7 +55,7 @@ class DungeonPrepActivity: AppCompatActivity() {
         val playerCharacter: PlayerCharacter = viewModel.selectedCharacter.value!!
 
         val intent = Intent(this, DungeonExplorationActivity::class.java)
-        intent.putExtra("CHARACTER", playerCharacter.id)
+        intent.putExtra("CHARACTER1", playerCharacter.id)
         startActivity(intent)
     }
 }

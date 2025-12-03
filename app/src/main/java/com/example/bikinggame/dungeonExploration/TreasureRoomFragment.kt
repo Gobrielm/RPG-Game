@@ -32,9 +32,11 @@ class TreasureRoomFragment : Fragment() {
 
         binding.openChestButton.setOnClickListener {
             val loot = viewModel.getDungeon()!!.rollRandomLoot()// TODO: Do stuff with loot
+            val coins = viewModel.getDungeon()!!.rollRandomCoins()
             viewModel.addLootEarned(loot)
+            viewModel.addCoinsEarned(coins)
 
-            (requireActivity() as DungeonExplorationActivity).showLootUi(loot)
+            (requireActivity() as DungeonExplorationActivity).showLootUi(loot, coins)
 
             binding.openChestButton.setImageResource(R.drawable.openchest)
 

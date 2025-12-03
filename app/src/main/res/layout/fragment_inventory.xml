@@ -12,4 +12,14 @@
         android:layout_height="match_parent"
         android:layout_gravity="top" />
 
+    <ImageButton
+        android:id="@+id/newCharacterButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/truck"
+        android:scaleType="centerCrop"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="25dp"
+        android:layout_marginEnd="25dp"/>
+
 </FrameLayout>

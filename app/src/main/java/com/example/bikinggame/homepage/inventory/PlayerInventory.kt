@@ -11,12 +11,21 @@ object PlayerInventory {
     val playerCharacters: ArrayList<PlayerCharacter> = ArrayList()
     val playerEquipment: MutableMap<Int, Int> = mutableMapOf()
     val usedPlayerEquipment: MutableMap<Int, Int> = mutableMapOf()
+    private var coins: Int = 0
 
     fun getCharacter(id: Int): PlayerCharacter? {
         playerCharacters.forEach { character ->
             if (character.id == id) return character
         }
         return null
+    }
+
+    fun setCoins(newAmt: Int) {
+        coins = newAmt
+    }
+
+    fun getCoins(): Int {
+        return coins
     }
 
     fun getAvailableEquipment(slot: EquipmentSlot): ArrayList<Pair<Equipment, Int>> {

@@ -7,9 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.bikinggame.databinding.FragmentStatsPreviewBinding
+import com.example.bikinggame.homepage.inventory.PlayerInventory
 import com.example.bikinggame.playerCharacter.CharacterClass
 import com.example.bikinggame.playerCharacter.PlayerCharacter
+import com.google.common.math.IntMath.pow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 private const val TAG = "StatsViewer"
 class StatsFragment : Fragment() {
@@ -19,6 +24,7 @@ class StatsFragment : Fragment() {
 
     private val viewModel: ClassChoiceViewModel by activityViewModels()
     private var playerCharacter: PlayerCharacter? = null
+    private var confirmed: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,9 +43,22 @@ class StatsFragment : Fragment() {
         } catch (e: Exception) {
             Log.d(TAG, e.toString())
         }
+
         binding.confirmButton.setOnClickListener {
-            confirmCharacter()
+            if (confirmed) {
+                checkCostAndConfirmCharacter()
+            } else {
+                confirmed = true
+                binding.confirmButton.text = "Cost: ${calculateCost()}"
+                lifecycleScope.launch {
+                    delay(4000)
+                    binding.confirmButton.text = "Confirm"
+                    binding.confirmButton.setTextColor(0xFFFFFFFF.toInt())
+                    confirmed = false
+                }
+            }
         }
+
         return root
     }
 
@@ -48,12 +67,21 @@ class StatsFragment : Fragment() {
         _binding = null
     }
 
+    fun calculateCost(): Int {
+        return pow(PlayerInventory.playerCharacters.size * 30, 2)
+    }
+
     fun displayCharacter() {
         binding.characterStats.text = playerCharacter.toString()
     }
 
-    fun confirmCharacter() {
-        viewModel.confirmClass()
+    fun checkCostAndConfirmCharacter() {
+        if (PlayerInventory.getCoins() >= calculateCost()) {
+            viewModel.confirmClass()
+        } else {
+            binding.confirmButton.text = "Insufficient Funds"
+            binding.confirmButton.setTextColor(0xFFFF0000.toInt())
+        }
     }
 
 }

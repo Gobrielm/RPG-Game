@@ -23,6 +23,11 @@ class ClassFragment : Fragment() {
         _binding = FragmentClassBinding.inflate(inflater, container, false)
         val root: View = binding.root
         setButtons()
+
+        binding.backButton.setOnClickListener {
+            (requireContext() as CharacterCreationActivity).goToHomePage()
+        }
+
         return root
     }
 

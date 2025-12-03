@@ -75,7 +75,6 @@ class CharacterCreationActivity : AppCompatActivity() {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
-
     fun initializeFirstCharacter(character: PlayerCharacter) {
         lifecycleScope.launch {
             val json: JSONObject? = getUserJson()

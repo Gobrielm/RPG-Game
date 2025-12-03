@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.FragmentInventoryBinding
 import com.example.bikinggame.dungeonPrep.DungeonPrepViewModel
+import com.example.bikinggame.homepage.HomePage
 import com.example.bikinggame.homepage.HomePageViewModel
 import com.example.bikinggame.homepage.inventory.PlayerInventory.playerCharacters
 import com.example.bikinggame.homepage.inventory.PlayerInventory.playerEquipment
@@ -79,6 +80,10 @@ class InventoryFragment() : Fragment() {
             loadPlayerCharactersLocally()
             loadPlayerCharactersReq()
             loadPlayerEquipment()
+        }
+
+        binding.newCharacterButton.setOnClickListener {
+            (requireContext() as HomePage).openCharacterCreator()
         }
     }
 
