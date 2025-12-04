@@ -136,8 +136,13 @@ class InventoryFragment() : Fragment() {
             val res = makeGetRequest("https://bikinggamebackend.vercel.app/api/equipment/",
                 userData.get("token") as String
             )
+            try {
+                val data = res.get("data") as JSONObject
 
-            PlayerInventory.updatePlayerEquipment(res)
+                PlayerInventory.updatePlayerEquipment(data)
+            } catch (error: Exception) {
+                Log.d("InventoryFragment", error.toString())
+            }
         }
     }
 

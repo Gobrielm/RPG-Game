@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
@@ -19,17 +18,11 @@ import com.example.bikinggame.characterViewer.CharacterViewerActivity
 import com.example.bikinggame.databinding.ActivityHomePageBinding
 import com.example.bikinggame.dungeonPrep.DungeonPrepActivity
 import com.example.bikinggame.homepage.inventory.PlayerInventory
-import com.example.bikinggame.playerCharacter.PlayerCharacter
 import com.example.bikinggame.requests.getUserJson
 import com.example.bikinggame.requests.makeGetRequest
-import com.example.bikinggame.requests.makeRequest
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
-import kotlin.getValue
 
 
 class HomePage : AppCompatActivity() {
@@ -116,7 +109,7 @@ class HomePage : AppCompatActivity() {
             val json = getUserJson()
             if (json == null) return@launch
             val data = makeGetRequest("https://bikinggamebackend.vercel.app/api/points", json.get("token") as String)
-            val points: String = data.get("points").toString()
+            val points: String = data.get("data").toString()
             storePointsLocally(points)
             setPoints(points)
         }

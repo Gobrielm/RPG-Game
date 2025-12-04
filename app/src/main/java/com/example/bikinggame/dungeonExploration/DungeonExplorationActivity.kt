@@ -28,7 +28,6 @@ import com.example.bikinggame.playerCharacter.Attack
 import com.example.bikinggame.playerCharacter.PlayerCharacter
 import com.example.bikinggame.requests.getUserJson
 import com.example.bikinggame.requests.getUserToken
-import com.example.bikinggame.requests.makeGetRequest
 import com.example.bikinggame.requests.makePutRequest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

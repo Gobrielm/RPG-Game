@@ -4,17 +4,20 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.bikinggame.characterCreation.CharacterCreationActivity
 import com.example.bikinggame.databinding.ActivityPasswordSetupBinding
 import com.example.bikinggame.requests.getUserJson
-import com.example.bikinggame.requests.makeRequest
+import com.example.bikinggame.requests.makePostRequest
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
@@ -37,8 +40,21 @@ class PasswordSetup : AppCompatActivity() {
             )
         }
 
+        binding.confirmUsernameButton.setOnClickListener {
+            createUsername()
+        }
+
         binding.goBackButton.setOnClickListener {
             goToSignInPage()
+        }
+
+        val isOnlySettingUsername = intent.getBooleanExtra("usernameSetup", false)
+        if (isOnlySettingUsername) {
+            binding.usernameLayout.visibility = View.VISIBLE
+            binding.CreateAccount.visibility = View.GONE
+            binding.CreateAccountPassword.visibility = View.GONE
+            binding.CreateAccountEmail.visibility = View.GONE
+            binding.goBackButton.visibility = View.GONE
         }
     }
 
@@ -64,7 +80,11 @@ class PasswordSetup : AppCompatActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "createUserWithEmail:success")
                     initializeUser()
-                    goToCharacterCreation()
+                    binding.usernameLayout.visibility = View.VISIBLE
+                    binding.CreateAccount.visibility = View.GONE
+                    binding.CreateAccountPassword.visibility = View.GONE
+                    binding.CreateAccountEmail.visibility = View.GONE
+                    binding.goBackButton.visibility = View.GONE
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)
@@ -139,8 +159,44 @@ class PasswordSetup : AppCompatActivity() {
         lifecycleScope.launch {
             val json = getUserJson()
             if (json == null) return@launch
-            val body = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
-            makeRequest("https://bikinggamebackend.vercel.app/api/createNewUser", body)
+
+            val emptyBody = "".toRequestBody("application/json".toMediaTypeOrNull())
+            makePostRequest("https://bikinggamebackend.vercel.app/api/points", json.get("token") as String, emptyBody)
+        }
+    }
+
+    fun createUsername() {
+        val username = binding.usernameText.text.toString()
+        if (username.length < 6) {
+            lifecycleScope.launch {
+                binding.usernameExplainText.text = "Username too short ( > 6 characters)"
+                binding.usernameExplainText.setTextColor(0xFFFF0000.toInt())
+                delay(3000)
+                binding.usernameExplainText.text = "Setup Username"
+                binding.usernameExplainText.setTextColor(0xFF000000.toInt())
+            }
+            return
+        }
+
+        lifecycleScope.launch {
+            val json = getUserJson()
+            if (json == null) return@launch
+
+            val usernameBody = username.toRequestBody("text/plain".toMediaType())
+            val res = makePostRequest("https://bikinggamebackend.vercel.app/api/usernames/", json.get("token") as String, usernameBody)
+
+            Log.d("AAAA", res.toString())
+            if (res.length() == 0) {
+                lifecycleScope.launch {
+                    binding.usernameExplainText.text = "Username is not unique"
+                    binding.usernameExplainText.setTextColor(0xFFFF0000.toInt())
+                    delay(3000)
+                    binding.usernameExplainText.text = "Setup Username"
+                    binding.usernameExplainText.setTextColor(0xFF000000.toInt())
+                }
+            } else {
+                goToCharacterCreation()
+            }
         }
     }
 

@@ -15,6 +15,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.ActivityCharacterCreationBinding
 import com.example.bikinggame.homepage.HomePage
+import com.example.bikinggame.homepage.inventory.PlayerInventory
+import com.example.bikinggame.homepage.inventory.savePoints
 import com.example.bikinggame.playerCharacter.CharacterClass
 import com.example.bikinggame.playerCharacter.CharacterMainClass
 import com.example.bikinggame.playerCharacter.CharacterSubClass
@@ -54,20 +56,6 @@ class CharacterCreationActivity : AppCompatActivity() {
             val navController = findNavController(R.id.nav_host_fragment_content_main)
             navController.navigate(R.id.nav_stats_preview)
         })
-
-        viewModel.confirmedClass.observe(this, Observer {
-            try {
-                val playerCharacter = PlayerCharacter(
-                    CharacterClass(
-                        viewModel.selectedClass.value!!,
-                        viewModel.selectedSubClass.value!!
-                    ), 1
-                )
-                initializeFirstCharacter(playerCharacter)
-            } catch (e: Exception) {
-                Log.d(TAG, e.toString())
-            }
-        })
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -75,14 +63,39 @@ class CharacterCreationActivity : AppCompatActivity() {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
-    fun initializeFirstCharacter(character: PlayerCharacter) {
+    fun initializeCharacter(cost: Int) {
+        val character: PlayerCharacter? = try {
+            PlayerCharacter(
+                CharacterClass(
+                    viewModel.selectedClass.value!!,
+                    viewModel.selectedSubClass.value!!
+                ), 1
+            )
+        } catch (e: Exception) {
+            Log.d(TAG, e.toString())
+            null
+        }
+
+        if (character == null) return
+
+        PlayerInventory.setCoins(PlayerInventory.getCoins() - cost)
+
         lifecycleScope.launch {
+            savePoints()
+
+            // Creates Character
             val json: JSONObject? = getUserJson()
             if (json == null) return@launch
-            val characterJSON = character.serialize()
+            val oldCharacterJSON = character.serialize()
 
-            val body = characterJSON.toString().toRequestBody("application/json".toMediaTypeOrNull())
-            makePostRequest("https://bikinggamebackend.vercel.app/api/characters", json.get("token") as String, body, ::finishCharacterCreation)
+            val body = oldCharacterJSON.toString().toRequestBody("application/json".toMediaTypeOrNull())
+            val jsonObject = makePostRequest("https://bikinggamebackend.vercel.app/api/characters/", json.get("token") as String, body)
+
+
+            val newCharacterJSON = jsonObject.get("data") as JSONArray
+            PlayerInventory.playerCharacters.add(PlayerCharacter(newCharacterJSON))
+
+            goToHomePage()
         }
     }
 
@@ -113,10 +126,8 @@ class CharacterCreationActivity : AppCompatActivity() {
 class ClassChoiceViewModel: ViewModel() {
     private val mutableSelectedClass = MutableLiveData<CharacterMainClass>()
     private val mutableSelectedSubClass = MutableLiveData<CharacterSubClass>()
-    private val mutableConfirmed = MutableLiveData<Boolean>()
     val selectedClass: LiveData<CharacterMainClass> get() = mutableSelectedClass
     val selectedSubClass: LiveData<CharacterSubClass> get() = mutableSelectedSubClass
-    val confirmedClass: LiveData<Boolean> get() = mutableConfirmed
 
     fun selectClass(p_class: CharacterMainClass) {
         mutableSelectedClass.value = p_class
@@ -124,9 +135,5 @@ class ClassChoiceViewModel: ViewModel() {
 
     fun selectSubClass(p_class: CharacterSubClass) {
         mutableSelectedSubClass.value = p_class
-    }
-
-    fun confirmClass() {
-        mutableConfirmed.value = true
     }
 }

@@ -77,7 +77,7 @@ class StatsFragment : Fragment() {
 
     fun checkCostAndConfirmCharacter() {
         if (PlayerInventory.getCoins() >= calculateCost()) {
-            viewModel.confirmClass()
+            (requireContext() as CharacterCreationActivity).initializeCharacter(calculateCost())
         } else {
             binding.confirmButton.text = "Insufficient Funds"
             binding.confirmButton.setTextColor(0xFFFF0000.toInt())

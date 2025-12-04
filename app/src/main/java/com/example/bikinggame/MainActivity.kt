@@ -6,11 +6,18 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.bikinggame.characterCreation.CharacterCreationActivity
 import com.example.bikinggame.databinding.LoginScreenBinding
 import com.example.bikinggame.homepage.HomePage
+import com.example.bikinggame.requests.getUserJson
+import com.example.bikinggame.requests.makeGetRequest
+import com.example.bikinggame.requests.makePostRequest
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,8 +29,7 @@ class MainActivity : AppCompatActivity() {
         val currentUser = Firebase.auth.currentUser
         if (currentUser != null) {
 //            Firebase.auth.signOut()
-            goToHomePage()
-//            goToCharacterCreation()
+            checkAccountHaveUsername()
         }
 
         binding = LoginScreenBinding.inflate(layoutInflater)
@@ -61,6 +67,22 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
+    fun checkAccountHaveUsername() {
+        lifecycleScope.launch {
+            val json = getUserJson()
+            if (json == null) return@launch
+
+            val res = makeGetRequest("https://bikinggamebackend.vercel.app/api/usernames", json.get("token") as String)
+
+            if (res.length() == 0) {
+                val intent = Intent(baseContext, PasswordSetup::class.java)
+                intent.putExtra("usernameSetup", true)
+                startActivity(intent)
+            } else {
+                goToHomePage()
+            }
+        }
+    }
     fun goToHomePage() {
         val intent = Intent(this, HomePage::class.java)
         startActivity(intent)

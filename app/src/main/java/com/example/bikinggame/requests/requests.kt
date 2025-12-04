@@ -19,7 +19,7 @@ import kotlin.coroutines.resumeWithException
 
 const val TAG = "REQUESTS"
 
-fun makePostRequest(url: String, token: String, body: RequestBody, callback: (JSONObject) -> Unit = ::logRes) {
+suspend fun makePostRequest(url: String, token: String, body: RequestBody): JSONObject {
     try {
         val request = Request.Builder()
             .url(url)
@@ -27,10 +27,11 @@ fun makePostRequest(url: String, token: String, body: RequestBody, callback: (JS
             .addHeader("Authorization", token)
             .build()
 
-        makeRequestTemp(request, callback)
+        return makeRequestWithResponse(request)
     } catch (e: Exception) {
         Log.d(TAG, e.toString())
     }
+    return JSONObject()
 }
 
 suspend fun makePutRequest(url: String, token: String, body: RequestBody) {
@@ -113,34 +114,43 @@ suspend fun makeRequestWithResponse(request: Request): JSONObject =
         val client = OkHttpClient()
         val call = client.newCall(request)
 
-        // Enqueue the async call
         call.enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                // Resume coroutine with exception
-                if (!cont.isCompleted) cont.resumeWithException(e)
+                // Log, but return an empty JSON object
+                Log.e(TAG, "Request failed", e)
+                if (!cont.isCompleted) cont.resume(JSONObject()) { cause, _, _ -> (cause) }
             }
 
             override fun onResponse(call: Call, response: Response) {
                 try {
                     response.use {
                         if (!response.isSuccessful) {
-                            // You can throw an exception or handle error as needed
-                            if (!cont.isCompleted) cont.resumeWithException(IOException("Unexpected code $response"))
-                        } else {
-                            val body = response.body ?: throw IOException("Empty response body")
-                            val json = JSONObject(body.string())
-                            val jsonObject: JSONObject = json.get("data") as JSONObject
-                            if (!cont.isCompleted) cont.resume(jsonObject) { cause, _, _ -> (cause) }
+                            Log.e(TAG, "Unsuccessful response: $response")
+                            if (!cont.isCompleted) cont.resume(JSONObject()) { cause, _, _ -> (cause) }
+                            return
                         }
+
+                        val bodyStr = response.body?.string()
+                        if (bodyStr == null) {
+                            Log.e(TAG, "Response body is null")
+                            if (!cont.isCompleted) cont.resume(JSONObject()) { cause, _, _ -> (cause) }
+                            return
+                        }
+
+                        val fullJson = JSONObject(bodyStr)
+
+                        if (!cont.isCompleted) cont.resume(fullJson) { cause, _, _ -> (cause) }
                     }
                 } catch (e: Exception) {
-                    if (!cont.isCompleted) cont.resumeWithException(e)
+                    Log.e(TAG, "Error parsing response", e)
+                    if (!cont.isCompleted) cont.resume(JSONObject()) { cause, _, _ -> (cause) }
                 }
             }
         })
 
         cont.invokeOnCancellation { call.cancel() }
     }
+
 
 
 fun makeRequestTemp(request: Request, callback: (JSONObject) -> Unit) {
@@ -167,37 +177,6 @@ fun makeRequestTemp(request: Request, callback: (JSONObject) -> Unit) {
         }
     })
 }
-
-fun makeRequest(url: String, body: RequestBody, callback: (JSONObject) -> Unit = ::logRes) {
-    val request = Request.Builder()
-        .url(url)
-        .post(body)
-        .build()
-
-    val client = OkHttpClient()
-
-    client.newCall(request).enqueue(object : Callback {
-        override fun onFailure(call: Call, e: IOException) {
-            // Handle error
-            e.printStackTrace()
-        }
-
-        override fun onResponse(call: Call, response: Response) {
-            response.use {
-                if (!response.isSuccessful) {
-                    logResErr(response)
-                } else {
-                    if (response.body == null) return
-                    val body: ResponseBody = (response.body) as ResponseBody
-                    val msg = body.string()
-                    val json = JSONObject(msg)
-                    callback.invoke(json)
-                }
-            }
-        }
-    })
-}
-
 
 suspend fun getUserToken(): String? {
     val mUser = Firebase.auth.currentUser ?: return null
