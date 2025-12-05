@@ -97,9 +97,7 @@ class EditCharacterFragment: Fragment() {
     }
 
     fun showAttackChooser(pAttackSlot: Int) {
-        Log.d("AAA", "AAA")
         if (attackSlot != pAttackSlot) {
-            Log.d("BBB", "BBB")
             unShowAttackChooser()
             attacksToChooseFrom.clear()
             inventoryList.clear()

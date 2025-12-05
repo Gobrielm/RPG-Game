@@ -105,7 +105,6 @@ class EditEquipmentFragment: Fragment() {
 
         map.forEach { slot, button ->
             val equipment = character.currentEquipment[slot.ordinal]
-            Log.d(slot.toString(), equipment.toString())
             if (equipment != null) {
                 // TODO: Get image from Equipment probably
                 button.setImageResource(R.drawable.truck)
@@ -171,7 +170,7 @@ class EditEquipmentFragment: Fragment() {
     fun unassignEquipment(character: PlayerCharacter) {
         if (character.currentEquipment[slotOpen!!.ordinal] != null) {
             val equipmentID = character.currentEquipment[slotOpen!!.ordinal]!!.id
-            PlayerInventory.addPieceOfEquipment(equipmentID)
+            PlayerInventory.unUsePieceOfEquipment(equipmentID)
             character.removeEquipment(slotOpen!!)
         }
     }

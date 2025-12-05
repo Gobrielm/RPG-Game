@@ -45,7 +45,7 @@
         android:background="#804E4E4E">
 
         <ProgressBar
-            android:id="@+id/mana_progressbar"
+            android:id="@+id/main_mana_progressbar"
             style="@style/Widget.ProgressBar.Vertical"
             android:layout_width="14dp"
             android:layout_height="141dp"
@@ -54,10 +54,10 @@
             android:progress="70"
             android:progressTint="#251BAF"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/health_progressbar" />
+            app:layout_constraintStart_toEndOf="@+id/main_health_progressbar" />
 
         <ProgressBar
-            android:id="@+id/stamina_progressbar"
+            android:id="@+id/main_stamina_progressbar"
             style="@style/Widget.ProgressBar.Vertical"
             android:layout_width="14dp"
             android:layout_height="141dp"
@@ -66,10 +66,10 @@
             android:progress="85"
             android:progressTint="#0BF613"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/mana_progressbar" />
+            app:layout_constraintStart_toEndOf="@+id/main_mana_progressbar" />
 
         <ProgressBar
-            android:id="@+id/health_progressbar"
+            android:id="@+id/main_health_progressbar"
             style="@style/Widget.ProgressBar.Vertical"
             android:layout_width="16dp"
             android:layout_height="141dp"

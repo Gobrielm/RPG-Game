@@ -148,9 +148,9 @@ class DungeonExplorationActivity: AppCompatActivity() {
         val character = viewModel.getSelectedCharacter()!!
 
         updateProgressBars(character,
-            binding.characterUi.healthProgressbar,
-            binding.characterUi.manaProgressbar,
-            binding.characterUi.staminaProgressbar
+            binding.characterUi.mainHealthProgressbar,
+            binding.characterUi.mainManaProgressbar,
+            binding.characterUi.mainStaminaProgressbar
         )
 
         val nextCharacter = viewModel.getNextCharacter()

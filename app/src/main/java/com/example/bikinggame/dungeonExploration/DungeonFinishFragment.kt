@@ -15,6 +15,7 @@ import com.example.bikinggame.homepage.inventory.InventoryManager
 import com.example.bikinggame.homepage.inventory.Item
 import com.example.bikinggame.homepage.inventory.PlayerInventory
 import com.example.bikinggame.homepage.inventory.saveCharacter
+import com.example.bikinggame.homepage.inventory.savePoints
 import com.example.bikinggame.homepage.inventory.updateEquipmentCount
 import com.example.bikinggame.playerCharacter.Equipment
 import kotlinx.coroutines.launch
@@ -43,12 +44,17 @@ class DungeonFinishFragment: Fragment() {
 
         val loot = viewModel.getLootEarned()
         val exp = loot[0]
-
+        loot.removeAt(0)
+        val coins = loot[0]
         loot.removeAt(0)
 
         // Update with loot locally
         inventoryList.add(Item(R.drawable.truck, "Exp Earned: $exp"))
         viewModel.getSelectedCharacter()!!.addExp(exp)
+
+        inventoryList.add(Item(R.drawable.truck, "Coins Earned: $coins"))
+        PlayerInventory.setCoins(PlayerInventory.getCoins() + coins)
+
 
         loot.forEach { lootID ->
             val equipment = Equipment.getEquipment(lootID)
@@ -59,6 +65,7 @@ class DungeonFinishFragment: Fragment() {
         // Update on cloud
         lifecycleScope.launch {
             saveCharacter(viewModel.getSelectedCharacter()!!.id)
+            savePoints()
 
             loot.forEach { equipmentID ->
                 updateEquipmentCount(equipmentID)

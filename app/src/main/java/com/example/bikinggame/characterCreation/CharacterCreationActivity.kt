@@ -88,7 +88,10 @@ class CharacterCreationActivity : AppCompatActivity() {
             if (json == null) return@launch
             val oldCharacterJSON = character.serialize()
 
-            val body = oldCharacterJSON.toString().toRequestBody("application/json".toMediaTypeOrNull())
+            val inputObject = JSONObject()
+            inputObject.put("characterInfo", oldCharacterJSON)
+
+            val body = inputObject.toString().toRequestBody("application/json".toMediaTypeOrNull())
             val jsonObject = makePostRequest("https://bikinggamebackend.vercel.app/api/characters/", json.get("token") as String, body)
 
 

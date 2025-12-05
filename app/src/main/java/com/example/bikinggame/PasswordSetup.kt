@@ -182,7 +182,10 @@ class PasswordSetup : AppCompatActivity() {
             val json = getUserJson()
             if (json == null) return@launch
 
-            val usernameBody = username.toRequestBody("text/plain".toMediaType())
+            val jsonObject = JSONObject()
+            jsonObject.put("username", username)
+
+            val usernameBody = jsonObject.toString().toRequestBody("application/json".toMediaTypeOrNull())
             val res = makePostRequest("https://bikinggamebackend.vercel.app/api/usernames/", json.get("token") as String, usernameBody)
 
             Log.d("AAAA", res.toString())

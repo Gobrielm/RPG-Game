@@ -18,7 +18,10 @@ suspend fun saveCharacter(characterID: Int) {
     val character = PlayerInventory.getCharacter(characterID)
     val characterJSON = character!!.serialize()
 
-    val body = characterJSON.toString().toRequestBody("application/json".toMediaTypeOrNull())
+    val jsonObject = JSONObject()
+    jsonObject.put("characterInfo", characterJSON)
+
+    val body = jsonObject.toString().toRequestBody("application/json".toMediaTypeOrNull())
     makePutRequest(
         "https://bikinggamebackend.vercel.app/api/characters/$characterID",
         userData.get("token") as String,
@@ -29,13 +32,15 @@ suspend fun saveCharacter(characterID: Int) {
 suspend fun updateEquipmentCount(equipmentID: Int) {
     val userData: JSONObject? = getUserJson()
     if (userData == null) return
-    val amount = PlayerInventory.getAmountOfEquipment(equipmentID)
-    if (amount < 0) {
+    val quantity = PlayerInventory.getAmountOfEquipment(equipmentID)
+    if (quantity < 0) {
         Log.d("Inventory Functions", "Invalid number of Equipment")
         return
     }
+    val jsonObject = JSONObject()
+    jsonObject.put("quantity", quantity)
 
-    val body = amount.toString().toRequestBody("text/plain".toMediaType())
+    val body = jsonObject.toString().toRequestBody("application/json".toMediaTypeOrNull())
     makePutRequest(
         "https://bikinggamebackend.vercel.app/api/equipment/$equipmentID",
         userData.get("token") as String,
@@ -47,7 +52,11 @@ suspend fun savePoints() {
     val userData: JSONObject? = getUserJson()
     if (userData == null) return
     val amount = PlayerInventory.getCoins()
-    val body = amount.toString().toRequestBody("text/plain".toMediaType())
+
+    val jsonObject = JSONObject()
+    jsonObject.put("points", amount)
+
+    val body = jsonObject.toString().toRequestBody("application/json".toMediaTypeOrNull())
     makePutRequest(
         "https://bikinggamebackend.vercel.app/api/points",
         userData.get("token") as String,

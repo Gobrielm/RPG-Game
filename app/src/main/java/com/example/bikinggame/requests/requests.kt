@@ -125,7 +125,7 @@ suspend fun makeRequestWithResponse(request: Request): JSONObject =
                 try {
                     response.use {
                         if (!response.isSuccessful) {
-                            Log.e(TAG, "Unsuccessful response: $response")
+                            logResErr(response)
                             if (!cont.isCompleted) cont.resume(JSONObject()) { cause, _, _ -> (cause) }
                             return
                         }
@@ -213,8 +213,8 @@ fun logResErr(response: Response) {
         Log.d("HTTPS Request", jsonText)
         try {
             val json = JSONObject(jsonText)
-            Log.d("HTTPS Request Error: ", json.get("error").toString())
-            Log.d("HTTPS Request Msg: ", json.get("message").toString())
+            if (json.has("error")) Log.e("HTTPS Request Error: ", json.get("error").toString())
+            if (json.has("message")) Log.e("HTTPS Request Msg: ", json.get("message").toString())
         } catch (e: Exception) {
             Log.d("HTTPS Request", "Could not Reach Server.")
         }

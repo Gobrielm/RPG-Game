@@ -56,10 +56,18 @@ object PlayerInventory {
         }
     }
 
-    fun addPieceOfEquipment(id: Int) {
+    fun unUsePieceOfEquipment(id: Int) {
         if (usedPlayerEquipment[id] != 0) {
             usedPlayerEquipment[id] = usedPlayerEquipment[id]!! - 1
         }
+    }
+
+    fun addPieceOfEquipment(id: Int) {
+        if (!playerEquipment.contains(id)) {
+            playerEquipment[id] = 0
+            usedPlayerEquipment[id] = 0
+        }
+        playerEquipment[id] = playerEquipment[id]!! + 1;
     }
 
     fun updateUsedEquipment(id: Int) {

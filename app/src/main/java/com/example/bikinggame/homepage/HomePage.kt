@@ -52,8 +52,10 @@ class HomePage : AppCompatActivity() {
             openCharacterViewer(id)
         })
 
-        loadPointsLocally()
-        loadPointsReq()
+        if (PlayerInventory.getCoins() == 0) {
+            loadPointsLocally()
+            loadPointsReq()
+        }
     }
 
     fun openDungeonPrepScreen() {
@@ -109,9 +111,14 @@ class HomePage : AppCompatActivity() {
             val json = getUserJson()
             if (json == null) return@launch
             val data = makeGetRequest("https://bikinggamebackend.vercel.app/api/points", json.get("token") as String)
+            if (!data.has("data")) {
+                Log.e("HomePage", "No data in message")
+                return@launch
+            }
             val points: String = data.get("data").toString()
             storePointsLocally(points)
             setPoints(points)
+            PlayerInventory.setCoins(points.toInt())
         }
     }
 }

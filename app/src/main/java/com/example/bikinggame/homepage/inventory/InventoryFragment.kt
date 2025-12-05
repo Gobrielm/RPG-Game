@@ -136,6 +136,12 @@ class InventoryFragment() : Fragment() {
             val res = makeGetRequest("https://bikinggamebackend.vercel.app/api/equipment/",
                 userData.get("token") as String
             )
+
+            if (!res.has("data")) {
+                Log.e("InventoryFragment", "Missing 'data' in response: $res")
+                return@launch
+            }
+
             try {
                 val data = res.get("data") as JSONObject
 
@@ -149,7 +155,13 @@ class InventoryFragment() : Fragment() {
     fun loadPlayerCharactersRes(json: JSONObject) {
         lifecycleScope.launch {
             val localList: ArrayList<PlayerCharacter> = ArrayList()
-            val playerCharacterJSON = json.get("characters") as JSONObject
+
+            if (!json.has("data")) {
+                Log.e("InventoryFragment", "Missing 'data' in response: $json")
+                return@launch
+            }
+
+            val playerCharacterJSON = json.get("data") as JSONObject
 
             for (section: String in (playerCharacterJSON).keys()) {
                 try {

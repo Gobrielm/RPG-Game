@@ -74,6 +74,7 @@ class MainActivity : AppCompatActivity() {
 
             val res = makeGetRequest("https://bikinggamebackend.vercel.app/api/usernames", json.get("token") as String)
 
+            // None empty res will have username
             if (res.length() == 0) {
                 val intent = Intent(baseContext, PasswordSetup::class.java)
                 intent.putExtra("usernameSetup", true)
