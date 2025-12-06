@@ -21,5 +21,15 @@
         android:contentDescription="Go Back Button"
         android:src="@android:drawable/btn_dialog" />
 
+    <TextView
+        android:id="@+id/errorText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text=""
+        android:textColor="#FF0000"
+        android:layout_marginTop="170dp"
+        android:layout_gravity="top|center_horizontal"/>
+
 
 </FrameLayout>

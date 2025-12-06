@@ -12,7 +12,7 @@ class HomePageFragmentAdapter(fragmentActivity: FragmentActivity) : FragmentStat
         return when (position) {
             0 -> InventoryFragment()
             1 -> HomePageFragment()
-            else -> StoreFragment()
+            else -> LeaderboardFragment()
         }
     }
 }

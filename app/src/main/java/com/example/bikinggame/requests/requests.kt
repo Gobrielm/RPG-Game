@@ -1,15 +1,19 @@
 package com.example.bikinggame.requests
 
 import android.util.Log
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import okhttp3.Call
 import okhttp3.Callback
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.ResponseBody
 import okio.IOException
@@ -201,6 +205,22 @@ suspend fun getUserJson(): JSONObject? {
         Log.e("Getting User Json", "Failed...", e)
         null
     }
+}
+
+suspend fun getUserName(): String? {
+    val token = getUserToken()
+    if (token == null) return null
+
+    val res = makeGetRequest(
+        "https://bikinggamebackend.vercel.app/api/usernames/",
+        token
+    )
+
+    if (res.has("data")) {
+        val body = res["data"] as? String
+        return body
+    }
+    return null
 }
 
 fun logRes(json: JSONObject) {

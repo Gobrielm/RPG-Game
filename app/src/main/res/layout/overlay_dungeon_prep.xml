@@ -15,7 +15,7 @@
         android:layout_marginBottom="25dp"
         android:layout_marginStart="25dp"
         android:contentDescription="Pick Character"
-        app:srcCompat="@drawable/truck" />
+        app:srcCompat="@drawable/nothing" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment_dungeon_prep_overlay"

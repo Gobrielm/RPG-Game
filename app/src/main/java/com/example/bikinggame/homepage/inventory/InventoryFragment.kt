@@ -14,11 +14,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.FragmentInventoryBinding
+import com.example.bikinggame.dungeonPrep.DungeonPrepActivity
 import com.example.bikinggame.dungeonPrep.DungeonPrepViewModel
 import com.example.bikinggame.homepage.HomePage
 import com.example.bikinggame.homepage.HomePageViewModel
 import com.example.bikinggame.homepage.inventory.PlayerInventory.playerCharacters
 import com.example.bikinggame.homepage.inventory.PlayerInventory.playerEquipment
+import com.example.bikinggame.playerCharacter.CharacterMainClass
 import com.example.bikinggame.playerCharacter.Equipment
 import com.example.bikinggame.playerCharacter.EquipmentSlot
 import com.example.bikinggame.playerCharacter.PlayerCharacter
@@ -61,7 +63,7 @@ class InventoryFragment() : Fragment() {
     }
 
     private val user = Firebase.auth.currentUser
-    var inventoryList: LinkedList<Item> = LinkedList<Item>()
+    private val inventoryList: LinkedList<Item> = LinkedList<Item>()
     lateinit var recyclerView: RecyclerView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -89,8 +91,18 @@ class InventoryFragment() : Fragment() {
 
     fun refreshInventoryScreen() {
         inventoryList.clear()
+
+        val getImage: (CharacterMainClass) -> Int = { ind ->
+            when (ind) {
+                CharacterMainClass.MELEE -> R.drawable.knightpic
+                CharacterMainClass.MAGIC -> R.drawable.wizardpic
+                CharacterMainClass.RANGED -> R.drawable.rangedpic
+                else -> R.drawable.lessthanthree
+            }
+        }
+
         playerCharacters.forEach { playerCharacter ->
-            inventoryList.add(Item(R.drawable.truck, playerCharacter.toString()))
+            inventoryList.add(Item(getImage(playerCharacter.playerClass.mainClass), playerCharacter.toString()))
         }
         requireActivity().runOnUiThread {
             recyclerView.adapter = InventoryManager(inventoryList, ::playerCharacterClicked)
@@ -110,8 +122,8 @@ class InventoryFragment() : Fragment() {
     }
 
     fun selectCharacter(position: Int) {
-        val viewModel: DungeonPrepViewModel by activityViewModels()
-        viewModel.selectCharacter(playerCharacters[position])
+        (requireContext() as DungeonPrepActivity)
+            .selectCharacter(playerCharacters[position], inventoryList[position].imageResId)
     }
 
     fun loadPlayerCharactersReq() {

@@ -27,6 +27,7 @@ import com.example.bikinggame.homepage.inventory.PlayerInventory
 import com.example.bikinggame.playerCharacter.Attack
 import com.example.bikinggame.playerCharacter.PlayerCharacter
 import com.example.bikinggame.requests.getUserJson
+import com.example.bikinggame.requests.getUserName
 import com.example.bikinggame.requests.getUserToken
 import com.example.bikinggame.requests.makePutRequest
 import kotlinx.coroutines.delay
@@ -248,15 +249,17 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
         binding.characterUi.finishText.visibility = View.GONE
         binding.characterUi.blurRect.visibility = View.GONE
-
-
         lifecycleScope.launch {
 
             val token = getUserToken()
             if (token == null) return@launch
 
+            val username = getUserName()
+            if (username == null) Log.e("Dungeon Exploration Activity", "No Username Found")
+
             val json = JSONObject()
             json.put("deepestRoom", currentRoom)
+            json.put("username", username!!)
 
             val body = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
 

@@ -14,9 +14,9 @@
 
     <ImageButton
         android:id="@+id/newCharacterButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/truck"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:src="@drawable/plus"
         android:scaleType="centerCrop"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="25dp"

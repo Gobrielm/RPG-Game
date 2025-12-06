@@ -43,9 +43,9 @@ class DungeonFinishFragment: Fragment() {
         }
 
         val loot = viewModel.getLootEarned()
-        val exp = loot[0]
+        val exp = loot.first()
         loot.removeAt(0)
-        val coins = loot[0]
+        val coins = loot.first()
         loot.removeAt(0)
 
         // Update with loot locally
@@ -54,7 +54,6 @@ class DungeonFinishFragment: Fragment() {
 
         inventoryList.add(Item(R.drawable.truck, "Coins Earned: $coins"))
         PlayerInventory.setCoins(PlayerInventory.getCoins() + coins)
-
 
         loot.forEach { lootID ->
             val equipment = Equipment.getEquipment(lootID)

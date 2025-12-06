@@ -7,8 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.bikinggame.databinding.FragmentSelectDungeonBinding
 import com.example.bikinggame.homepage.HomePage
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.getValue
 
 
@@ -28,6 +31,13 @@ class SelectDungeonFragment : Fragment() {
 
         binding.dungeonButton.setOnClickListener {
             viewModel.startDungeon()
+            if (viewModel.getCharacter() == null) {
+                lifecycleScope.launch {
+                    binding.errorText.text = "Pick a Character"
+                    delay(1400)
+                    binding.errorText.text = ""
+                }
+            }
         }
 
         binding.backButton.setOnClickListener {

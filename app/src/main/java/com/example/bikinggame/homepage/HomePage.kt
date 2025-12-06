@@ -55,6 +55,8 @@ class HomePage : AppCompatActivity() {
         if (PlayerInventory.getCoins() == 0) {
             loadPointsLocally()
             loadPointsReq()
+        } else {
+            setPoints(PlayerInventory.getCoins().toString())
         }
     }
 

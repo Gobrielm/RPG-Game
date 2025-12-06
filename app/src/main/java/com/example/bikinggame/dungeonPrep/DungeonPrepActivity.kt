@@ -40,22 +40,23 @@ class DungeonPrepActivity: AppCompatActivity() {
             tryToStartDungeon()
         })
 
-        viewModel.selectedCharacter.observe(this, Observer {
-            val navController = findNavController(R.id.nav_host_fragment_dungeon_prep_overlay)
-            navController.navigate(R.id.selectDungeonFragment)
-        })
+    }
 
+    fun selectCharacter(character: PlayerCharacter, imageID: Int) {
+        val navController = findNavController(R.id.nav_host_fragment_dungeon_prep_overlay)
+        navController.navigate(R.id.selectDungeonFragment)
+        viewModel.setCharacter(character)
+        binding.overlayDungeonPrep.characterButton.setImageResource(imageID)
     }
 
     fun tryToStartDungeon() {
-        if (viewModel.selectedCharacter.value == null) {
+        if (viewModel.getCharacter() == null) {
+            // TODO: Error msg
             return
         }
 
-        val playerCharacter: PlayerCharacter = viewModel.selectedCharacter.value!!
-
         val intent = Intent(this, DungeonExplorationActivity::class.java)
-        intent.putExtra("CHARACTER1", playerCharacter.id)
+        intent.putExtra("CHARACTER1", viewModel.getCharacter()!!.id)
         startActivity(intent)
     }
 }
@@ -63,16 +64,15 @@ class DungeonPrepActivity: AppCompatActivity() {
 class DungeonPrepViewModel: ViewModel() {
     private val mutableSelectedCharacter = MutableLiveData<PlayerCharacter>()
     private val mutableStartDungeon = MutableLiveData<Boolean>()
-
-    val selectedCharacter: LiveData<PlayerCharacter> get() = mutableSelectedCharacter
     val startDungeon: LiveData<Boolean> get() = mutableStartDungeon
-
-    fun selectCharacter(pCharacter: PlayerCharacter) {
-        mutableSelectedCharacter.value = pCharacter
-    }
 
     fun startDungeon() {
         mutableStartDungeon.value = true
     }
-
+    fun getCharacter(): PlayerCharacter? {
+        return mutableSelectedCharacter.value
+    }
+    fun setCharacter(character: PlayerCharacter) {
+        mutableSelectedCharacter.value = character
+    }
 }
