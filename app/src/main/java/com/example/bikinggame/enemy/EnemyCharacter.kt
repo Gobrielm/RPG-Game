@@ -36,10 +36,14 @@ class EnemyCharacter {
     }
 
     /**
-     *  @return Whether or not this character has gone below 0 health
+     *  @return (Whether or not this character has gone below 0 health, Msg of Attack)
      */
-    fun takeAttack(attack: Attack): Boolean {
-        return currentStats.getAttacked(attack)
+    fun takeAttack(damage: Int, hitType: Attack.HitTypes): Pair<Boolean, String> {
+        return Pair(currentStats.getAttacked(damage, hitType), "Direct Attack")
+    }
+
+    fun calculateDamageForAttack(attack: Attack): Pair<Int, Attack.HitTypes> {
+        return currentStats.calculateDamageForAttack(attack)
     }
 
     fun chooseRandAttack(): Attack {

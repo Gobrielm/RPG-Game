@@ -33,7 +33,7 @@ suspend fun updateEquipmentCount(equipmentID: Int) {
     val userData: JSONObject? = getUserJson()
     if (userData == null) return
     val quantity = PlayerInventory.getAmountOfEquipment(equipmentID)
-    if (quantity < 0) {
+    if (quantity <= 0) {
         Log.d("Inventory Functions", "Invalid number of Equipment")
         return
     }

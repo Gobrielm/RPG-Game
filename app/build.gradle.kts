@@ -64,6 +64,8 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
+    implementation("com.airbnb.android:lottie:6.3.0")
+
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)

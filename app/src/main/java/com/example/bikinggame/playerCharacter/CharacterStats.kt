@@ -1,6 +1,7 @@
 package com.example.bikinggame.playerCharacter
 
 import android.util.Log
+import kotlin.math.round
 
 private const val TAG: String = "CharacterStats"
 
@@ -25,12 +26,39 @@ enum class BasicStats {
 
 class CharacterStats {
 
+
+    /**
+     * @return with (Hit Type, Damage)
+     *
+     */
+    fun calculateDamageForAttack(attack: Attack): Pair<Int, Attack.HitTypes> {
+        val baseDamage = attack.getMomentum()
+        val hitType = attack.getRandomHitType()
+        val statMult = getStatMult(attack.type)
+
+        return Pair(round(baseDamage * hitType.getMultiplier() * statMult).toInt(), hitType)
+    }
+
+    fun getStatMult(attackType: Attack.AttackTypes): Float {
+        return 1f + when (attackType) {
+            Attack.AttackTypes.PHY -> {
+                getStrength() / 50.0f
+            }
+            Attack.AttackTypes.MAG -> {
+                getIntelligence() / 50.0f
+            }
+            else -> {
+                getStrength() / 120.0f
+            }
+        }
+    }
+
     /**
      *  @return Whether true if character has gone below 0 health
      */
-    fun getAttacked(attack: Attack): Boolean {
+    fun getAttacked(damage: Int, hitType: Attack.HitTypes): Boolean {
         var health: Int = getHealth()
-        health -= attack.getMomentum()
+        health -= damage
         return if (health <= 0) {
             setHealth(0)
             true
@@ -62,6 +90,26 @@ class CharacterStats {
 
     fun setStamina(value: Int) {
         characterStats[BasicStats.BaseStamina] = value
+    }
+
+    fun getStrength(): Int {
+        return characterStats[BasicStats.Strength]!!
+    }
+
+    fun getCasting(): Int {
+        return characterStats[BasicStats.Casting]!!
+    }
+
+    fun getConstitution(): Int {
+        return characterStats[BasicStats.Constitution]!!
+    }
+
+    fun getIntelligence(): Int {
+        return characterStats[BasicStats.Intelligence]!!
+    }
+
+    fun getDexterity(): Int {
+        return characterStats[BasicStats.Dexterity]!!
     }
 
     fun raiseStat(stat: BasicStats, amount: Int) {

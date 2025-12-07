@@ -41,10 +41,10 @@ interface Dungeon {
                 BasicStats.Intelligence to (3),
                 BasicStats.Dexterity to (3)
             )), arrayListOf(
-                Attack(-1, "Boulder Smash", 10, 4, 2, 80),
-                Attack(-1, "Rock Throw", 4, 5, 7, 100),
-                Attack(-1, "AAAA", 1, 5, 0, 100),
-                Attack(-1, "AAAA", 1, 5, 0, 100)
+                Attack(-1, "Boulder Smash", 10, 4, 80, Attack.AttackTypes.PHY),
+                Attack(-1, "Rock Throw", 4, 5, 100, Attack.AttackTypes.RAN),
+                Attack(-1, "AAAA", 1, 5, 100, Attack.AttackTypes.PHY),
+                Attack(-1, "AAAA", 1, 5, 100, Attack.AttackTypes.PHY)
             ))
         )
 

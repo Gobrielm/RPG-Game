@@ -84,6 +84,7 @@ class PlayerCharacter {
             val shield = Shield.getShield(id)
             if (shield != null) shields.add(shield)
         }
+        shields.sortWith<Shield>(Comparator { shield1, shield2 -> shield1.fortitude - shield2.fortitude })
     }
 
 
@@ -161,11 +162,31 @@ class PlayerCharacter {
         skillTree.exp += amount
     }
 
+    fun regenerateShields() {
+        shields.forEach { shield ->
+            shield.regenShield()
+        }
+    }
+
     /**
-     *  @return Whether or not this character has gone below 0 health
+     *  @return (Whether or not this character has gone below 0 health, Msg of Event)
      */
-    fun takeAttack(attack: Attack): Boolean {
-        return currentStats.getAttacked(attack)
+    fun takeAttack(attack: Attack, damage: Int, hitType: Attack.HitTypes): Pair<Boolean, String> {
+        var damage: Int = damage
+        var msg = "Direct Attack"
+        for (shield in shields) {
+            if (shield.currentHitPoints > 0) {
+                val (newDamage, newMsg) = shield.blockHit(attack, damage, hitType)
+                damage = newDamage
+                msg = newMsg
+                break // Can only block with one shield at max
+            }
+        }
+        return Pair(currentStats.getAttacked(damage, hitType), msg)
+    }
+
+    fun calculateDamageForAttack(attack: Attack): Pair<Int, Attack.HitTypes> {
+        return currentStats.calculateDamageForAttack(attack)
     }
 
     fun getAttack(slot: Int): Attack? {

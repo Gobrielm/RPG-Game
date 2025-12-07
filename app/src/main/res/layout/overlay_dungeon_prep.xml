@@ -7,13 +7,34 @@
     tools:context=".dungeonPrep.DungeonPrepActivity">
 
     <ImageButton
-        android:id="@+id/characterButton"
+        android:id="@+id/characterButton1"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:scaleType="centerCrop"
         android:layout_gravity="bottom|start"
         android:layout_marginBottom="25dp"
         android:layout_marginStart="25dp"
+        android:contentDescription="Pick Character"
+        app:srcCompat="@drawable/nothing" />
+
+    <ImageButton
+        android:id="@+id/characterButton2"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="centerCrop"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="25dp"
+        android:contentDescription="Pick Character"
+        app:srcCompat="@drawable/nothing" />
+
+    <ImageButton
+        android:id="@+id/characterButton3"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="centerCrop"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="25dp"
+        android:layout_marginEnd="25dp"
         android:contentDescription="Pick Character"
         app:srcCompat="@drawable/nothing" />
 

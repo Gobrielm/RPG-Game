@@ -31,10 +31,12 @@ class SelectDungeonFragment : Fragment() {
 
         binding.dungeonButton.setOnClickListener {
             viewModel.startDungeon()
-            if (viewModel.getCharacter() == null) {
+            if ((requireContext() as DungeonPrepActivity).getCharacters().isEmpty()) {
                 lifecycleScope.launch {
+                    if (_binding == null) return@launch
                     binding.errorText.text = "Pick a Character"
                     delay(1400)
+                    if (_binding == null) return@launch
                     binding.errorText.text = ""
                 }
             }

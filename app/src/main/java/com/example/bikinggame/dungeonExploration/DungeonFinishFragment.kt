@@ -43,31 +43,38 @@ class DungeonFinishFragment: Fragment() {
         }
 
         val loot = viewModel.getLootEarned()
-        val exp = loot.first()
-        loot.removeAt(0)
-        val coins = loot.first()
-        loot.removeAt(0)
+        val exp = loot[-2]!!
+        val coins = loot[-1]!!
 
         // Update with loot locally
         inventoryList.add(Item(R.drawable.truck, "Exp Earned: $exp"))
-        viewModel.getSelectedCharacter()!!.addExp(exp)
+        val expEach = exp / viewModel.getPartySize()
+
+        viewModel.getSelectedCharacter()!!.addExp(expEach)
+        viewModel.getNextCharacter()?.addExp(expEach)
+        viewModel.getNextNextCharacter()?.addExp(expEach)
 
         inventoryList.add(Item(R.drawable.truck, "Coins Earned: $coins"))
         PlayerInventory.setCoins(PlayerInventory.getCoins() + coins)
 
-        loot.forEach { lootID ->
-            val equipment = Equipment.getEquipment(lootID)
-            inventoryList.add(Item(R.drawable.truck, equipment!!.name))
-            PlayerInventory.addPieceOfEquipment(lootID)
+        for ((lootID, count) in loot) {
+            if (lootID < 0 || count <= 0) continue
+
+            val equipment = Equipment.getEquipment(lootID) ?: continue
+
+            inventoryList.add(Item(R.drawable.truck,"${equipment.name} x$count"))
+
+            PlayerInventory.addEquipment(lootID, count)
         }
+
 
         // Update on cloud
         lifecycleScope.launch {
             saveCharacter(viewModel.getSelectedCharacter()!!.id)
             savePoints()
 
-            loot.forEach { equipmentID ->
-                updateEquipmentCount(equipmentID)
+            loot.forEach { (equipmentID, _) ->
+                if (equipmentID >= 0) updateEquipmentCount(equipmentID)
             }
         }
 

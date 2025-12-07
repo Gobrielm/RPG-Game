@@ -1,6 +1,10 @@
 package com.example.bikinggame.playerCharacter
 
 import org.json.JSONArray
+import kotlin.math.min
+import kotlin.math.round
+import kotlin.math.sqrt
+import kotlin.random.Random
 
 class Shield {
     val id: Int
@@ -8,6 +12,7 @@ class Shield {
     val deflection: Int // Chance to redirect attacks
     val fortitude: Int  // Hit points
     val regeneration: Int // Regenerates Hit points every round
+    var currentHitPoints: Int
 
     constructor(pId: Int, pName: String, pDeflection: Int, pFortitude: Int, pRegeneration: Int) {
         id = pId
@@ -15,14 +20,46 @@ class Shield {
         deflection = pDeflection
         fortitude = pFortitude
         regeneration = pRegeneration
+        currentHitPoints = fortitude
     }
 
-    constructor(jsonArray: JSONArray, offset: IntWrapper) {
-        id = jsonArray.get(offset.value++) as Int
-        name = jsonArray.get(offset.value++) as String
-        deflection = jsonArray.get(offset.value++) as Int
-        fortitude = jsonArray.get(offset.value++) as Int
-        regeneration = jsonArray.get(offset.value++) as Int
+    fun regenShield() {
+        if (currentHitPoints == 0) return
+        currentHitPoints += regeneration
+        currentHitPoints = min(currentHitPoints, fortitude)
+    }
+
+    /**
+     * @return With the (damage after blocking with Shield, Description of Event)
+     */
+    fun blockHit(attack: Attack, damage: Int, hitType: Attack.HitTypes): Pair<Int, String> {
+        if (damage == 0 || hitType.getMultiplier() == 0f) return Pair(0, "Miss")
+        if (currentHitPoints == 0) return Pair(damage, "Shield Broken")
+        val rand: Int = Random.nextInt(0, 100)
+        val area = sqrt(attack.mass.toDouble())
+        val pressure = (damage / area)
+
+        val chanceToDeflect = deflection / hitType.getMultiplier() // Higher chance with glancing
+
+        if (rand < chanceToDeflect) return Pair(0, "Deflected") // Deflected
+
+        if (fortitude * 3 < pressure) {
+            // Critical Shattering
+            val damageBlock = currentHitPoints / 2.0f
+            currentHitPoints = 0
+            return Pair(round(damage - damageBlock).toInt(), "Critical Shield Shattering")
+        }
+
+        val pierceRatio = min(0.5, pressure / 2.0 / fortitude)
+
+        val damageBlocked = round((1 - pierceRatio) * damage).toInt()
+        currentHitPoints -= damageBlocked
+
+        return Pair(damage - damageBlocked, if (currentHitPoints == 0) {
+           "Shield Shattering"
+        } else {
+            "Block"
+        })
     }
 
     override fun toString(): String {

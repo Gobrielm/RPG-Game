@@ -10,17 +10,20 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.example.bikinggame.databinding.FragmentRegularRoomBinding
+import com.example.bikinggame.enemy.EnemyCharacter
 import com.example.bikinggame.playerCharacter.Attack
+import com.example.bikinggame.playerCharacter.PlayerCharacter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 import kotlin.getValue
 
 class RegularRoomFragment : Fragment() {
     private var _binding: FragmentRegularRoomBinding? = null
-
     private val binding get() = _binding!!
-
     private val viewModel: DungeonExplorationViewModel by activityViewModels()
+
+    private var bossRoom: Boolean = false
     private var firstTime = true
 
     override fun onCreateView(
@@ -30,7 +33,14 @@ class RegularRoomFragment : Fragment() {
         _binding = FragmentRegularRoomBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        viewModel.setEnemy(viewModel.getDungeon()!!.rollRandomEnemy())
+        bossRoom = requireArguments().getBoolean("boss")
+
+        if (bossRoom) {
+            viewModel.setEnemy(viewModel.getDungeon()!!.rollRandomBoss())
+        } else {
+            viewModel.setEnemy(viewModel.getDungeon()!!.rollRandomEnemy())
+        }
+
 
         updateStats()
 
@@ -50,36 +60,83 @@ class RegularRoomFragment : Fragment() {
     }
 
     fun simulateRound(playerAttack: Attack) {
-        val enemyCharacter = viewModel.getEnemy()!!
-        val playerCharacter = viewModel.getSelectedCharacter()!!
+        lifecycleScope.launch {
+            (requireContext() as DungeonExplorationActivity).startBlockingInputs()
+            simulatePlayerAttack(playerAttack)
+            (requireContext() as DungeonExplorationActivity).stopBlockingInputs()
+        }
+    }
 
-        val enemyIsDead = enemyCharacter.takeAttack(playerAttack)
+    suspend fun simulatePlayerAttack(playerAttack: Attack) {
+        val enemyCharacter = viewModel.getEnemy()
+        val playerCharacter = viewModel.getSelectedCharacter()
+        if (enemyCharacter == null || playerCharacter == null) return
 
+        val (damage, hitType) = playerCharacter.calculateDamageForAttack(playerAttack)
+
+        lifecycleScope.launch {
+            launchAttackAnimation(550, hitType.toString())
+        }
+        delay(300)
+
+        val (enemyIsDead, msg) = enemyCharacter.takeAttack(damage, hitType)
+        // TODO: Display Msg
         updateStats()
+
+        delay(300)
 
         if (enemyIsDead) {
             viewModel.setReadyForNextRoom()
-            val exp = viewModel.getDungeon()!!.getExpForEnemy()
+            val dungeon = viewModel.getDungeon()
+            if (dungeon == null) return
+            val exp = dungeon.getExpForEnemy()
             viewModel.addExpEarned(exp)
             return
         }
 
+        delay(200)
+
+        simulateEnemyAttack(playerCharacter, enemyCharacter)
+    }
+
+    suspend fun launchAttackAnimation(len: Long, attackType: String) {
+        binding.attackAnimation.visibility = View.VISIBLE
+        binding.attackAnimation.playAnimation()
+        binding.hitTypeText.text = attackType
+
+        delay(len)
+
+        binding.hitTypeText.text = ""
+        binding.attackAnimation.visibility = View.GONE
+    }
+
+    suspend fun simulateEnemyAttack(playerCharacter: PlayerCharacter, enemyCharacter: EnemyCharacter) {
         val enemyAttack: Attack = enemyCharacter.chooseRandAttack()
+        val (damage, hitType) = enemyCharacter.calculateDamageForAttack(enemyAttack)
 
-        val isPlayerDead = playerCharacter.takeAttack(enemyAttack)
+        lifecycleScope.launch {
+            launchAttackAnimation(550, hitType.toString())
+        }
+        delay(300)
 
-        (requireActivity() as DungeonExplorationActivity).updateStats()
+        val (isPlayerDead, msg) = playerCharacter.takeAttack(enemyAttack, damage, hitType)
 
+        (requireContext() as DungeonExplorationActivity).updateStats()
+
+        // TODO: Display Msg
+        delay(300)
+
+        if (!isPlayerDead) playerCharacter.regenerateShields()
+        moveToNextCharacter(isPlayerDead)
+    }
+
+    fun moveToNextCharacter(isPlayerDead: Boolean) {
         if (isPlayerDead) {
             viewModel.removeCurrentMember()
         } else {
             viewModel.cycleSelectedCharacter()
-        }
-
-        // TODO: Block inputs while player watches character get hurt
-        lifecycleScope.launch {
-            delay(1000)
-            (requireActivity() as DungeonExplorationActivity).updateStats()
+            (requireContext() as DungeonExplorationActivity).updateStats()
+            (requireContext() as DungeonExplorationActivity).setAttacks()
         }
     }
 

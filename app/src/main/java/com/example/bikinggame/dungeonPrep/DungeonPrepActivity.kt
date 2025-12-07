@@ -21,6 +21,8 @@ class DungeonPrepActivity: AppCompatActivity() {
     private lateinit var binding: ActivityDungeonPrepBinding
 
     private val viewModel: DungeonPrepViewModel by viewModels()
+    private var selectedCharacterButtonInd: Int = -1
+    private val partySelected: Array<PlayerCharacter?> = arrayOf(null, null, null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +30,29 @@ class DungeonPrepActivity: AppCompatActivity() {
         binding = ActivityDungeonPrepBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.overlayDungeonPrep.characterButton.setOnClickListener {
+        binding.overlayDungeonPrep.characterButton1.setOnClickListener {
+            if (selectedCharacterButtonInd != -1) return@setOnClickListener
+            selectedCharacterButtonInd = 1
+            val navController = findNavController(R.id.nav_host_fragment_dungeon_prep_overlay)
+            val bundle = Bundle().apply {
+                putBoolean("PICK", true)
+            }
+            navController.navigate(R.id.selectPlayerCharacter, bundle)
+        }
+
+        binding.overlayDungeonPrep.characterButton2.setOnClickListener {
+            if (selectedCharacterButtonInd != -1) return@setOnClickListener
+            selectedCharacterButtonInd = 2
+            val navController = findNavController(R.id.nav_host_fragment_dungeon_prep_overlay)
+            val bundle = Bundle().apply {
+                putBoolean("PICK", true)
+            }
+            navController.navigate(R.id.selectPlayerCharacter, bundle)
+        }
+
+        binding.overlayDungeonPrep.characterButton3.setOnClickListener {
+            if (selectedCharacterButtonInd != -1) return@setOnClickListener
+            selectedCharacterButtonInd = 3
             val navController = findNavController(R.id.nav_host_fragment_dungeon_prep_overlay)
             val bundle = Bundle().apply {
                 putBoolean("PICK", true)
@@ -43,36 +67,66 @@ class DungeonPrepActivity: AppCompatActivity() {
     }
 
     fun selectCharacter(character: PlayerCharacter, imageID: Int) {
+        if (selectedCharacterButtonInd == -1) return
         val navController = findNavController(R.id.nav_host_fragment_dungeon_prep_overlay)
         navController.navigate(R.id.selectDungeonFragment)
-        viewModel.setCharacter(character)
-        binding.overlayDungeonPrep.characterButton.setImageResource(imageID)
+        val status = putCharacterInParty(character, selectedCharacterButtonInd - 1)
+
+        if (!status) {
+            selectedCharacterButtonInd = -1
+            return
+        }
+
+        when (selectedCharacterButtonInd) {
+            1 -> binding.overlayDungeonPrep.characterButton1.setImageResource(imageID)
+            2 -> binding.overlayDungeonPrep.characterButton2.setImageResource(imageID)
+            else -> binding.overlayDungeonPrep.characterButton3.setImageResource(imageID)
+        }
+        selectedCharacterButtonInd = -1
+    }
+
+    fun putCharacterInParty(character: PlayerCharacter, ind: Int): Boolean {
+        partySelected.forEach { otherCharacter ->
+            if (otherCharacter?.id == character.id) {
+                return false
+            }
+        }
+
+        partySelected[ind] = character
+        return true
     }
 
     fun tryToStartDungeon() {
-        if (viewModel.getCharacter() == null) {
-            // TODO: Error msg
+        val charactersSelected = getCharacters()
+        if (charactersSelected.isEmpty()) {
             return
         }
 
         val intent = Intent(this, DungeonExplorationActivity::class.java)
-        intent.putExtra("CHARACTER1", viewModel.getCharacter()!!.id)
+
+        val slots = arrayOf("CHARACTER1", "CHARACTER2", "CHARACTER3")
+        for (i in 0 until charactersSelected.size) {
+            val character = charactersSelected[i]
+            intent.putExtra(slots[i], character.id)
+        }
+
         startActivity(intent)
+    }
+
+    fun getCharacters(): ArrayList<PlayerCharacter> {
+        val list = ArrayList<PlayerCharacter>()
+        partySelected.forEach { character ->
+            if (character != null) list.add(character)
+        }
+        return list
     }
 }
 
 class DungeonPrepViewModel: ViewModel() {
-    private val mutableSelectedCharacter = MutableLiveData<PlayerCharacter>()
     private val mutableStartDungeon = MutableLiveData<Boolean>()
     val startDungeon: LiveData<Boolean> get() = mutableStartDungeon
 
     fun startDungeon() {
         mutableStartDungeon.value = true
-    }
-    fun getCharacter(): PlayerCharacter? {
-        return mutableSelectedCharacter.value
-    }
-    fun setCharacter(character: PlayerCharacter) {
-        mutableSelectedCharacter.value = character
     }
 }

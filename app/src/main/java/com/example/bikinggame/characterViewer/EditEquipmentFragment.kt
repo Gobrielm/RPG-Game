@@ -123,7 +123,7 @@ class EditEquipmentFragment: Fragment() {
 
         equipmentToChooseFrom = PlayerInventory.getAvailableEquipment(slot)
 
-        inventoryList.add(Item(R.drawable.ic_menu_camera, "Unequip Item"))
+        inventoryList.add(Item(R.drawable.nothing, "Unequip Item"))
 
         equipmentToChooseFrom.forEach { pair ->
             if (pair.second > 0) inventoryList.add(Item(R.drawable.truck, pair.first.toString() + "   x${pair.second}"))

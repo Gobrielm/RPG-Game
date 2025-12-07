@@ -87,6 +87,12 @@
             android:layout_marginEnd="35dp"
             android:layout_marginBottom="35dp"
             android:text="Button"
+
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeMaxTextSize="18sp"
+            android:autoSizeStepGranularity="1sp"
+
             app:layout_constraintBottom_toTopOf="@+id/mv2Button"
             app:layout_constraintEnd_toStartOf="@+id/mv3Button" />
 
@@ -97,6 +103,12 @@
             android:layout_marginEnd="35dp"
             android:layout_marginBottom="35dp"
             android:text="Button"
+
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeMaxTextSize="18sp"
+            android:autoSizeStepGranularity="1sp"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/mv4Button" />
 
@@ -107,6 +119,12 @@
             android:layout_marginEnd="35dp"
             android:layout_marginBottom="35dp"
             android:text="Button"
+
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeMaxTextSize="18sp"
+            android:autoSizeStepGranularity="1sp"
+
             app:layout_constraintBottom_toTopOf="@+id/mv4Button"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -117,6 +135,12 @@
             android:layout_marginEnd="35dp"
             android:layout_marginBottom="35dp"
             android:text="Button"
+
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeMaxTextSize="18sp"
+            android:autoSizeStepGranularity="1sp"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

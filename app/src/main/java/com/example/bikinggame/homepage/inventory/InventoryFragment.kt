@@ -70,7 +70,10 @@ class InventoryFragment() : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val status = arguments?.getBoolean("PICK")
-        if (status != null && status) mode = InventoryMode.PICK
+        if (status != null && status) {
+            mode = InventoryMode.PICK
+            binding.newCharacterButton.visibility = View.GONE
+        }
 
         recyclerView =  view.findViewById(R.id.recyclerView)
 

@@ -10,13 +10,11 @@
         android:name="com.example.bikinggame.dungeonExploration.RegularRoomFragment"
         android:label="Dungeon"
         tools:layout="@layout/fragment_regular_room" >
-    </fragment>
 
-    <fragment
-        android:id="@+id/boss_room"
-        android:name="com.example.bikinggame.dungeonExploration.BossRoomFragment"
-        android:label="Dungeon"
-        tools:layout="@layout/fragment_boss_room" >
+        <argument
+            android:name="boss"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
 
     <fragment

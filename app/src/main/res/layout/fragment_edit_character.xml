@@ -19,41 +19,66 @@
 
     <Button
         android:id="@+id/mv2Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
         android:layout_marginTop="70dp"
         android:layout_marginEnd="75dp"
         android:text="Button"
+
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="8sp"
+        android:autoSizeMaxTextSize="18sp"
+        android:autoSizeStepGranularity="1sp"
+
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/statsPreview" />
+        app:layout_constraintTop_toBottomOf="@+id/statsPreview"/>
+
 
     <Button
         android:id="@+id/mv4Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
         android:layout_marginTop="27dp"
         android:layout_marginEnd="75dp"
         android:text="Button"
+
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="8sp"
+        android:autoSizeMaxTextSize="18sp"
+        android:autoSizeStepGranularity="1sp"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mv2Button" />
 
     <Button
         android:id="@+id/mv1Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
         android:layout_marginStart="75dp"
         android:layout_marginTop="297dp"
         android:text="Button"
+
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="8sp"
+        android:autoSizeMaxTextSize="18sp"
+        android:autoSizeStepGranularity="1sp"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/mv3Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
         android:layout_marginStart="75dp"
         android:layout_marginTop="27dp"
         android:text="Button"
+
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="8sp"
+        android:autoSizeMaxTextSize="18sp"
+        android:autoSizeStepGranularity="1sp"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mv1Button" />
 
@@ -80,9 +105,11 @@
         android:id="@+id/equipmentButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="126dp"
-        android:text="Button"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="124dp"
+        android:layout_marginEnd="48dp"
+        android:text="Equipment"
+        app:layout_constraintEnd_toStartOf="@+id/skillsButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mv3Button" />
 
@@ -90,9 +117,9 @@
         android:id="@+id/skillsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="126dp"
-        android:layout_marginEnd="100dp"
-        android:text="Button"
+        android:layout_marginTop="124dp"
+        android:layout_marginEnd="72dp"
+        android:text="Skill Tree"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mv4Button" />
 

@@ -97,4 +97,10 @@ class CenteredFlowLayout @JvmOverloads constructor(
             y += ch
         }
     }
+
+    fun removeChildren() {
+        for (i in 0 until childCount) {
+            removeViewAt(0)
+        }
+    }
 }
