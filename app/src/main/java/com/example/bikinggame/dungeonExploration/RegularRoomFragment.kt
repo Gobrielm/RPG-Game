@@ -49,7 +49,12 @@ class RegularRoomFragment : Fragment() {
                 firstTime = false
                 return@observe
             }
-            simulateRound(attack)
+            if (attack == null) {
+                simulateSkipRound()
+            } else {
+                simulateRound(attack)
+            }
+
         }
         return root
     }
@@ -67,6 +72,14 @@ class RegularRoomFragment : Fragment() {
         }
     }
 
+    fun simulateSkipRound() {
+        lifecycleScope.launch {
+            (requireContext() as DungeonExplorationActivity).startBlockingInputs()
+            simulateEnemyAttack(viewModel.getSelectedCharacter()!!, viewModel.getEnemy()!!)
+            (requireContext() as DungeonExplorationActivity).stopBlockingInputs()
+        }
+    }
+
     suspend fun simulatePlayerAttack(playerAttack: Attack) {
         val enemyCharacter = viewModel.getEnemy()
         val playerCharacter = viewModel.getSelectedCharacter()
@@ -74,16 +87,13 @@ class RegularRoomFragment : Fragment() {
 
         val (damage, hitType) = playerCharacter.calculateDamageForAttack(playerAttack)
 
-        lifecycleScope.launch {
-            launchAttackAnimation(550, hitType.toString())
-        }
-        delay(300)
-
-        val (enemyIsDead, msg) = enemyCharacter.takeAttack(damage, hitType)
-        // TODO: Display Msg
+        val (enemyIsDead, msg) = enemyCharacter.takeAttack(damage, playerAttack, hitType)
         updateStats()
 
-        delay(300)
+        val str = "$hitType\n$msg"
+
+        launchAttackAnimation(1000, str)
+
 
         if (enemyIsDead) {
             viewModel.setReadyForNextRoom()
@@ -99,34 +109,24 @@ class RegularRoomFragment : Fragment() {
         simulateEnemyAttack(playerCharacter, enemyCharacter)
     }
 
-    suspend fun launchAttackAnimation(len: Long, attackType: String) {
-        binding.attackAnimation.visibility = View.VISIBLE
-        binding.attackAnimation.playAnimation()
-        binding.hitTypeText.text = attackType
-
-        delay(len)
-
-        binding.hitTypeText.text = ""
-        binding.attackAnimation.visibility = View.GONE
-    }
-
     suspend fun simulateEnemyAttack(playerCharacter: PlayerCharacter, enemyCharacter: EnemyCharacter) {
         val enemyAttack: Attack = enemyCharacter.chooseRandAttack()
         val (damage, hitType) = enemyCharacter.calculateDamageForAttack(enemyAttack)
-
-        lifecycleScope.launch {
-            launchAttackAnimation(550, hitType.toString())
-        }
-        delay(300)
 
         val (isPlayerDead, msg) = playerCharacter.takeAttack(enemyAttack, damage, hitType)
 
         (requireContext() as DungeonExplorationActivity).updateStats()
 
-        // TODO: Display Msg
-        delay(300)
+        val str = "$hitType\n$msg"
 
-        if (!isPlayerDead) playerCharacter.regenerateShields()
+        launchAttackAnimation(1000, str)
+
+        if (!isPlayerDead) playerCharacter.updateNewTurn()
+        if (enemyCharacter.isAlive()) enemyCharacter.updateNewTurn()
+
+        (requireContext() as DungeonExplorationActivity).updateStats()
+        updateStats()
+
         moveToNextCharacter(isPlayerDead)
     }
 
@@ -138,6 +138,18 @@ class RegularRoomFragment : Fragment() {
             (requireContext() as DungeonExplorationActivity).updateStats()
             (requireContext() as DungeonExplorationActivity).setAttacks()
         }
+    }
+
+    suspend fun launchAttackAnimation(len: Long, attackDesc: String) {
+        binding.attackAnimation.visibility = View.VISIBLE
+        binding.attackAnimation.speed = 600.0f / len
+        binding.attackAnimation.playAnimation()
+        binding.hitTypeText.text = attackDesc
+
+        delay(len)
+
+        binding.hitTypeText.text = ""
+        binding.attackAnimation.visibility = View.GONE
     }
 
     fun updateStats() {

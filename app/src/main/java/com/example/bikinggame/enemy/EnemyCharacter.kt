@@ -38,8 +38,9 @@ class EnemyCharacter {
     /**
      *  @return (Whether or not this character has gone below 0 health, Msg of Attack)
      */
-    fun takeAttack(damage: Int, hitType: Attack.HitTypes): Pair<Boolean, String> {
-        return Pair(currentStats.getAttacked(damage, hitType), "Direct Attack")
+    fun takeAttack(damage: Int, attack: Attack, hitType: Attack.HitTypes): Pair<Boolean, String> {
+        val (status, msg) = currentStats.getAttacked(damage, attack, hitType, true)
+        return Pair(status, msg)
     }
 
     fun calculateDamageForAttack(attack: Attack): Pair<Int, Attack.HitTypes> {
@@ -53,5 +54,14 @@ class EnemyCharacter {
         }
 
         return attacks[Random.nextInt(0, numValidAttacks)]!!
+    }
+
+    fun isAlive(): Boolean {
+        return currentStats.getHealth() > 0
+    }
+
+    fun updateNewTurn() {
+        currentStats.regenStamina(baseStats.getStamina())
+        currentStats.regenMana(baseStats.getMana())
     }
 }

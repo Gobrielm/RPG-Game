@@ -6,6 +6,7 @@ import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.min
 import kotlin.math.pow
+import kotlin.math.round
 import kotlin.random.Random
 
 class IntWrapper(var value: Int)
@@ -162,10 +163,28 @@ class PlayerCharacter {
         skillTree.exp += amount
     }
 
-    fun regenerateShields() {
+
+    /**
+     * Used to update shields, status affects, regenerating
+     */
+    fun updateNewTurn() {
         shields.forEach { shield ->
             shield.regenShield()
         }
+        currentStats.regenStamina(baseStats.getStamina())
+        currentStats.regenMana(baseStats.getMana())
+    }
+
+    fun canChooseAttack(attack: Attack): Boolean {
+        val (stat, amt) = attack.statCost
+        if (stat == null) return true
+        return currentStats.characterStats[stat]!! >= amt
+    }
+
+    fun takeCostFromAttackUsed(attack: Attack) {
+        val (stat, amt) = attack.statCost
+        if (stat == null) return
+        currentStats.lowerStat(stat, amt)
     }
 
     /**
@@ -173,16 +192,20 @@ class PlayerCharacter {
      */
     fun takeAttack(attack: Attack, damage: Int, hitType: Attack.HitTypes): Pair<Boolean, String> {
         var damage: Int = damage
-        var msg = "Direct Attack"
+        var msg = ""
+        var canDodge = true // Can either dodge or use shield
         for (shield in shields) {
             if (shield.currentHitPoints > 0) {
+                canDodge = false
                 val (newDamage, newMsg) = shield.blockHit(attack, damage, hitType)
                 damage = newDamage
                 msg = newMsg
                 break // Can only block with one shield at max
             }
         }
-        return Pair(currentStats.getAttacked(damage, hitType), msg)
+        val (status, otherMsg) = currentStats.getAttacked(damage, attack, hitType, canDodge)
+
+        return Pair(status, msg.ifEmpty { otherMsg })
     }
 
     fun calculateDamageForAttack(attack: Attack): Pair<Int, Attack.HitTypes> {
@@ -219,16 +242,16 @@ class PlayerCharacter {
     }
 
     fun healCharacter(percentage: Double) {
-        val amt1 = (baseStats.getHealth() * percentage).toInt()
-        val newHealth = min(currentStats.getHealth() + amt1, currentStats.getHealth())
+        val amt1 = round(baseStats.getHealth() * percentage).toInt()
+        val newHealth = min(currentStats.getHealth() + amt1, baseStats.getHealth())
         currentStats.setHealth(newHealth)
 
-        val amt2 = (baseStats.getStamina() * percentage).toInt()
-        val newStamina = min(currentStats.getStamina() + amt2, currentStats.getStamina())
+        val amt2 = round(baseStats.getStamina() * percentage).toInt()
+        val newStamina = min(currentStats.getStamina() + amt2, baseStats.getStamina())
         currentStats.setStamina(newStamina)
 
-        val amt3 = (baseStats.getMana() * percentage).toInt()
-        val newMana = min(currentStats.getMana() + amt3, currentStats.getMana())
+        val amt3 = round(baseStats.getMana() * percentage).toInt()
+        val newMana = min(currentStats.getMana() + amt3, baseStats.getMana())
         currentStats.setMana(newMana)
     }
 }

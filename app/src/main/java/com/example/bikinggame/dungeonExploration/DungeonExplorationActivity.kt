@@ -98,6 +98,9 @@ class DungeonExplorationActivity: AppCompatActivity() {
         binding.characterUi.mv4Button.setOnClickListener {
             chooseAttack(3)
         }
+        binding.characterUi.skipButton.setOnClickListener {
+            skipAttack()
+        }
 
         viewModel.readyForNextRoom.observe(this, Observer {
             viewModel.resetSelectedCharacter()
@@ -215,6 +218,11 @@ class DungeonExplorationActivity: AppCompatActivity() {
         if (attack == null) return
 
         viewModel.setPlayerAttack(attack)
+    }
+
+    fun skipAttack() {
+        if (finished || pauseInputs) return
+        viewModel.setPlayerAttack(null)
     }
 
     fun blurIn() {
@@ -343,7 +351,7 @@ class DungeonExplorationViewModel : ViewModel() {
         mutableDungeon.value = dungeon
     }
 
-    fun setPlayerAttack(attack: Attack) {
+    fun setPlayerAttack(attack: Attack?) {
         mutablePlayerAttack.value = attack
     }
 

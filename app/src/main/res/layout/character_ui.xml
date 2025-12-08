@@ -40,7 +40,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/mainCharacterUI"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="220dp"
         android:layout_gravity="bottom"
         android:background="#804E4E4E">
 
@@ -50,7 +50,7 @@
             android:layout_width="14dp"
             android:layout_height="141dp"
             android:layout_marginStart="23dp"
-            android:layout_marginBottom="29dp"
+            android:layout_marginBottom="59dp"
             android:progress="70"
             android:progressTint="#251BAF"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -62,7 +62,7 @@
             android:layout_width="14dp"
             android:layout_height="141dp"
             android:layout_marginStart="23dp"
-            android:layout_marginBottom="29dp"
+            android:layout_marginBottom="59dp"
             android:progress="85"
             android:progressTint="#0BF613"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -74,7 +74,7 @@
             android:layout_width="16dp"
             android:layout_height="141dp"
             android:layout_marginStart="25dp"
-            android:layout_marginBottom="29dp"
+            android:layout_marginBottom="59dp"
             android:progress="50"
             android:progressTint="#F80000"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -86,12 +86,12 @@
             android:layout_height="50dp"
             android:layout_marginEnd="35dp"
             android:layout_marginBottom="35dp"
-            android:text="Button"
-
-            android:autoSizeTextType="uniform"
-            android:autoSizeMinTextSize="8sp"
             android:autoSizeMaxTextSize="18sp"
+
+            android:autoSizeMinTextSize="8sp"
             android:autoSizeStepGranularity="1sp"
+            android:autoSizeTextType="uniform"
+            android:text="Button"
 
             app:layout_constraintBottom_toTopOf="@+id/mv2Button"
             app:layout_constraintEnd_toStartOf="@+id/mv3Button" />
@@ -101,13 +101,13 @@
             android:layout_width="95dp"
             android:layout_height="50dp"
             android:layout_marginEnd="35dp"
-            android:layout_marginBottom="35dp"
-            android:text="Button"
-
-            android:autoSizeTextType="uniform"
-            android:autoSizeMinTextSize="8sp"
+            android:layout_marginBottom="65dp"
             android:autoSizeMaxTextSize="18sp"
+
+            android:autoSizeMinTextSize="8sp"
             android:autoSizeStepGranularity="1sp"
+            android:autoSizeTextType="uniform"
+            android:text="Button"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/mv4Button" />
@@ -116,14 +116,14 @@
             android:id="@+id/mv3Button"
             android:layout_width="95dp"
             android:layout_height="50dp"
-            android:layout_marginEnd="35dp"
+            android:layout_marginEnd="45dp"
             android:layout_marginBottom="35dp"
-            android:text="Button"
-
-            android:autoSizeTextType="uniform"
-            android:autoSizeMinTextSize="8sp"
             android:autoSizeMaxTextSize="18sp"
+
+            android:autoSizeMinTextSize="8sp"
             android:autoSizeStepGranularity="1sp"
+            android:autoSizeTextType="uniform"
+            android:text="Button"
 
             app:layout_constraintBottom_toTopOf="@+id/mv4Button"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -132,15 +132,27 @@
             android:id="@+id/mv4Button"
             android:layout_width="95dp"
             android:layout_height="50dp"
-            android:layout_marginEnd="35dp"
-            android:layout_marginBottom="35dp"
+            android:layout_marginEnd="45dp"
+            android:layout_marginBottom="65dp"
+            android:autoSizeMaxTextSize="18sp"
+
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeStepGranularity="1sp"
+            android:autoSizeTextType="uniform"
             android:text="Button"
 
-            android:autoSizeTextType="uniform"
-            android:autoSizeMinTextSize="8sp"
-            android:autoSizeMaxTextSize="18sp"
-            android:autoSizeStepGranularity="1sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
+
+        <Button
+            android:id="@+id/skipButton"
+            android:layout_width="120dp"
+            android:layout_height="40dp"
+
+            android:layout_marginEnd="95dp"
+            android:layout_marginBottom="15dp"
+            android:text="Skip Turn"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

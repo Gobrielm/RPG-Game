@@ -9,16 +9,17 @@ class Attack {
     val mass: Int
     val velocity: Int
     val accuracy: Int // Chance to do direct hit, 0 - 100
-
     val type: AttackTypes
+    val statCost: Pair<BasicStats?, Int>
 
-    constructor(pId: Int, pName: String, pMass: Int, pVelocity: Int, pAccuracy: Int, pType: AttackTypes) {
+    constructor(pId: Int, pName: String, pMass: Int, pVelocity: Int, pAccuracy: Int, pType: AttackTypes, pStatCost: Pair<BasicStats?, Int> = Pair<BasicStats?, Int>(null, 0)) {
         id = pId
         mass = pMass
         name = pName
         velocity = pVelocity
         accuracy = pAccuracy
         type = pType
+        statCost = pStatCost
     }
 
     fun getMomentum(): Int {
@@ -76,7 +77,7 @@ class Attack {
         val attackIDToAttack = hashMapOf<Int, Attack>(
             1 to Attack(1, "Basic Hit", 2, 5, 90, AttackTypes.PHY),
 
-            2 to Attack(2, "Mana Blast", 1, 8, 80, AttackTypes.MAG),
+            2 to Attack(2, "Mana Blast", 1, 8, 80, AttackTypes.MAG, Pair(BasicStats.BaseMana, 3)),
 
             3 to Attack(3, "Normal Shot", 1, 7, 85, AttackTypes.RAN),
 
