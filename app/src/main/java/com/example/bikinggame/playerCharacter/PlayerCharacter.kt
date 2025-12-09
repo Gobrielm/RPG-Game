@@ -120,8 +120,7 @@ class PlayerCharacter {
     fun addEquipment(slot: EquipmentSlot, equipment: Equipment) {
         currentEquipment[slot.ordinal] = equipment
         for (statBoost: Pair<BasicStats, Int> in equipment.statBoost) {
-            val prev: Int = currentStats.characterStats[statBoost.first]!!
-            currentStats.characterStats[statBoost.first] = prev + statBoost.second
+            currentStats.raiseStat(statBoost.first, statBoost.second)
         }
     }
 
@@ -129,8 +128,7 @@ class PlayerCharacter {
         val toRemove: Equipment? = currentEquipment[slot.ordinal]
         if (toRemove != null) {
             for (statBoost: Pair<BasicStats, Int> in toRemove.statBoost) {
-                val prev: Int = currentStats.characterStats[statBoost.first]!!
-                currentStats.characterStats[statBoost.first] = prev - statBoost.second
+                currentStats.lowerStat(statBoost.first, statBoost.second)
             }
         }
         currentEquipment[slot.ordinal] = null
@@ -163,7 +161,6 @@ class PlayerCharacter {
         skillTree.exp += amount
     }
 
-
     /**
      * Used to update shields, status affects, regenerating
      */
@@ -173,17 +170,22 @@ class PlayerCharacter {
         }
         currentStats.regenStamina(baseStats.getStamina())
         currentStats.regenMana(baseStats.getMana())
+        currentStats.updateNewTurn()
+    }
+
+    fun addStatusEffect(statusEffect: StatusEffect) {
+        currentStats.addStatusEffect(statusEffect)
     }
 
     fun canChooseAttack(attack: Attack): Boolean {
+        if (attack.statCost == null) return true
         val (stat, amt) = attack.statCost
-        if (stat == null) return true
-        return currentStats.characterStats[stat]!! >= amt
+        return currentStats.getPrimaryStat(stat) >= amt
     }
 
     fun takeCostFromAttackUsed(attack: Attack) {
+        if (attack.statCost == null) return
         val (stat, amt) = attack.statCost
-        if (stat == null) return
         currentStats.lowerStat(stat, amt)
     }
 

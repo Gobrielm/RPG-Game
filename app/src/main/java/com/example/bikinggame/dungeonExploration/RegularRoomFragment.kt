@@ -88,6 +88,9 @@ class RegularRoomFragment : Fragment() {
         val (damage, hitType) = playerCharacter.calculateDamageForAttack(playerAttack)
 
         val (enemyIsDead, msg) = enemyCharacter.takeAttack(damage, playerAttack, hitType)
+        playerCharacter.takeCostFromAttackUsed(playerAttack)
+
+        (requireContext() as DungeonExplorationActivity).updateStats()
         updateStats()
 
         val str = "$hitType\n$msg"

@@ -10,9 +10,22 @@ class Attack {
     val velocity: Int
     val accuracy: Int // Chance to do direct hit, 0 - 100
     val type: AttackTypes
-    val statCost: Pair<BasicStats?, Int>
+    val statCost: Pair<BasicStats, Int>?
+    val statusEffectInflictChance: Pair<Int, StatusEffect>? // (0 - 100, Status Effect)
 
-    constructor(pId: Int, pName: String, pMass: Int, pVelocity: Int, pAccuracy: Int, pType: AttackTypes, pStatCost: Pair<BasicStats?, Int> = Pair<BasicStats?, Int>(null, 0)) {
+    constructor(pId: Int, pName: String, pMass: Int, pVelocity: Int, pAccuracy: Int, pType: AttackTypes) {
+        id = pId
+        mass = pMass
+        name = pName
+        velocity = pVelocity
+        accuracy = pAccuracy
+        type = pType
+        statCost = null
+        statusEffectInflictChance = null
+    }
+
+    constructor(pId: Int, pName: String, pMass: Int, pVelocity: Int, pAccuracy: Int,
+                pType: AttackTypes, pStatCost: Pair<BasicStats, Int>?, pStatusEffectInflictChance: Pair<Int, StatusEffect>? = null) {
         id = pId
         mass = pMass
         name = pName
@@ -20,6 +33,19 @@ class Attack {
         accuracy = pAccuracy
         type = pType
         statCost = pStatCost
+        statusEffectInflictChance = pStatusEffectInflictChance
+    }
+
+    constructor(pId: Int, pName: String, pMass: Int, pVelocity: Int, pAccuracy: Int,
+                pType: AttackTypes, pStatusEffectInflictChance: Pair<Int, StatusEffect>) {
+        id = pId
+        mass = pMass
+        name = pName
+        velocity = pVelocity
+        accuracy = pAccuracy
+        type = pType
+        statCost = null
+        statusEffectInflictChance = pStatusEffectInflictChance
     }
 
     fun getMomentum(): Int {

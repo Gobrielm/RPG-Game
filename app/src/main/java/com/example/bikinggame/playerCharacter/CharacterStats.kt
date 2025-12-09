@@ -1,7 +1,6 @@
 package com.example.bikinggame.playerCharacter
 
 import android.util.Log
-import java.util.Random
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
@@ -37,12 +36,12 @@ class CharacterStats {
     fun calculateDamageForAttack(attack: Attack): Pair<Int, Attack.HitTypes> {
         val baseDamage = attack.getMomentum()
         val hitType = attack.getRandomHitType()
-        val statMult = getStatDamageMultipler(attack.type)
+        val statMult = getStatDamageMultiplier(attack.type)
 
         return Pair(round(baseDamage * hitType.getMultiplier() * statMult).toInt(), hitType)
     }
 
-    fun getStatDamageMultipler(attackType: Attack.AttackTypes): Float {
+    fun getStatDamageMultiplier(attackType: Attack.AttackTypes): Float {
         return 1f + when (attackType) {
             Attack.AttackTypes.PHY -> {
                 getStrength() / 50.0f
@@ -69,6 +68,7 @@ class CharacterStats {
      *  @return Whether true if character has gone below 0 health
      */
     fun getAttacked(damage: Int, attack: Attack, hitType: Attack.HitTypes, canDodge: Boolean): Pair<Boolean, String> {
+
         val blocked = getDamageBlockedForAttack(attack.type)
         var damage = max(0, damage - blocked)
 
@@ -81,6 +81,14 @@ class CharacterStats {
                 damage = 0
             }
             msg = newMsg
+        }
+
+        if (damage != 0 && attack.statusEffectInflictChance != null) {
+            val rand: Int = kotlin.random.Random.nextInt(0, 100)
+            val (chance, statusEffect) = attack.statusEffectInflictChance
+            if (chance > rand) {
+                addStatusEffect(statusEffect)
+            }
         }
 
         var health: Int = getHealth()
@@ -122,6 +130,14 @@ class CharacterStats {
         return Pair(false, "")
     }
 
+    fun getPrimaryStat(stat: BasicStats): Int {
+        if (stat == BasicStats.BaseHealth) return getHealth()
+        if (stat == BasicStats.BaseStamina) return getStamina()
+        if (stat == BasicStats.BaseMana) return getMana()
+        Log.e("Character Stats", "Tried to Access non primary stat")
+        return -1
+    }
+
     fun getHealth(): Int {
         return characterStats[BasicStats.BaseHealth] ?: 0
     }
@@ -147,23 +163,23 @@ class CharacterStats {
     }
 
     fun getStrength(): Int {
-        return characterStats[BasicStats.Strength]!!
+        return characterStats[BasicStats.Strength]!! - getDebuffForStat(BasicStats.Strength)
     }
 
     fun getCasting(): Int {
-        return characterStats[BasicStats.Casting]!!
+        return characterStats[BasicStats.Casting]!! - getDebuffForStat(BasicStats.Casting)
     }
 
     fun getConstitution(): Int {
-        return characterStats[BasicStats.Constitution]!!
+        return characterStats[BasicStats.Constitution]!! - getDebuffForStat(BasicStats.Constitution)
     }
 
     fun getIntelligence(): Int {
-        return characterStats[BasicStats.Intelligence]!!
+        return characterStats[BasicStats.Intelligence]!! - getDebuffForStat(BasicStats.Intelligence)
     }
 
     fun getDexterity(): Int {
-        return characterStats[BasicStats.Dexterity]!!
+        return characterStats[BasicStats.Dexterity]!! - getDebuffForStat(BasicStats.Dexterity)
     }
 
     fun raiseStat(stat: BasicStats, amount: Int) {
@@ -173,6 +189,36 @@ class CharacterStats {
     fun lowerStat(stat: BasicStats, amount: Int) {
         characterStats[stat] = characterStats[stat]!! - amount
         characterStats[stat] = max(characterStats[stat]!!, 0)
+    }
+
+    fun getDebuffForStat(stat: BasicStats): Int {
+        var total = 0
+        for (i in 0 until statusEffects.size) {
+            val statusEffect = statusEffects[i]
+            if (statusEffect.statDebuff.first == stat) total += statusEffect.statDebuff.second
+        }
+        return total
+    }
+
+    fun addStatusEffect(statusEffect: StatusEffect) {
+        statusEffects.add(statusEffect.copy())
+    }
+
+    fun updateNewTurn() {
+        val iterator = statusEffects.iterator()
+        while (iterator.hasNext()) {
+            val statusEffect = iterator.next()
+            if (statusEffect.updateNewTurn()) {
+                iterator.remove()
+            } else {
+                val (stat, decrease) = statusEffect.statDecrease
+                lowerStat(stat, decrease)
+            }
+        }
+    }
+
+    fun removeAllStatusEffects() {
+        statusEffects.clear()
     }
 
     fun regenStamina(maxStamina: Int) {
@@ -185,18 +231,22 @@ class CharacterStats {
         setMana(newMana)
     }
 
-    var characterStats: MutableMap<BasicStats, Int> = mutableMapOf(
-        BasicStats.BaseHealth to 0,
-        BasicStats.BaseMana to 0,
-        BasicStats.BaseStamina to 0,
-        BasicStats.Strength to 0,
-        BasicStats.Casting to 0,
-        BasicStats.Constitution to 0,
-        BasicStats.Intelligence to 0,
-        BasicStats.Dexterity to 0
-    )
+    private val characterStats: MutableMap<BasicStats, Int>
 
-    constructor()
+    private val statusEffects: ArrayList<StatusEffect> = arrayListOf()
+
+    constructor() {
+        characterStats = mutableMapOf(
+            BasicStats.BaseHealth to 0,
+            BasicStats.BaseMana to 0,
+            BasicStats.BaseStamina to 0,
+            BasicStats.Strength to 0,
+            BasicStats.Casting to 0,
+            BasicStats.Constitution to 0,
+            BasicStats.Intelligence to 0,
+            BasicStats.Dexterity to 0
+        )
+    }
 
     constructor(pCharacterStats: MutableMap<BasicStats, Int>) {
         characterStats = pCharacterStats
@@ -205,22 +255,16 @@ class CharacterStats {
     constructor(pOtherCharacterStats: CharacterStats): this((pOtherCharacterStats.characterStats).toMutableMap())
 
     constructor(subClass: CharacterSubClass) {
-        try {
-            characterStats[BasicStats.BaseHealth] = baseHealthMap[subClass]!!
-            characterStats[BasicStats.BaseMana] = baseManaMap[subClass]!!
-            characterStats[BasicStats.BaseStamina] = baseStaminaMap[subClass]!!
-
-            characterStats[BasicStats.Strength] = baseStrengthMap[subClass]!!
-            characterStats[BasicStats.Casting] = baseCastingMap[subClass]!!
-
-            characterStats[BasicStats.Constitution] = baseConstitutionMap[subClass]!!
-            characterStats[BasicStats.Intelligence] = baseIntelligenceMap[subClass]!!
-            characterStats[BasicStats.Dexterity] = baseDexterityMap[subClass]!!
-
-
-        } catch (e: Exception) {
-            Log.d(TAG, e.toString())
-        }
+        characterStats = mutableMapOf(
+            BasicStats.BaseHealth to baseHealthMap[subClass]!!,
+            BasicStats.BaseMana to baseManaMap[subClass]!!,
+            BasicStats.BaseStamina to baseStaminaMap[subClass]!!,
+            BasicStats.Strength to baseStrengthMap[subClass]!!,
+            BasicStats.Casting to baseCastingMap[subClass]!!,
+            BasicStats.Constitution to baseConstitutionMap[subClass]!!,
+            BasicStats.Intelligence to baseIntelligenceMap[subClass]!!,
+            BasicStats.Dexterity to baseDexterityMap[subClass]!!
+        )
     }
 
     override fun toString(): String {

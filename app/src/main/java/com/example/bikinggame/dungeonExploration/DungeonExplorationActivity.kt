@@ -9,6 +9,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
@@ -57,6 +58,14 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
         binding = ActivityDungeonExplorationBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        onBackPressedDispatcher.addCallback(this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    // Do nothing
+                }
+            }
+        )
 
         val character1ID = intent.getIntExtra("CHARACTER1", -1)
         val character2ID = intent.getIntExtra("CHARACTER2", -1)
@@ -216,6 +225,11 @@ class DungeonExplorationActivity: AppCompatActivity() {
         val playerCharacter = viewModel.getSelectedCharacter()!!
         val attack = playerCharacter.attacks[mvInd]
         if (attack == null) return
+
+        if (!playerCharacter.canChooseAttack(attack)) {
+            // TODO: Show err msg
+            return
+        }
 
         viewModel.setPlayerAttack(attack)
     }

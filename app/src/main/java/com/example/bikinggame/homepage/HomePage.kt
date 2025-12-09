@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
@@ -58,6 +59,14 @@ class HomePage : AppCompatActivity() {
         } else {
             setPoints(PlayerInventory.getCoins().toString())
         }
+
+        onBackPressedDispatcher.addCallback(this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    // Do nothing
+                }
+            }
+        )
     }
 
     fun openDungeonPrepScreen() {
