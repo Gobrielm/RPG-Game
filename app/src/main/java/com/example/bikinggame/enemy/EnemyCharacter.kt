@@ -2,6 +2,7 @@ package com.example.bikinggame.enemy
 
 import com.example.bikinggame.playerCharacter.Attack
 import com.example.bikinggame.playerCharacter.CharacterStats
+import com.example.bikinggame.playerCharacter.StatusEffect
 import kotlin.math.abs
 import kotlin.random.Random
 
@@ -63,5 +64,9 @@ class EnemyCharacter {
     fun updateNewTurn() {
         currentStats.regenStamina(baseStats.getStamina())
         currentStats.regenMana(baseStats.getMana())
+    }
+
+    fun getStatusEffects(): ArrayList<StatusEffect> {
+        return currentStats.getStatusEffects()
     }
 }

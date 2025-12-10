@@ -72,6 +72,45 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/health_progressbar" />
 
+    <ImageView
+        android:id="@+id/statusEffect1"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:srcCompat="@drawable/truck"
+        android:scaleType="centerCrop"
+
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/statusEffect2"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:srcCompat="@drawable/truck"
+        android:scaleType="centerCrop"
+
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/statusEffect1" />
+
+    <ImageView
+        android:id="@+id/statusEffect3"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:srcCompat="@drawable/truck"
+        android:scaleType="centerCrop"
+
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/statusEffect2" />
+
     <TextView
         android:id="@+id/hitTypeText"
         android:layout_width="100dp"

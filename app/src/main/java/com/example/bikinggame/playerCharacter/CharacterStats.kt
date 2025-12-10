@@ -195,13 +195,18 @@ class CharacterStats {
         var total = 0
         for (i in 0 until statusEffects.size) {
             val statusEffect = statusEffects[i]
-            if (statusEffect.statDebuff.first == stat) total += statusEffect.statDebuff.second
+            if (statusEffect.statDebuff?.first == stat) total += statusEffect.statDebuff.second
         }
         return total
     }
 
     fun addStatusEffect(statusEffect: StatusEffect) {
+        if (statusEffects.size >= 3) return // Don't add more than 3 status effects
         statusEffects.add(statusEffect.copy())
+    }
+
+    fun getStatusEffects(): ArrayList<StatusEffect> {
+        return statusEffects
     }
 
     fun updateNewTurn() {
@@ -211,6 +216,7 @@ class CharacterStats {
             if (statusEffect.updateNewTurn()) {
                 iterator.remove()
             } else {
+                if (statusEffect.statDecrease == null) continue
                 val (stat, decrease) = statusEffect.statDecrease
                 lowerStat(stat, decrease)
             }

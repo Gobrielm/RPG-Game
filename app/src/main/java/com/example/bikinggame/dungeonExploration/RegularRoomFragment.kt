@@ -164,8 +164,23 @@ class RegularRoomFragment : Fragment() {
                     / enemyCharacter.baseStats.getMana().toDouble() * 100.0).toInt()
             binding.staminaProgressbar.progress = (enemyCharacter.currentStats.getStamina().toDouble()
                     / enemyCharacter.baseStats.getStamina().toDouble() * 100.0).toInt()
+            updateStatusEffectsOnMainGui(enemyCharacter)
         } catch (e: Exception) {
             Log.d("Battle Fragment", e.toString())
+        }
+    }
+
+    fun updateStatusEffectsOnMainGui(character: EnemyCharacter) {
+        val statusEffects = character.getStatusEffects()
+
+        val statusEffectImages = arrayOf(binding.statusEffect1, binding.statusEffect2, binding.statusEffect3)
+        for (i in 0 until 3) {
+            if (i < statusEffects.size - 1) {
+                // TODO: Set Img here
+                statusEffectImages[i].visibility = View.VISIBLE
+            } else {
+                statusEffectImages[i].visibility = View.GONE
+            }
         }
     }
 

@@ -12,7 +12,6 @@ import android.widget.ProgressBar
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatButton
 import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -22,6 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.ActivityDungeonExplorationBinding
+import com.example.bikinggame.databinding.MiniCharacterUiBinding
 import com.example.bikinggame.dungeon.Dungeon
 import com.example.bikinggame.dungeon.DungeonRooms
 import com.example.bikinggame.dungeon.InfiniteDungeon
@@ -31,7 +31,6 @@ import com.example.bikinggame.homepage.inventory.PlayerInventory
 import com.example.bikinggame.playerCharacter.Attack
 import com.example.bikinggame.playerCharacter.Attack.AttackTypes
 import com.example.bikinggame.playerCharacter.PlayerCharacter
-import com.example.bikinggame.requests.getUserJson
 import com.example.bikinggame.requests.getUserName
 import com.example.bikinggame.requests.getUserToken
 import com.example.bikinggame.requests.makePutRequest
@@ -39,10 +38,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONArray
 import org.json.JSONObject
-import kotlin.collections.set
-import kotlin.getValue
 
 class DungeonExplorationActivity: AppCompatActivity() {
 
@@ -183,6 +179,8 @@ class DungeonExplorationActivity: AppCompatActivity() {
             binding.characterUi.mainStaminaProgressbar
         )
 
+        updateStatusEffectsOnMainGui(character)
+
         val nextCharacter = viewModel.getNextCharacter()
 
         if (nextCharacter == null) return
@@ -194,6 +192,8 @@ class DungeonExplorationActivity: AppCompatActivity() {
             binding.characterUi.miniCharacterUi1.staminaProgressbar
         )
 
+        updateStatusEffectsOnMiniGui(nextCharacter, binding.characterUi.miniCharacterUi1)
+
         val nextNextCharacter = viewModel.getNextNextCharacter()
 
         if (nextNextCharacter == null) return
@@ -204,7 +204,41 @@ class DungeonExplorationActivity: AppCompatActivity() {
             binding.characterUi.miniCharacterUi2.manaProgressbar,
             binding.characterUi.miniCharacterUi2.staminaProgressbar
         )
+
+        updateStatusEffectsOnMiniGui(nextNextCharacter, binding.characterUi.miniCharacterUi2)
     }
+
+    fun updateStatusEffectsOnMainGui(character: PlayerCharacter) {
+        val container = binding.characterUi
+        val statusEffects = character.getStatusEffects()
+
+        val statusEffectImages = arrayOf(container.mainStatusEffect1, container.mainStatusEffect2, container.mainStatusEffect3)
+        for (i in 0 until 3) {
+            if (i < statusEffects.size - 1) {
+                // TODO: Set Img here
+                statusEffectImages[i].visibility = View.VISIBLE
+            } else {
+                statusEffectImages[i].visibility = View.GONE
+            }
+        }
+    }
+
+    fun updateStatusEffectsOnMiniGui(character: PlayerCharacter, container: MiniCharacterUiBinding) {
+        val statusEffects = character.getStatusEffects()
+
+        val statusEffectImages = arrayOf(container.statusEffect1, container.statusEffect2, container.statusEffect3)
+        for (i in 0 until 3) {
+            if (i < statusEffects.size - 1) {
+                // TODO: Set Img here
+                statusEffectImages[i].visibility = View.VISIBLE
+            } else {
+                statusEffectImages[i].visibility = View.GONE
+            }
+        }
+    }
+
+
+
 
     fun updateProgressBars(character: PlayerCharacter, healthProgressBar: ProgressBar, manaProgressBar: ProgressBar, staminaProgressBar: ProgressBar) {
         healthProgressBar.progress = (character.currentStats.getHealth().toDouble() / character.baseStats.getHealth() * 100.0).toInt()

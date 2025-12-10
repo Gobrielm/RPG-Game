@@ -177,6 +177,10 @@ class PlayerCharacter {
         currentStats.addStatusEffect(statusEffect)
     }
 
+    fun getStatusEffects(): ArrayList<StatusEffect> {
+        return currentStats.getStatusEffects()
+    }
+
     fun canChooseAttack(attack: Attack): Boolean {
         if (attack.statCost == null) return true
         val (stat, amt) = attack.statCost
