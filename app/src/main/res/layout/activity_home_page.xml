@@ -5,7 +5,8 @@
     android:id="@+id/home_page"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".homepage.HomePage">
+    tools:context=".homepage.HomePage"
+    android:configChanges="orientation|screenSize">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topBar"

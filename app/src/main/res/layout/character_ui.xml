@@ -8,22 +8,22 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/character_ui1_container"
-        android:layout_width="181dp"
-        android:layout_height="160dp"
+        android:layout_width="224dp"
+        android:layout_height="120dp"
         android:layout_gravity="bottom|start">
 
         <include
             android:id="@+id/character_ui1"
             layout="@layout/dungeon_character_ui"
-            android:layout_width="181dp"
-            android:layout_height="160dp" />
+            android:layout_width="224dp"
+            android:layout_height="120dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/character_ui2_container"
-        android:layout_width="181dp"
-        android:layout_height="160dp"
+        android:layout_width="224dp"
+        android:layout_height="120dp"
         android:layout_gravity="bottom|center_horizontal"
         android:visibility="gone">
 
@@ -38,16 +38,16 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/character_ui3_container"
-        android:layout_width="181dp"
-        android:layout_height="160dp"
+        android:layout_width="224dp"
+        android:layout_height="120dp"
         android:layout_gravity="bottom|end"
         android:visibility="gone">
 
         <include
             android:id="@+id/character_ui3"
             layout="@layout/dungeon_character_ui"
-            android:layout_width="181dp"
-            android:layout_height="160dp" />
+            android:layout_width="224dp"
+            android:layout_height="120dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -58,7 +58,7 @@
         android:orientation="horizontal"
         android:gravity="top"
         android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="160dp">
+        android:layout_marginBottom="123dp">
 
         <Button
             android:id="@+id/mv1Button"

@@ -12,9 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BikingGame">
         <activity
-        android:name=".dungeonPrep.DungeonPrepActivity"
-        android:exported="false"
-        android:theme="@style/Theme.BikingGame.NoActionBar" />
+            android:name=".dungeonPrep.DungeonPrepActivity"
+            android:exported="false"
+            android:theme="@style/Theme.BikingGame.NoActionBar"
+            android:configChanges="orientation|screenSize"/>
         <activity
             android:name=".dungeonExploration.DungeonExplorationActivity"
             android:exported="false"

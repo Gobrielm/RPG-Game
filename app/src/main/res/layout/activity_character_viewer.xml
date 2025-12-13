@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="false"
-    tools:openDrawer="start">
+    tools:openDrawer="start"
+    android:configChanges="orientation|screenSize">
 
     <include
         android:id="@+id/overlay_character_viewer"
