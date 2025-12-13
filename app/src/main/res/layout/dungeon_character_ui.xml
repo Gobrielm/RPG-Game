@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="181dp"
+    android:layout_height="160dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -21,40 +21,46 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
-        android:id="@+id/main_health_progressbar"
+        android:id="@+id/health_progressbar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="141dp"
         android:layout_height="14dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="5dp"
         android:progress="50"
+        android:max="100"
         android:progressTint="#F80000"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
 
     <ProgressBar
-        android:id="@+id/main_mana_progressbar"
+        android:id="@+id/mana_progressbar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="141dp"
         android:layout_height="14dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="8dp"
         android:progress="70"
+        android:max="100"
         android:progressTint="#251BAF"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_health_progressbar" />
+        app:layout_constraintTop_toBottomOf="@+id/health_progressbar" />
 
     <ProgressBar
-        android:id="@+id/main_stamina_progressbar"
+        android:id="@+id/stamina_progressbar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="141dp"
         android:layout_height="14dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="8dp"
         android:progress="85"
+        android:max="100"
         android:progressTint="#0BF613"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_mana_progressbar" />
+        app:layout_constraintTop_toBottomOf="@+id/mana_progressbar" />
 
     <ImageView
-        android:id="@+id/mainStatusEffect1"
+        android:id="@+id/status_effect1"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="17dp"
@@ -63,11 +69,11 @@
         android:scaleType="centerCrop"
 
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_stamina_progressbar"
+        app:layout_constraintTop_toBottomOf="@+id/stamina_progressbar"
         app:srcCompat="@drawable/truck" />
 
     <ImageView
-        android:id="@+id/mainStatusEffect2"
+        android:id="@+id/status_effect2"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="17dp"
@@ -75,12 +81,12 @@
 
         android:scaleType="centerCrop"
 
-        app:layout_constraintStart_toEndOf="@+id/mainStatusEffect1"
-        app:layout_constraintTop_toBottomOf="@+id/main_stamina_progressbar"
+        app:layout_constraintStart_toEndOf="@+id/status_effect1"
+        app:layout_constraintTop_toBottomOf="@+id/stamina_progressbar"
         app:srcCompat="@drawable/truck" />
 
     <ImageView
-        android:id="@+id/mainStatusEffect3"
+        android:id="@+id/status_effect3"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="17dp"
@@ -88,8 +94,8 @@
 
         android:scaleType="centerCrop"
 
-        app:layout_constraintStart_toEndOf="@+id/mainStatusEffect2"
-        app:layout_constraintTop_toBottomOf="@+id/main_stamina_progressbar"
+        app:layout_constraintStart_toEndOf="@+id/status_effect2"
+        app:layout_constraintTop_toBottomOf="@+id/stamina_progressbar"
         app:srcCompat="@drawable/truck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

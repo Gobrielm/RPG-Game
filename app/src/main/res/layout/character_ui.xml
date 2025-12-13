@@ -7,196 +7,121 @@
     tools:context=".dungeonExploration.DungeonExplorationActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/mini_character1_container"
-        android:layout_width="140dp"
-        android:layout_height="120dp"
-        android:layout_gravity="end|bottom"
-        android:layout_marginBottom="254dp"
-        android:visibility="gone">
+        android:id="@+id/character_ui1_container"
+        android:layout_width="181dp"
+        android:layout_height="160dp"
+        android:layout_gravity="bottom|start">
 
         <include
-            android:id="@+id/mini_character_ui1"
-            layout="@layout/mini_character_ui"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:id="@+id/character_ui1"
+            layout="@layout/dungeon_character_ui"
+            android:layout_width="181dp"
+            android:layout_height="160dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/mini_character2_container"
-        android:layout_width="140dp"
-        android:layout_height="120dp"
-        android:layout_gravity="end|bottom"
-        android:layout_marginBottom="374dp"
+        android:id="@+id/character_ui2_container"
+        android:layout_width="181dp"
+        android:layout_height="160dp"
+        android:layout_gravity="bottom|center_horizontal"
         android:visibility="gone">
 
         <include
-            android:id="@+id/mini_character_ui2"
-            layout="@layout/mini_character_ui"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:id="@+id/character_ui2"
+            layout="@layout/dungeon_character_ui"
+            android:layout_width="181dp"
+            android:layout_height="160dp" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/mainCharacterUI"
+        android:id="@+id/character_ui3_container"
+        android:layout_width="181dp"
+        android:layout_height="160dp"
+        android:layout_gravity="bottom|end"
+        android:visibility="gone">
+
+        <include
+            android:id="@+id/character_ui3"
+            layout="@layout/dungeon_character_ui"
+            android:layout_width="181dp"
+            android:layout_height="160dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/buttonLayout"
         android:layout_width="match_parent"
-        android:layout_height="254dp"
-        android:layout_gravity="bottom"
-        android:background="#804E4E4E">
-
-        <ProgressBar
-            android:id="@+id/main_mana_progressbar"
-            style="@style/Widget.ProgressBar.Vertical"
-            android:layout_width="14dp"
-            android:layout_height="141dp"
-            android:layout_marginStart="23dp"
-            android:layout_marginBottom="75dp"
-            android:progress="70"
-            android:progressTint="#251BAF"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/main_health_progressbar" />
-
-        <ProgressBar
-            android:id="@+id/main_stamina_progressbar"
-            style="@style/Widget.ProgressBar.Vertical"
-            android:layout_width="14dp"
-            android:layout_height="141dp"
-            android:layout_marginStart="23dp"
-            android:layout_marginBottom="75dp"
-            android:progress="85"
-            android:progressTint="#0BF613"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/main_mana_progressbar" />
-
-        <ProgressBar
-            android:id="@+id/main_health_progressbar"
-            style="@style/Widget.ProgressBar.Vertical"
-            android:layout_width="16dp"
-            android:layout_height="141dp"
-            android:layout_marginStart="25dp"
-            android:layout_marginBottom="75dp"
-            android:progress="50"
-            android:progressTint="#F80000"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="top"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="160dp">
 
         <Button
             android:id="@+id/mv1Button"
-            android:layout_width="95dp"
+            android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_marginEnd="35dp"
-            android:layout_marginBottom="35dp"
-            android:autoSizeMaxTextSize="18sp"
-
-            android:autoSizeMinTextSize="8sp"
-            android:autoSizeStepGranularity="1sp"
-            android:autoSizeTextType="uniform"
+            android:layout_weight="1"
             android:text="Button"
-
-            app:layout_constraintBottom_toTopOf="@+id/mv2Button"
-            app:layout_constraintEnd_toStartOf="@+id/mv3Button" />
+            android:layout_marginHorizontal="20dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeMaxTextSize="18sp"
+            android:autoSizeStepGranularity="1sp"/>
 
         <Button
             android:id="@+id/mv2Button"
-            android:layout_width="95dp"
+            android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_marginEnd="35dp"
-            android:layout_marginBottom="80dp"
-
-            android:autoSizeMaxTextSize="18sp"
-            android:autoSizeMinTextSize="8sp"
-            android:autoSizeStepGranularity="1sp"
-            android:autoSizeTextType="uniform"
-
+            android:layout_weight="1"
             android:text="Button"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/mv4Button" />
+            android:layout_marginHorizontal="20dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeMaxTextSize="18sp"
+            android:autoSizeStepGranularity="1sp"/>
 
         <Button
             android:id="@+id/mv3Button"
-            android:layout_width="95dp"
+            android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_marginEnd="45dp"
-            android:layout_marginBottom="35dp"
-            android:autoSizeMaxTextSize="18sp"
-
-            android:autoSizeMinTextSize="8sp"
-            android:autoSizeStepGranularity="1sp"
-            android:autoSizeTextType="uniform"
+            android:layout_weight="1"
             android:text="Button"
-
-            app:layout_constraintBottom_toTopOf="@+id/mv4Button"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:layout_marginHorizontal="20dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeMaxTextSize="18sp"
+            android:autoSizeStepGranularity="1sp"/>
 
         <Button
             android:id="@+id/mv4Button"
-            android:layout_width="95dp"
+            android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_marginEnd="45dp"
-            android:layout_marginBottom="80dp"
-            android:autoSizeMaxTextSize="18sp"
-
-            android:autoSizeMinTextSize="8sp"
-            android:autoSizeStepGranularity="1sp"
-            android:autoSizeTextType="uniform"
+            android:layout_weight="1"
             android:text="Button"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
+            android:layout_marginHorizontal="20dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeMaxTextSize="18sp"
+            android:autoSizeStepGranularity="1sp"/>
 
         <Button
             android:id="@+id/skipButton"
-            android:layout_width="120dp"
-            android:layout_height="40dp"
-
-            android:layout_marginEnd="45dp"
-            android:layout_marginBottom="20dp"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="0.8"
             android:text="Skip Turn"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
 
-        <ImageView
-            android:id="@+id/mainStatusEffect1"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            app:srcCompat="@drawable/truck"
-            android:scaleType="centerCrop"
+            android:layout_marginHorizontal="20dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeMaxTextSize="18sp"
+            android:autoSizeStepGranularity="1sp"/>
 
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="20dp"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <ImageView
-            android:id="@+id/mainStatusEffect2"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            app:srcCompat="@drawable/truck"
-            android:scaleType="centerCrop"
-
-            android:layout_marginBottom="20dp"
-            android:layout_marginStart="20dp"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/mainStatusEffect1" />
-
-        <ImageView
-            android:id="@+id/mainStatusEffect3"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            app:srcCompat="@drawable/truck"
-            android:scaleType="centerCrop"
-
-            android:layout_marginBottom="20dp"
-            android:layout_marginStart="20dp"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/mainStatusEffect2" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+    </LinearLayout>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment_character_ui"

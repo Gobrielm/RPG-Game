@@ -21,6 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.ActivityDungeonExplorationBinding
+import com.example.bikinggame.databinding.DungeonCharacterUiBinding
 import com.example.bikinggame.databinding.MiniCharacterUiBinding
 import com.example.bikinggame.dungeon.Dungeon
 import com.example.bikinggame.dungeon.DungeonRooms
@@ -75,12 +76,12 @@ class DungeonExplorationActivity: AppCompatActivity() {
         viewModel.addSelectedCharacter(PlayerInventory.getCharacter(character1ID)!!)
 
         if (character2ID != character1ID && character2ID != -1) {
-            binding.characterUi.miniCharacter1Container.visibility = VISIBLE
+            binding.characterUi.characterUi2Container.visibility = VISIBLE
             val character = PlayerInventory.getCharacter(character2ID)!!
             viewModel.addSelectedCharacter(character)
         }
         if (character2ID != character3ID && character3ID != character1ID && character3ID != -1) {
-            binding.characterUi.miniCharacter2Container.visibility = VISIBLE
+            binding.characterUi.characterUi3Container.visibility = VISIBLE
             val character = PlayerInventory.getCharacter(character3ID)!!
             viewModel.addSelectedCharacter(character)
         }
@@ -173,57 +174,44 @@ class DungeonExplorationActivity: AppCompatActivity() {
         if (viewModel.partyDied.value!!) return
         val character = viewModel.getSelectedCharacter()!!
 
+        binding.characterUi.characterUi1.nameTextView.text = character.playerClass.mainClass.toString()
         updateProgressBars(character,
-            binding.characterUi.mainHealthProgressbar,
-            binding.characterUi.mainManaProgressbar,
-            binding.characterUi.mainStaminaProgressbar
+            binding.characterUi.characterUi1.healthProgressbar,
+            binding.characterUi.characterUi1.manaProgressbar,
+            binding.characterUi.characterUi1.staminaProgressbar
         )
 
-        updateStatusEffectsOnMainGui(character)
+        updateStatusEffectsOnMainGui(character, binding.characterUi.characterUi1)
 
         val nextCharacter = viewModel.getNextCharacter()
 
         if (nextCharacter == null) return
-
-        binding.characterUi.miniCharacterUi1.textBox.text = nextCharacter.playerClass.mainClass.toString()
+        binding.characterUi.characterUi2.nameTextView.text = nextCharacter.playerClass.mainClass.toString()
         updateProgressBars(nextCharacter,
-            binding.characterUi.miniCharacterUi1.healthProgressbar,
-            binding.characterUi.miniCharacterUi1.manaProgressbar,
-            binding.characterUi.miniCharacterUi1.staminaProgressbar
+            binding.characterUi.characterUi2.healthProgressbar,
+            binding.characterUi.characterUi2.manaProgressbar,
+            binding.characterUi.characterUi2.staminaProgressbar
         )
 
-        updateStatusEffectsOnMiniGui(nextCharacter, binding.characterUi.miniCharacterUi1)
+        updateStatusEffectsOnMainGui(nextCharacter, binding.characterUi.characterUi2)
 
         val nextNextCharacter = viewModel.getNextNextCharacter()
 
         if (nextNextCharacter == null) return
 
-        binding.characterUi.miniCharacterUi2.textBox.text = nextNextCharacter.playerClass.mainClass.toString()
+        binding.characterUi.characterUi3.nameTextView.text = nextNextCharacter.playerClass.mainClass.toString()
         updateProgressBars(nextNextCharacter,
-            binding.characterUi.miniCharacterUi2.healthProgressbar,
-            binding.characterUi.miniCharacterUi2.manaProgressbar,
-            binding.characterUi.miniCharacterUi2.staminaProgressbar
+            binding.characterUi.characterUi3.healthProgressbar,
+            binding.characterUi.characterUi3.manaProgressbar,
+            binding.characterUi.characterUi3.staminaProgressbar
         )
 
-        updateStatusEffectsOnMiniGui(nextNextCharacter, binding.characterUi.miniCharacterUi2)
+        binding.characterUi.characterUi3
+
+        updateStatusEffectsOnMainGui(nextNextCharacter, binding.characterUi.characterUi3)
     }
 
-    fun updateStatusEffectsOnMainGui(character: PlayerCharacter) {
-        val container = binding.characterUi
-        val statusEffects = character.getStatusEffects()
-
-        val statusEffectImages = arrayOf(container.mainStatusEffect1, container.mainStatusEffect2, container.mainStatusEffect3)
-        for (i in 0 until 3) {
-            if (i < statusEffects.size - 1) {
-                // TODO: Set Img here
-                statusEffectImages[i].visibility = View.VISIBLE
-            } else {
-                statusEffectImages[i].visibility = View.GONE
-            }
-        }
-    }
-
-    fun updateStatusEffectsOnMiniGui(character: PlayerCharacter, container: MiniCharacterUiBinding) {
+    fun updateStatusEffectsOnMainGui(character: PlayerCharacter, container: DungeonCharacterUiBinding) {
         val statusEffects = character.getStatusEffects()
 
         val statusEffectImages = arrayOf(container.statusEffect1, container.statusEffect2, container.statusEffect3)
@@ -236,9 +224,6 @@ class DungeonExplorationActivity: AppCompatActivity() {
             }
         }
     }
-
-
-
 
     fun updateProgressBars(character: PlayerCharacter, healthProgressBar: ProgressBar, manaProgressBar: ProgressBar, staminaProgressBar: ProgressBar) {
         healthProgressBar.progress = (character.currentStats.getHealth().toDouble() / character.baseStats.getHealth() * 100.0).toInt()
@@ -333,12 +318,13 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
     fun moveToEndingScreen() {
         unShowLootUi()
-        binding.characterUi.mainCharacterUI.visibility = View.GONE
+        binding.characterUi.characterUi1Container.visibility = View.GONE
+        binding.characterUi.characterUi2Container.visibility = View.GONE
+        binding.characterUi.characterUi3Container.visibility = View.GONE
 
         binding.characterUi.finishText.visibility = View.GONE
         binding.characterUi.blurRect.visibility = View.GONE
-        binding.characterUi.miniCharacter1Container.visibility = View.GONE
-        binding.characterUi.miniCharacter2Container.visibility = View.GONE
+
         lifecycleScope.launch {
 
             val token = getUserToken()
