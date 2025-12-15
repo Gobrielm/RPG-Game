@@ -22,7 +22,7 @@ class DungeonPrepActivity: AppCompatActivity() {
 
     private val viewModel: DungeonPrepViewModel by viewModels()
     private var selectedCharacterButtonInd: Int = -1
-    private val partySelected: Array<PlayerCharacter?> = arrayOf(null, null, null)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,13 +64,20 @@ class DungeonPrepActivity: AppCompatActivity() {
             tryToStartDungeon()
         })
 
+        val savedParty = viewModel.getPartySelectedWithImageIDs()
+        for (i in 0 until 3) {
+            val (character, imageID) = savedParty[i]
+            if (character == null || imageID == null) continue
+            putCharacterInParty(character, imageID, i)
+        }
+
     }
 
     fun selectCharacter(character: PlayerCharacter, imageID: Int) {
         if (selectedCharacterButtonInd == -1) return
         val navController = findNavController(R.id.nav_host_fragment_dungeon_prep_overlay)
         navController.navigate(R.id.selectDungeonFragment)
-        val status = putCharacterInParty(character, selectedCharacterButtonInd - 1)
+        val status = putCharacterInParty(character, imageID, selectedCharacterButtonInd - 1)
 
         if (!status) {
             selectedCharacterButtonInd = -1
@@ -85,14 +92,14 @@ class DungeonPrepActivity: AppCompatActivity() {
         selectedCharacterButtonInd = -1
     }
 
-    fun putCharacterInParty(character: PlayerCharacter, ind: Int): Boolean {
-        partySelected.forEach { otherCharacter ->
+    fun putCharacterInParty(character: PlayerCharacter, imageID: Int, ind: Int): Boolean {
+        viewModel.getPartySelected().forEach { otherCharacter ->
             if (otherCharacter?.id == character.id) {
                 return false
             }
         }
 
-        partySelected[ind] = character
+        viewModel.setPartyMember(character, imageID, ind)
         return true
     }
 
@@ -115,7 +122,7 @@ class DungeonPrepActivity: AppCompatActivity() {
 
     fun getCharacters(): ArrayList<PlayerCharacter> {
         val list = ArrayList<PlayerCharacter>()
-        partySelected.forEach { character ->
+        viewModel.getPartySelected().forEach { character ->
             if (character != null) list.add(character)
         }
         return list
@@ -124,9 +131,31 @@ class DungeonPrepActivity: AppCompatActivity() {
 
 class DungeonPrepViewModel: ViewModel() {
     private val mutableStartDungeon = MutableLiveData<Boolean>()
+    private val mutablePartySelected = MutableLiveData<Array<PlayerCharacter?>>(arrayOf(null, null, null))
+    private val mutablePartySelectedImageIDs = MutableLiveData<Array<Int?>>(arrayOf(null, null, null))
     val startDungeon: LiveData<Boolean> get() = mutableStartDungeon
+
 
     fun startDungeon() {
         mutableStartDungeon.value = true
+    }
+
+    fun getPartySelected(): Array<PlayerCharacter?> {
+        return mutablePartySelected.value!!
+    }
+
+    fun getPartySelectedWithImageIDs(): Array<Pair<PlayerCharacter?, Int?>> {
+        val party = mutablePartySelected.value ?: return Array(3) { Pair(null, null) }
+        val images = mutablePartySelectedImageIDs.value ?: return Array(3) { Pair(null, null) }
+
+        return Array(3) { i ->
+            Pair(party[i], images[i])
+        }
+    }
+
+
+    fun setPartyMember(character: PlayerCharacter, imageID: Int, slot: Int) {
+        mutablePartySelected.value!![slot] = character
+        mutablePartySelectedImageIDs.value!![slot] = imageID
     }
 }
