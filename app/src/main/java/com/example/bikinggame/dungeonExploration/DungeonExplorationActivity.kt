@@ -1,6 +1,7 @@
 package com.example.bikinggame.dungeonExploration
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -21,6 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.ActivityDungeonExplorationBinding
+import com.example.bikinggame.databinding.CharacterUiBinding
 import com.example.bikinggame.databinding.DungeonCharacterUiBinding
 import com.example.bikinggame.databinding.MiniCharacterUiBinding
 import com.example.bikinggame.dungeon.Dungeon
@@ -40,6 +42,7 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import java.util.Random
 
 class DungeonExplorationActivity: AppCompatActivity() {
 
@@ -49,6 +52,7 @@ class DungeonExplorationActivity: AppCompatActivity() {
     private var currentRoom: Int = 0
     private var finished: Boolean = false
     private var pauseInputs: Boolean = false
+    private var leaveButtonClicked: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,6 +95,9 @@ class DungeonExplorationActivity: AppCompatActivity() {
         updateStats()
         setAttacks()
 
+        binding.characterUi.backButton.setOnClickListener {
+            clickGoBack()
+        }
 
         binding.characterUi.mv1Button.setOnClickListener {
             chooseAttack(0)
@@ -135,6 +142,24 @@ class DungeonExplorationActivity: AppCompatActivity() {
         })
     }
 
+    fun clickGoBack() {
+        if (leaveButtonClicked) {
+            moveToMainMenu()
+        } else {
+            lifecycleScope.launch {
+                leaveButtonClicked = true
+
+                binding.characterUi.failText.visibility = View.VISIBLE
+                binding.characterUi.failText.text = "You Will Lose All Progress in the Current Dungeon. \nClick to Confirm and Leave the Dungeon."
+                delay(1500)
+                binding.characterUi.failText.visibility = View.GONE
+                binding.characterUi.failText.text = "Fail"
+
+                leaveButtonClicked = false
+            }
+        }
+    }
+
     fun showLootUi(lootEarned: ArrayList<Int>, coinsEarned: Int) {
         val container = binding.lootEarnedUi.lootContainer
         container.visibility = VISIBLE
@@ -172,7 +197,13 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
     fun updateStats() {
         if (viewModel.partyDied.value!!) return
-        val character = viewModel.getSelectedCharacter()!!
+        val character = viewModel.getCharacter(0)!!
+
+        if (character == viewModel.getSelectedCharacter()) {
+            highlightCharacter(binding.characterUi.characterUi1)
+        } else {
+            resetHighlights(binding.characterUi.characterUi1)
+        }
 
         binding.characterUi.characterUi1.nameTextView.text = character.playerClass.mainClass.toString()
         updateProgressBars(character,
@@ -183,9 +214,15 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
         updateStatusEffectsOnMainGui(character, binding.characterUi.characterUi1)
 
-        val nextCharacter = viewModel.getNextCharacter()
-
+        val nextCharacter = viewModel.getCharacter(1)
         if (nextCharacter == null) return
+
+        if (nextCharacter == viewModel.getSelectedCharacter()) {
+            highlightCharacter(binding.characterUi.characterUi2)
+        } else {
+            resetHighlights(binding.characterUi.characterUi2)
+        }
+
         binding.characterUi.characterUi2.nameTextView.text = nextCharacter.playerClass.mainClass.toString()
         updateProgressBars(nextCharacter,
             binding.characterUi.characterUi2.healthProgressbar,
@@ -195,9 +232,14 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
         updateStatusEffectsOnMainGui(nextCharacter, binding.characterUi.characterUi2)
 
-        val nextNextCharacter = viewModel.getNextNextCharacter()
-
+        val nextNextCharacter = viewModel.getCharacter(2)
         if (nextNextCharacter == null) return
+
+        if (nextNextCharacter == viewModel.getSelectedCharacter()) {
+            highlightCharacter(binding.characterUi.characterUi3)
+        } else {
+            resetHighlights(binding.characterUi.characterUi3)
+        }
 
         binding.characterUi.characterUi3.nameTextView.text = nextNextCharacter.playerClass.mainClass.toString()
         updateProgressBars(nextNextCharacter,
@@ -211,6 +253,14 @@ class DungeonExplorationActivity: AppCompatActivity() {
         updateStatusEffectsOnMainGui(nextNextCharacter, binding.characterUi.characterUi3)
     }
 
+    fun highlightCharacter(container: DungeonCharacterUiBinding) {
+        container.nameTextView.setTextColor(0xFF22FF22.toInt())
+    }
+
+    fun resetHighlights(container: DungeonCharacterUiBinding) {
+        container.nameTextView.setTextColor(0xFF000000.toInt())
+    }
+
     fun updateStatusEffectsOnMainGui(character: PlayerCharacter, container: DungeonCharacterUiBinding) {
         val statusEffects = character.getStatusEffects()
 
@@ -220,7 +270,7 @@ class DungeonExplorationActivity: AppCompatActivity() {
                 // TODO: Set Img here
                 statusEffectImages[i].visibility = View.VISIBLE
             } else {
-                statusEffectImages[i].visibility = View.GONE
+                statusEffectImages[i].visibility = View.INVISIBLE
             }
         }
     }
@@ -278,6 +328,39 @@ class DungeonExplorationActivity: AppCompatActivity() {
             }
             .start()
     }
+
+    fun showAttackIndicatorOnCharacter(ind: Int) {
+        val container = when (ind) {
+            0 -> binding.characterUi.characterUi1
+            1 -> binding.characterUi.characterUi2
+            else -> binding.characterUi.characterUi3
+        }
+
+
+        lifecycleScope.launch {
+            delay(300)
+
+            container.damageIndicator.apply {
+                alpha = 0f
+                visibility = VISIBLE
+                animate()
+                    .alpha(1f)
+                    .setDuration(300) // ms
+                    .start()
+            }
+
+            delay(500)
+            container.damageIndicator.animate()
+                .alpha(0f)
+                .setDuration(300)
+                .withEndAction {
+                    container.damageIndicator.visibility = View.GONE
+                }
+                .start()
+        }
+    }
+
+
 
     fun startBlockingInputs() {
         pauseInputs = true
@@ -364,7 +447,7 @@ class DungeonExplorationViewModel : ViewModel() {
     private val mutableDungeon = MutableLiveData<Dungeon>()
     private val mutablePlayerAttack = MutableLiveData(Attack(0, "Temp", 0, 0, 0, AttackTypes.PHY))
     private val mutableReadyForNextRoom = MutableLiveData<Boolean>()
-    private val mutablePartyDied = MutableLiveData<Boolean>(false)
+    private val mutablePartyDied = MutableLiveData(false)
     private val mutablePartyDone = MutableLiveData<Boolean>()
     private val lootEarned = MutableLiveData(mutableMapOf(-2 to 0, -1 to 0)) // XP first, then gold
 
@@ -426,6 +509,11 @@ class DungeonExplorationViewModel : ViewModel() {
         return mutableCharacters.value!![currentCharacterInd]
     }
 
+    fun getCharacter(ind: Int): PlayerCharacter? {
+        if (ind >= mutableCharacters.value!!.size) return null
+        return mutableCharacters.value!![ind]
+    }
+
     fun getNextCharacter(): PlayerCharacter? {
         val next = mutableCharacters.value!![(currentCharacterInd + 1) % getPartySize()]
         if (next == getSelectedCharacter()) return null
@@ -439,18 +527,22 @@ class DungeonExplorationViewModel : ViewModel() {
     }
 
     fun cycleSelectedCharacter() {
-        Log.d("AAA", currentCharacterInd.toString())
         _currentCharacterInd.value = (currentCharacterInd + 1) % getPartySize()
-        Log.d("AAA", currentCharacterInd.toString())
     }
 
-    fun removeCurrentMember() {
-        mutableCharacters.value!!.removeAt(currentCharacterInd)
+    fun removePartyMember(ind: Int) {
+        mutableCharacters.value!!.removeAt(ind)
         if (mutableCharacters.value!!.isNotEmpty()) {
             _currentCharacterInd.value = currentCharacterInd % getPartySize()
         } else {
             setPartyHasDied()
         }
+    }
+
+    fun getRandomCharacter(): Pair<Int, PlayerCharacter> {
+        val characters = mutableCharacters.value!!
+        val ind = Random().nextInt(characters.size)
+        return Pair(ind, characters[ind])
     }
 
     fun getPartySize(): Int {

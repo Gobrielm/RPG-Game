@@ -75,7 +75,7 @@ class RegularRoomFragment : Fragment() {
     fun simulateSkipRound() {
         lifecycleScope.launch {
             (requireContext() as DungeonExplorationActivity).startBlockingInputs()
-            simulateEnemyAttack(viewModel.getSelectedCharacter()!!, viewModel.getEnemy()!!)
+            simulateEnemyAttack(viewModel.getEnemy()!!)
             (requireContext() as DungeonExplorationActivity).stopBlockingInputs()
         }
     }
@@ -109,14 +109,18 @@ class RegularRoomFragment : Fragment() {
 
         delay(200)
 
-        simulateEnemyAttack(playerCharacter, enemyCharacter)
+
+        simulateEnemyAttack(enemyCharacter)
     }
 
-    suspend fun simulateEnemyAttack(playerCharacter: PlayerCharacter, enemyCharacter: EnemyCharacter) {
+    suspend fun simulateEnemyAttack(enemyCharacter: EnemyCharacter) {
+        val (ind, characterOnDefense) = viewModel.getRandomCharacter()
+        (requireContext() as DungeonExplorationActivity).showAttackIndicatorOnCharacter(ind)
+
         val enemyAttack: Attack = enemyCharacter.chooseRandAttack()
         val (damage, hitType) = enemyCharacter.calculateDamageForAttack(enemyAttack)
 
-        val (isPlayerDead, msg) = playerCharacter.takeAttack(enemyAttack, damage, hitType)
+        val (isPlayerDead, msg) = characterOnDefense.takeAttack(enemyAttack, damage, hitType)
 
         (requireContext() as DungeonExplorationActivity).updateStats()
 
@@ -124,18 +128,18 @@ class RegularRoomFragment : Fragment() {
 
         launchAttackAnimation(1000, str)
 
-        if (!isPlayerDead) playerCharacter.updateNewTurn()
+        if (!isPlayerDead) characterOnDefense.updateNewTurn()
         if (enemyCharacter.isAlive()) enemyCharacter.updateNewTurn()
 
         (requireContext() as DungeonExplorationActivity).updateStats()
         updateStats()
 
-        moveToNextCharacter(isPlayerDead)
+        moveToNextCharacter(isPlayerDead, ind)
     }
 
-    fun moveToNextCharacter(isPlayerDead: Boolean) {
+    fun moveToNextCharacter(isPlayerDead: Boolean, characterAttackedInd: Int) {
         if (isPlayerDead) {
-            viewModel.removeCurrentMember()
+            viewModel.removePartyMember(characterAttackedInd)
         } else {
             viewModel.cycleSelectedCharacter()
             (requireContext() as DungeonExplorationActivity).updateStats()

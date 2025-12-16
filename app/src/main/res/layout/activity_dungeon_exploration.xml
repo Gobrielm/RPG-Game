@@ -7,14 +7,14 @@
     android:configChanges="orientation|screenSize">
 
     <include
-        android:id="@+id/character_ui"
-        layout="@layout/character_ui"
+        android:id="@+id/loot_earned_ui"
+        layout="@layout/loot_earned_ui"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <include
-        android:id="@+id/loot_earned_ui"
-        layout="@layout/loot_earned_ui"
+        android:id="@+id/character_ui"
+        layout="@layout/character_ui"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

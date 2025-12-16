@@ -9,25 +9,24 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.FragmentEditCharacterBinding
 import com.example.bikinggame.homepage.inventory.InventoryManager
 import com.example.bikinggame.homepage.inventory.Item
+import com.example.bikinggame.homepage.inventory.PlayerInventory
 import com.example.bikinggame.homepage.inventory.PlayerInventory.playerCharacters
 import com.example.bikinggame.homepage.inventory.saveCharacter
 import com.example.bikinggame.playerCharacter.Attack
 import com.example.bikinggame.requests.getUserJson
-import com.example.bikinggame.requests.makePostRequest
-import com.example.bikinggame.requests.makePutRequest
+import com.example.bikinggame.requests.makeDeleteRequest
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.util.LinkedList
-import kotlin.arrayOf
 
 class EditCharacterFragment: Fragment() {
 
@@ -39,6 +38,7 @@ class EditCharacterFragment: Fragment() {
     private var attacksToChooseFrom: ArrayList<Pair<Attack, Boolean>> = arrayListOf()
     private var attackSlot: Int = -1
     private val inventoryList: LinkedList<Item> = LinkedList<Item>()
+    private var triedDeleteCharacter: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -76,12 +76,48 @@ class EditCharacterFragment: Fragment() {
             unShowAttackChooser()
         }
 
+        binding.deleteCharacter.setOnClickListener {
+            clickDeleteCharacter()
+        }
+
         return root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    fun clickDeleteCharacter() {
+        if (triedDeleteCharacter) {
+            deleteCharacter()
+            (requireContext() as CharacterViewerActivity).goToHomePage()
+        } else {
+            lifecycleScope.launch {
+                triedDeleteCharacter = true
+
+                binding.deleteCharacterText.text = "Click Again to Confirm Permanent Deletion of Character"
+                delay(1000)
+                if (_binding == null) return@launch
+                binding.deleteCharacterText.text = ""
+
+                triedDeleteCharacter = false
+            }
+        }
+    }
+
+    fun deleteCharacter() {
+        val characterID = viewModel.getSelectedCharacterID()!!
+        PlayerInventory.deleteCharacter(characterID)
+        lifecycleScope.launch {
+            val userData: JSONObject? = getUserJson()
+            if (userData == null) return@launch
+
+            makeDeleteRequest(
+                "https://bikinggamebackend.vercel.app/api/characters/$characterID",
+                userData.get("token") as String
+            )
+        }
     }
 
     fun updateInfo() {

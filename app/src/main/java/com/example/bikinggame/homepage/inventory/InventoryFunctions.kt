@@ -10,8 +10,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 
-
-// TODO: Some weird stuff with either "text/plain".toMediaType() or "application/json".toMediaTypeOrNull()
 suspend fun saveCharacter(characterID: Int) {
     val userData: JSONObject? = getUserJson()
     if (userData == null) return

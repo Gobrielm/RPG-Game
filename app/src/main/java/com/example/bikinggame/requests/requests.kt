@@ -52,6 +52,20 @@ suspend fun makePutRequest(url: String, token: String, body: RequestBody) {
     }
 }
 
+suspend fun makeDeleteRequest(url: String, token: String) {
+    try {
+        val request = Request.Builder()
+            .url(url)
+            .delete()
+            .addHeader("Authorization", token)
+            .build()
+
+        makeRequestWithoutResponse(request)
+    } catch (e: Exception) {
+        Log.d(TAG, e.toString())
+    }
+}
+
 fun makeGetRequest(url: String, token: String, callback: (JSONObject) -> Unit = ::logRes) {
     try {
         val request = Request.Builder()

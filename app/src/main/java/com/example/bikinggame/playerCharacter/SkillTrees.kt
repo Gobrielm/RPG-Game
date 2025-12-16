@@ -62,7 +62,17 @@ object SkillTrees {
 
             10 to Offset(1.576f, 1.21f),
             11 to Offset(1.21f, 1.576f),
+        ),
+
+        CharacterSubClass.TraditionalRanged to arrayOf(
+            6 to Offset(0f, 0f),
+
+            12 to Offset(0.71f, 0.71f),
+
+
+            13 to Offset(1.21f, 1.576f),
         )
+
     )
 }
 
@@ -126,11 +136,9 @@ class Skill {
 
             // Start of Knight Tree
             3 to Skill(3, "Humble Beginnings", emptyMap(), emptyArray(), 1, -1),
-
             7 to Skill(7, "Path of Strength", mapOf(BasicStats.Strength to 1), arrayOf(3), -1, -1),
             8 to Skill(8, "Path of Fortitude", mapOf(BasicStats.Constitution to 1), arrayOf(3), -1, -1),
             9 to Skill(9, "Path of Heartiness", mapOf(BasicStats.BaseHealth to 2), arrayOf(3), -1, -1),
-
             10 to Skill(10, "Improvised Block", emptyMap(), arrayOf(8), -1, 3),
             11 to Skill(11, "Improved Heartiness", mapOf(BasicStats.BaseHealth to 2), arrayOf(8), -1, -1),
 
@@ -141,7 +149,9 @@ class Skill {
             5 to Skill(5, "Humble Beginnings", emptyMap(), emptyArray(), 3, -1),
 
             // Start of NonTraditionalRanged Tree
-            6 to Skill(6, "Humble Beginnings", emptyMap(), emptyArray(), 3, -1)
+            6 to Skill(6, "Humble Beginnings", emptyMap(), emptyArray(), 3, -1),
+            12 to Skill(12, "Tree Dwelling", mapOf(BasicStats.Dexterity to 1), arrayOf(6), -1, -1),
+            13 to Skill(13, "Poison Craft", emptyMap(), arrayOf(12), 5, -1),
 
 
         )

@@ -63,14 +63,6 @@ class DungeonPrepActivity: AppCompatActivity() {
         viewModel.startDungeon.observe(this, Observer {
             tryToStartDungeon()
         })
-
-        val savedParty = viewModel.getPartySelectedWithImageIDs()
-        for (i in 0 until 3) {
-            val (character, imageID) = savedParty[i]
-            if (character == null || imageID == null) continue
-            putCharacterInParty(character, imageID, i)
-        }
-
     }
 
     fun selectCharacter(character: PlayerCharacter, imageID: Int) {

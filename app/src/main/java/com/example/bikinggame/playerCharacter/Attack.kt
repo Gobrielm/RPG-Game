@@ -107,7 +107,9 @@ class Attack {
 
             3 to Attack(3, "Normal Shot", 1, 7, 85, AttackTypes.RAN),
 
-            4 to Attack(4, "Intermediate Hit", 4, 5, 90, AttackTypes.PHY)
+            4 to Attack(4, "Intermediate Hit", 4, 5, 90, AttackTypes.PHY),
+
+            5 to Attack(5, "Poison Arrow", 2, 5, 85, AttackTypes.PHY, Pair<Int, StatusEffect>(100, StatusEffect.getStatusEffect(1)!!))
         )
 
         fun getAttack(attackID: Int): Attack? {

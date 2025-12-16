@@ -20,6 +20,15 @@ object PlayerInventory {
         return null
     }
 
+    fun deleteCharacter(id: Int) {
+        for (i in 0 until playerCharacters.size) {
+            if (playerCharacters[i].id == id) {
+                playerCharacters.removeAt(i)
+                return
+            }
+        }
+    }
+
     fun setCoins(newAmt: Int) {
         coins = newAmt
     }
