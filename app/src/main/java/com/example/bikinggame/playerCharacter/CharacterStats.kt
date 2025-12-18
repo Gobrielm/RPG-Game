@@ -65,14 +65,14 @@ class CharacterStats {
     }
 
     /**
-     *  @return Whether true if character has gone below 0 health
+     *  @return Msg
      */
-    fun getAttacked(damage: Int, attack: Attack, hitType: Attack.HitTypes, canDodge: Boolean): Pair<Boolean, String> {
+    fun getAttacked(damage: Int, attack: Attack, hitType: Attack.HitTypes, canDodge: Boolean): String {
 
         val blocked = getDamageBlockedForAttack(attack.type)
         var damage = max(0, damage - blocked)
 
-        if (damage < 0) return Pair(false, "")
+        if (damage < 0) return ""
 
         var msg = ""
         if (canDodge) {
@@ -93,14 +93,8 @@ class CharacterStats {
 
         var health: Int = getHealth()
         health -= damage
-
-        return Pair(if (health <= 0) {
-            setHealth(0)
-            true
-        } else {
-            setHealth(health)
-            false
-        }, msg)
+        setHealth(if (health > 0) health else 0)
+        return msg
     }
 
     /**

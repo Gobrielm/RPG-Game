@@ -64,16 +64,18 @@ object SkillTrees {
             11 to Offset(1.21f, 1.576f),
         ),
 
-        CharacterSubClass.TraditionalRanged to arrayOf(
+        CharacterSubClass.NonTraditionalRanged to arrayOf(
             6 to Offset(0f, 0f),
 
             12 to Offset(0.71f, 0.71f),
 
-
             13 to Offset(1.21f, 1.576f),
         )
-
     )
+
+    fun getSkillTree(subClass: CharacterSubClass): Array<Pair<Int, Offset>> {
+        return skillTrees[subClass] ?: Array(0) { Pair(0, Offset(0f, 0f))}
+    }
 }
 
 

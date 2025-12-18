@@ -87,7 +87,7 @@ class RegularRoomFragment : Fragment() {
 
         val (damage, hitType) = playerCharacter.calculateDamageForAttack(playerAttack)
 
-        val (enemyIsDead, msg) = enemyCharacter.takeAttack(damage, playerAttack, hitType)
+        val msg = enemyCharacter.takeAttack(damage, playerAttack, hitType)
         playerCharacter.takeCostFromAttackUsed(playerAttack)
 
         (requireContext() as DungeonExplorationActivity).updateStats()
@@ -98,7 +98,7 @@ class RegularRoomFragment : Fragment() {
         launchAttackAnimation(1000, str)
 
 
-        if (enemyIsDead) {
+        if (!enemyCharacter.isAlive()) {
             viewModel.setReadyForNextRoom()
             val dungeon = viewModel.getDungeon()
             if (dungeon == null) return
@@ -120,7 +120,7 @@ class RegularRoomFragment : Fragment() {
         val enemyAttack: Attack = enemyCharacter.chooseRandAttack()
         val (damage, hitType) = enemyCharacter.calculateDamageForAttack(enemyAttack)
 
-        val (isPlayerDead, msg) = characterOnDefense.takeAttack(enemyAttack, damage, hitType)
+        val msg = characterOnDefense.takeAttack(enemyAttack, damage, hitType)
 
         (requireContext() as DungeonExplorationActivity).updateStats()
 
@@ -128,23 +128,19 @@ class RegularRoomFragment : Fragment() {
 
         launchAttackAnimation(1000, str)
 
-        if (!isPlayerDead) characterOnDefense.updateNewTurn()
+        if (characterOnDefense.isAlive()) characterOnDefense.updateNewTurn()
         if (enemyCharacter.isAlive()) enemyCharacter.updateNewTurn()
 
         (requireContext() as DungeonExplorationActivity).updateStats()
         updateStats()
 
-        moveToNextCharacter(isPlayerDead, ind)
+        moveToNextCharacter()
     }
 
-    fun moveToNextCharacter(isPlayerDead: Boolean, characterAttackedInd: Int) {
-        if (isPlayerDead) {
-            viewModel.removePartyMember(characterAttackedInd)
-        } else {
-            viewModel.cycleSelectedCharacter()
-            (requireContext() as DungeonExplorationActivity).updateStats()
-            (requireContext() as DungeonExplorationActivity).setAttacks()
-        }
+    fun moveToNextCharacter() {
+        viewModel.cycleSelectedCharacter()
+        (requireContext() as DungeonExplorationActivity).updateStats()
+        (requireContext() as DungeonExplorationActivity).setAttacks()
     }
 
     suspend fun launchAttackAnimation(len: Long, attackDesc: String) {

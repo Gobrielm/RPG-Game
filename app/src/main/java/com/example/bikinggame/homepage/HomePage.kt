@@ -30,7 +30,6 @@ class HomePage : AppCompatActivity() {
 
     private val user = Firebase.auth.currentUser
     private lateinit var binding: ActivityHomePageBinding
-    private val viewModel: HomePageViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,10 +47,6 @@ class HomePage : AppCompatActivity() {
 
         val currentItem = intent.getIntExtra("currentItem", 1)
         viewPager.currentItem = currentItem
-
-        viewModel.selectedCharacterID.observe(this, Observer{ id ->
-            openCharacterViewer(id)
-        })
 
         if (PlayerInventory.getCoins() == 0) {
             loadPointsLocally()
@@ -131,16 +126,6 @@ class HomePage : AppCompatActivity() {
             setPoints(points)
             PlayerInventory.setCoins(points.toInt())
         }
-    }
-}
-
-class HomePageViewModel: ViewModel() {
-    private val mutableSelectedCharacterID = MutableLiveData<Int>()
-
-    val selectedCharacterID: LiveData<Int> get() = mutableSelectedCharacterID
-
-    fun selectCharacter(pCharacterID: Int) {
-        mutableSelectedCharacterID.value = pCharacterID
     }
 }
 

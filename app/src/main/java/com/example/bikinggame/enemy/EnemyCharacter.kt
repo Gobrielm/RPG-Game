@@ -39,9 +39,9 @@ class EnemyCharacter {
     /**
      *  @return (Whether or not this character has gone below 0 health, Msg of Attack)
      */
-    fun takeAttack(damage: Int, attack: Attack, hitType: Attack.HitTypes): Pair<Boolean, String> {
-        val (status, msg) = currentStats.getAttacked(damage, attack, hitType, true)
-        return Pair(status, msg)
+    fun takeAttack(damage: Int, attack: Attack, hitType: Attack.HitTypes): String {
+        val msg = currentStats.getAttacked(damage, attack, hitType, true)
+        return msg
     }
 
     fun calculateDamageForAttack(attack: Attack): Pair<Int, Attack.HitTypes> {

@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -48,7 +49,11 @@ class EditCharacterFragment: Fragment() {
         val root: View = binding.root
 
         binding.attackList.layoutManager = LinearLayoutManager(context)
-        binding.attackList.adapter = InventoryManager(inventoryList, ::selectedAttackID)
+        binding.attackList.adapter = InventoryManager(inventoryList, ::selectedAttackID, { holder, item ->
+            holder.imageButton.setImageResource(item.imageResId)
+            holder.imageButton.scaleType = ImageView.ScaleType.CENTER_CROP
+            holder.text.text = item.text
+        })
 
         if (viewModel.getSelectedCharacterID() != null) {
             updateInfo()
@@ -122,7 +127,8 @@ class EditCharacterFragment: Fragment() {
 
     fun updateInfo() {
         val characterID = viewModel.getSelectedCharacterID()!!
-        val character = playerCharacters[characterID]
+        val character = PlayerInventory.getCharacter(characterID)
+        if (character == null) return
         binding.statsPreview.text = character.toString()
 
         val buttons = arrayOf(binding.mv1Button, binding.mv2Button, binding.mv3Button, binding.mv4Button)
@@ -142,7 +148,8 @@ class EditCharacterFragment: Fragment() {
 
         attackSlot = pAttackSlot
         val characterID = viewModel.getSelectedCharacterID()!!
-        val character = playerCharacters[characterID]
+        val character = PlayerInventory.getCharacter(characterID)
+        if (character == null) return
         binding.equipmentButton.visibility = View.GONE
         binding.skillsButton.visibility = View.GONE
         binding.closeMenuButton.visibility = View.VISIBLE
@@ -158,9 +165,10 @@ class EditCharacterFragment: Fragment() {
         }
     }
 
-    fun selectedAttackID(ind: Int) {
+    fun selectedAttackID(ind: Int, item: Item) {
         val characterID = viewModel.getSelectedCharacterID()!!
-        val character = playerCharacters[characterID]
+        val character = PlayerInventory.getCharacter(characterID)
+        if (character == null) return
 
         if (attackSlot < 0 || attackSlot > 3) {
             Log.d("Selecting Attack", "Invalid Attack Slot")

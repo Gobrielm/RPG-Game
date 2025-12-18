@@ -6,36 +6,26 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.runtime.key
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.FragmentInventoryBinding
 import com.example.bikinggame.dungeonPrep.DungeonPrepActivity
-import com.example.bikinggame.dungeonPrep.DungeonPrepViewModel
 import com.example.bikinggame.homepage.HomePage
-import com.example.bikinggame.homepage.HomePageViewModel
 import com.example.bikinggame.homepage.inventory.PlayerInventory.playerCharacters
-import com.example.bikinggame.homepage.inventory.PlayerInventory.playerEquipment
 import com.example.bikinggame.playerCharacter.CharacterMainClass
-import com.example.bikinggame.playerCharacter.Equipment
-import com.example.bikinggame.playerCharacter.EquipmentSlot
 import com.example.bikinggame.playerCharacter.PlayerCharacter
 import com.example.bikinggame.requests.getUserJson
 import com.example.bikinggame.requests.makeGetRequest
-import com.example.bikinggame.requests.makePutRequest
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.LinkedList
-import kotlin.getValue
 
 class InventoryFragment() : Fragment() {
     enum class InventoryMode { VIEW, PICK }
@@ -43,7 +33,6 @@ class InventoryFragment() : Fragment() {
     var mode: InventoryMode = InventoryMode.VIEW
 
     private var _binding: FragmentInventoryBinding? = null
-    private val viewModel: HomePageViewModel by activityViewModels()
 
     private val binding get() = _binding!!
 
@@ -63,7 +52,7 @@ class InventoryFragment() : Fragment() {
     }
 
     private val user = Firebase.auth.currentUser
-    private val inventoryList: LinkedList<Item> = LinkedList<Item>()
+    private val inventoryList: LinkedList<ItemWID> = LinkedList<ItemWID>()
     lateinit var recyclerView: RecyclerView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -79,7 +68,7 @@ class InventoryFragment() : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        recyclerView.adapter = InventoryManager(inventoryList, ::playerCharacterClicked)
+        refreshInventoryBinding()
 
         if (inventoryList.isEmpty()) {
             loadPlayerCharactersLocally()
@@ -104,29 +93,39 @@ class InventoryFragment() : Fragment() {
             }
         }
 
-        playerCharacters.forEach { playerCharacter ->
-            inventoryList.add(Item(getImage(playerCharacter.playerClass.mainClass), playerCharacter.toString()))
+        playerCharacters.forEach { (_, playerCharacter) ->
+            inventoryList.add(ItemWID(playerCharacter.id,
+                Item(getImage(playerCharacter.playerClass.mainClass), playerCharacter.toString())
+            ))
         }
         requireActivity().runOnUiThread {
-            recyclerView.adapter = InventoryManager(inventoryList, ::playerCharacterClicked)
+            refreshInventoryBinding()
         }
     }
 
-    fun playerCharacterClicked(position: Int) {
+    fun refreshInventoryBinding() {
+        recyclerView.adapter = InventoryManager(inventoryList, ::playerCharacterClicked) { holder, item ->
+            holder.imageButton.setImageResource(item.item.imageResId)
+            holder.imageButton.scaleType = ImageView.ScaleType.CENTER_CROP
+            holder.text.text = item.item.text
+        }
+    }
+
+    fun playerCharacterClicked(position: Int, item: ItemWID) {
         if (mode == InventoryMode.VIEW) {
-            editCharacter(position)
+            editCharacter(item)
         } else {
-            selectCharacter(position)
+            selectCharacter(item)
         }
     }
 
-    fun editCharacter(position: Int) {
-        viewModel.selectCharacter(position)
+    fun editCharacter(item: ItemWID) {
+        (requireActivity() as HomePage).openCharacterViewer(item.id)
     }
 
-    fun selectCharacter(position: Int) {
+    fun selectCharacter(item: ItemWID) {
         (requireContext() as DungeonPrepActivity)
-            .selectCharacter(playerCharacters[position], inventoryList[position].imageResId)
+            .selectCharacter(PlayerInventory.getCharacter(item.id)!!, item.item.imageResId)
     }
 
     fun loadPlayerCharactersReq() {
@@ -190,7 +189,9 @@ class InventoryFragment() : Fragment() {
             }
 
             playerCharacters.clear()
-            playerCharacters.addAll(localList)
+            localList.forEach { playerCharacter ->
+                PlayerInventory.addCharacter(playerCharacter)
+            }
             savePlayerCharactersLocally()
             refreshInventoryScreen()
         }
@@ -211,14 +212,16 @@ class InventoryFragment() : Fragment() {
             Log.d("PlayerCharacterStorage", err.toString())
         }
         playerCharacters.clear()
-        playerCharacters.addAll(localCharacters)
+        localCharacters.forEach { playerCharacter ->
+            PlayerInventory.addCharacter(playerCharacter)
+        }
         refreshInventoryScreen()
     }
 
     fun savePlayerCharactersLocally() {
         val filename = "characters_data"
         var data = ""
-        for (playerCharacter in playerCharacters) {
+        for ((_, playerCharacter) in playerCharacters) {
             data += playerCharacter.serialize().toString() + '\n'
         }
 

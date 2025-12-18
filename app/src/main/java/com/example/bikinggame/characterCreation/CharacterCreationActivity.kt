@@ -96,7 +96,7 @@ class CharacterCreationActivity : AppCompatActivity() {
 
 
             val newCharacterJSON = jsonObject.get("data") as JSONArray
-            PlayerInventory.playerCharacters.add(PlayerCharacter(newCharacterJSON))
+            PlayerInventory.addCharacter(PlayerCharacter(newCharacterJSON))
 
             goToHomePage()
         }

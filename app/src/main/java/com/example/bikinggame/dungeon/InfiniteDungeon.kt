@@ -25,7 +25,8 @@ class InfiniteDungeon: Dungeon {
 
             else -> {
                 val odds = arrayOf(DungeonRooms.REGULAR, DungeonRooms.REGULAR, DungeonRooms.REGULAR, DungeonRooms.REGULAR, DungeonRooms.REGULAR, DungeonRooms.REGULAR, DungeonRooms.BOSS, DungeonRooms.TREASURE)
-                odds[Random().nextInt(odds.size)]
+                DungeonRooms.TREASURE
+//                odds[Random().nextInt(odds.size)]
             }
         }
 

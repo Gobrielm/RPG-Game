@@ -4,6 +4,7 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,6 +32,7 @@ class SkillTreeFragment: Fragment() {
     private val binding get() = _binding!!
     private val viewModel: CharacterViewerViewModel by activityViewModels()
     private var availableSkillPts: Int = 0
+    private val spreadFactor = 600f
     private var skillIDSelected: Int? = null
     private val nodeButtons = mutableMapOf<Int, Button>()
 
@@ -41,12 +43,40 @@ class SkillTreeFragment: Fragment() {
         _binding = FragmentSkillTreeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val spreadFactor = 600f
+        createSkillTreeGraphic()
 
-        val skillTree = SkillTrees.skillTrees[CharacterSubClass.Knight]!!
+        binding.closeMenuButton.setOnClickListener {
+            closeSkillInfoPanel()
+        }
+
+        binding.unlockSkillButton.setOnClickListener {
+            unlockSkill()
+        }
+
+        binding.backButton.setOnClickListener {
+            val navController = findNavController()
+            navController.navigate(R.id.editCharacterFragment)
+        }
+
+        updateSkillPointerCount()
+        return root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun createSkillTreeGraphic() {
+        if (viewModel.getSelectedCharacterID() == null) return
+        Log.d("AAA", viewModel.getSelectedCharacterID().toString())
+        val character = PlayerInventory.getCharacter(viewModel.getSelectedCharacterID()!!)
+        if (character == null) return
+        Log.d("AAA", character.playerClass.subClass.toString())
+        val skillTree = SkillTrees.getSkillTree(character.playerClass.subClass)
+        Log.d("AAA", skillTree.size.toString())
         val zoomContainer = binding.zoomContainer
 
-        val character = PlayerInventory.getCharacter(viewModel.getSelectedCharacterID()!!)!!
         val skillsUnlocked = character.skillTree.skillsUnlocked
 
         availableSkillPts = character.skillTree.getAvailableSkillPoints()
@@ -86,30 +116,6 @@ class SkillTreeFragment: Fragment() {
                 }
             }
         }
-
-        binding.closeMenuButton.setOnClickListener {
-            closeSkillInfoPanel()
-        }
-
-        binding.unlockSkillButton.setOnClickListener {
-            unlockSkill()
-        }
-
-        binding.backButton.setOnClickListener {
-            val navController = findNavController()
-            navController.navigate(R.id.editCharacterFragment)
-        }
-
-        updateSkillPointerCount()
-        return root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private fun openSkillInfoPanel(skillID: Int) {

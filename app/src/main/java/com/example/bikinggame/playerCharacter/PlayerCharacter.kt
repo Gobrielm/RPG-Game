@@ -194,9 +194,9 @@ class PlayerCharacter {
     }
 
     /**
-     *  @return (Whether or not this character has gone below 0 health, Msg of Event)
+     *  @return (Msg of Event)
      */
-    fun takeAttack(attack: Attack, damage: Int, hitType: Attack.HitTypes): Pair<Boolean, String> {
+    fun takeAttack(attack: Attack, damage: Int, hitType: Attack.HitTypes): String {
         var damage: Int = damage
         var msg = ""
         var canDodge = true // Can either dodge or use shield
@@ -209,9 +209,9 @@ class PlayerCharacter {
                 break // Can only block with one shield at max
             }
         }
-        val (status, otherMsg) = currentStats.getAttacked(damage, attack, hitType, canDodge)
+        val otherMsg = currentStats.getAttacked(damage, attack, hitType, canDodge)
 
-        return Pair(status, msg.ifEmpty { otherMsg })
+        return msg.ifEmpty { otherMsg }
     }
 
     fun calculateDamageForAttack(attack: Attack): Pair<Int, Attack.HitTypes> {
@@ -259,5 +259,9 @@ class PlayerCharacter {
         val amt3 = round(baseStats.getMana() * percentage).toInt()
         val newMana = min(currentStats.getMana() + amt3, baseStats.getMana())
         currentStats.setMana(newMana)
+    }
+
+    fun isAlive(): Boolean {
+        return currentStats.getHealth() > 0
     }
 }

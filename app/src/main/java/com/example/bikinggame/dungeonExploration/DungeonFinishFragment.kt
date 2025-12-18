@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -47,14 +48,14 @@ class DungeonFinishFragment: Fragment() {
         val coins = loot[-1]!!
 
         // Update with loot locally
-        inventoryList.add(Item(R.drawable.truck, "Exp Earned: $exp"))
+        inventoryList.add(Item(R.drawable.truck, "Exp: $exp"))
         val expEach = exp / viewModel.getPartySize()
 
         viewModel.getSelectedCharacter()!!.addExp(expEach)
         viewModel.getNextCharacter()?.addExp(expEach)
         viewModel.getNextNextCharacter()?.addExp(expEach)
 
-        inventoryList.add(Item(R.drawable.truck, "Coins Earned: $coins"))
+        inventoryList.add(Item(R.drawable.truck, "Coins: $coins"))
         PlayerInventory.setCoins(PlayerInventory.getCoins() + coins)
 
         for ((lootID, count) in loot) {
@@ -70,7 +71,9 @@ class DungeonFinishFragment: Fragment() {
 
         // Update on cloud
         lifecycleScope.launch {
-            saveCharacter(viewModel.getSelectedCharacter()!!.id)
+            viewModel.getCharacterIDs().forEach { id ->
+                saveCharacter(id)
+            }
             savePoints()
 
             loot.forEach { (equipmentID, _) ->
@@ -82,12 +85,18 @@ class DungeonFinishFragment: Fragment() {
 
         linearLayout.layoutManager = LinearLayoutManager(context)
 
-        linearLayout.adapter = InventoryManager(inventoryList, ::doNothing)
+        linearLayout.adapter = InventoryManager(inventoryList, ::doNothing) { holder, item ->
+            holder.imageButton.setImageResource(item.imageResId)
+            holder.imageButton.scaleType = ImageView.ScaleType.CENTER_CROP
+            holder.text.text = item.text
+        }
+
+
 
         return root
     }
 
-    fun doNothing(ind: Int) {
+    fun doNothing(ind: Int, item: Item) {
 
     }
 

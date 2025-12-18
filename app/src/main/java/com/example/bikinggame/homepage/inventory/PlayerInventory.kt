@@ -8,22 +8,25 @@ import kotlin.collections.forEach
 import kotlin.collections.set
 
 object PlayerInventory {
-    val playerCharacters: ArrayList<PlayerCharacter> = ArrayList()
+    val playerCharacters: MutableMap<Int, PlayerCharacter> = mutableMapOf<Int, PlayerCharacter>()
     val playerEquipment: MutableMap<Int, Int> = mutableMapOf()
     val usedPlayerEquipment: MutableMap<Int, Int> = mutableMapOf()
     private var coins: Int = 0
 
+    fun addCharacter(character: PlayerCharacter) {
+        playerCharacters[character.id] = character
+    }
     fun getCharacter(id: Int): PlayerCharacter? {
-        playerCharacters.forEach { character ->
-            if (character.id == id) return character
+        playerCharacters.forEach { (idToCheck, character) ->
+            if (id == idToCheck) return character
         }
         return null
     }
 
-    fun deleteCharacter(id: Int) {
-        for (i in 0 until playerCharacters.size) {
-            if (playerCharacters[i].id == id) {
-                playerCharacters.removeAt(i)
+    fun deleteCharacter(idToRemove: Int) {
+        playerCharacters.forEach { (id, _) ->
+            if (idToRemove == id) {
+                playerCharacters.remove(id)
                 return
             }
         }
@@ -87,7 +90,7 @@ object PlayerInventory {
         val equipment = Equipment.getEquipment(id)
         if (equipment == null || id == -1) return
         val slot = equipment.slot
-        for (character in playerCharacters) {
+        for ((_, character) in playerCharacters) {
             if ((character.getEquipment(slot)?.id ?: -1) == id) {
                 usePieceOfEquipment(id)
             }

@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,12 +35,16 @@ class LeaderboardFragment : Fragment() {
 
         val recyclerView =  binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = InventoryManager(leaderboardList, ::doNothing)
+        recyclerView.adapter = InventoryManager(leaderboardList, ::doNothing) { holder, item ->
+            holder.imageButton.setImageResource(item.imageResId)
+            holder.imageButton.scaleType = ImageView.ScaleType.CENTER_CROP
+            holder.text.text = item.text
+        }
         loadLeaderboard()
         return root
     }
 
-    fun doNothing(ind: Int) {}
+    fun doNothing(ind: Int, item: Item) {}
 
     fun loadLeaderboard() {
         lifecycleScope.launch {
@@ -71,7 +76,11 @@ class LeaderboardFragment : Fragment() {
             }
 
             requireActivity().runOnUiThread {
-                binding.recyclerView.adapter = InventoryManager(leaderboardList, ::doNothing)
+                binding.recyclerView.adapter = InventoryManager(leaderboardList, ::doNothing) { holder, item ->
+                    holder.imageButton.setImageResource(item.imageResId)
+                    holder.imageButton.scaleType = ImageView.ScaleType.CENTER_CROP
+                    holder.text.text = item.text
+                }
             }
         }
     }

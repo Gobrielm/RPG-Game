@@ -1,7 +1,6 @@
 package com.example.bikinggame.dungeonExploration
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -22,9 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.ActivityDungeonExplorationBinding
-import com.example.bikinggame.databinding.CharacterUiBinding
 import com.example.bikinggame.databinding.DungeonCharacterUiBinding
-import com.example.bikinggame.databinding.MiniCharacterUiBinding
 import com.example.bikinggame.dungeon.Dungeon
 import com.example.bikinggame.dungeon.DungeonRooms
 import com.example.bikinggame.dungeon.InfiniteDungeon
@@ -116,7 +113,7 @@ class DungeonExplorationActivity: AppCompatActivity() {
         }
 
         viewModel.readyForNextRoom.observe(this, Observer {
-            viewModel.resetSelectedCharacter()
+            viewModel.cycleSelectedCharacter()
             moveToNextRoom()
         })
 
@@ -197,52 +194,70 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
     fun updateStats() {
         if (viewModel.partyDied.value!!) return
-        val character = viewModel.getCharacter(0)!!
+        val character1 = viewModel.getCharacter(0)!!
 
-        if (character == viewModel.getSelectedCharacter()) {
+        if (character1 == viewModel.getSelectedCharacter()) {
             highlightCharacter(binding.characterUi.characterUi1)
         } else {
             resetHighlights(binding.characterUi.characterUi1)
         }
 
-        binding.characterUi.characterUi1.nameTextView.text = character.playerClass.mainClass.toString()
-        updateProgressBars(character,
+        if (!character1.isAlive()) {
+            binding.characterUi.characterUi1Container.visibility = View.INVISIBLE
+        } else {
+            binding.characterUi.characterUi1Container.visibility = View.VISIBLE
+        }
+
+        binding.characterUi.characterUi1.nameTextView.text = character1.playerClass.mainClass.toString()
+        updateProgressBars(character1,
             binding.characterUi.characterUi1.healthProgressbar,
             binding.characterUi.characterUi1.manaProgressbar,
             binding.characterUi.characterUi1.staminaProgressbar
         )
 
-        updateStatusEffectsOnMainGui(character, binding.characterUi.characterUi1)
+        updateStatusEffectsOnMainGui(character1, binding.characterUi.characterUi1)
 
-        val nextCharacter = viewModel.getCharacter(1)
-        if (nextCharacter == null) return
+        val character2 = viewModel.getCharacter(1)
+        if (character2 == null) return
 
-        if (nextCharacter == viewModel.getSelectedCharacter()) {
+        if (character2 == viewModel.getSelectedCharacter()) {
             highlightCharacter(binding.characterUi.characterUi2)
         } else {
             resetHighlights(binding.characterUi.characterUi2)
         }
 
-        binding.characterUi.characterUi2.nameTextView.text = nextCharacter.playerClass.mainClass.toString()
-        updateProgressBars(nextCharacter,
+        if (!character2.isAlive()) {
+            binding.characterUi.characterUi2Container.visibility = View.INVISIBLE
+        } else {
+            binding.characterUi.characterUi2Container.visibility = View.VISIBLE
+        }
+
+        binding.characterUi.characterUi2.nameTextView.text = character2.playerClass.mainClass.toString()
+        updateProgressBars(character2,
             binding.characterUi.characterUi2.healthProgressbar,
             binding.characterUi.characterUi2.manaProgressbar,
             binding.characterUi.characterUi2.staminaProgressbar
         )
 
-        updateStatusEffectsOnMainGui(nextCharacter, binding.characterUi.characterUi2)
+        updateStatusEffectsOnMainGui(character2, binding.characterUi.characterUi2)
 
-        val nextNextCharacter = viewModel.getCharacter(2)
-        if (nextNextCharacter == null) return
+        val character3 = viewModel.getCharacter(2)
+        if (character3 == null) return
 
-        if (nextNextCharacter == viewModel.getSelectedCharacter()) {
+        if (character3 == viewModel.getSelectedCharacter()) {
             highlightCharacter(binding.characterUi.characterUi3)
         } else {
             resetHighlights(binding.characterUi.characterUi3)
         }
 
-        binding.characterUi.characterUi3.nameTextView.text = nextNextCharacter.playerClass.mainClass.toString()
-        updateProgressBars(nextNextCharacter,
+        if (!character3.isAlive()) {
+            binding.characterUi.characterUi3Container.visibility = View.INVISIBLE
+        } else {
+            binding.characterUi.characterUi3Container.visibility = View.VISIBLE
+        }
+
+        binding.characterUi.characterUi3.nameTextView.text = character3.playerClass.mainClass.toString()
+        updateProgressBars(character3,
             binding.characterUi.characterUi3.healthProgressbar,
             binding.characterUi.characterUi3.manaProgressbar,
             binding.characterUi.characterUi3.staminaProgressbar
@@ -250,7 +265,7 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
         binding.characterUi.characterUi3
 
-        updateStatusEffectsOnMainGui(nextNextCharacter, binding.characterUi.characterUi3)
+        updateStatusEffectsOnMainGui(character3, binding.characterUi.characterUi3)
     }
 
     fun highlightCharacter(container: DungeonCharacterUiBinding) {
@@ -329,6 +344,14 @@ class DungeonExplorationActivity: AppCompatActivity() {
             .start()
     }
 
+    fun hideCharacterUI() {
+        binding.characterUiContainer.visibility = View.INVISIBLE
+    }
+
+    fun showCharacterUI() {
+        binding.characterUiContainer.visibility = View.VISIBLE
+    }
+
     fun showAttackIndicatorOnCharacter(ind: Int) {
         val container = when (ind) {
             0 -> binding.characterUi.characterUi1
@@ -380,18 +403,22 @@ class DungeonExplorationActivity: AppCompatActivity() {
             val roomType = viewModel.getDungeon()!!.getRoom(++currentRoom)!!
             val navController = findNavController(R.id.nav_host_fragment_character_ui)
 
+            showCharacterUI()
             when (roomType) {
                 DungeonRooms.BOSS ->
                     navController.navigate(R.id.regular_room, bundleOf("boss" to true))
 
-                DungeonRooms.TREASURE ->
+                DungeonRooms.TREASURE -> {
+                    hideCharacterUI()
                     navController.navigate(R.id.treasure_room)
-
-                DungeonRooms.REST ->
+                }
+                DungeonRooms.REST -> {
+                    hideCharacterUI()
                     navController.navigate(R.id.rest_room)
-
-                else ->
+                }
+                else -> {
                     navController.navigate(R.id.regular_room, bundleOf("boss" to false))
+                }
             }
             pauseInputs = false
             updateStats()
@@ -401,12 +428,7 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
     fun moveToEndingScreen() {
         unShowLootUi()
-        binding.characterUi.characterUi1Container.visibility = View.GONE
-        binding.characterUi.characterUi2Container.visibility = View.GONE
-        binding.characterUi.characterUi3Container.visibility = View.GONE
-
-        binding.characterUi.finishText.visibility = View.GONE
-        binding.characterUi.blurRect.visibility = View.GONE
+        hideCharacterUI()
 
         lifecycleScope.launch {
 
@@ -505,6 +527,11 @@ class DungeonExplorationViewModel : ViewModel() {
         return lootEarned.value!!.toMap()
     }
 
+    fun getCharacterIDs(): Array<Int> {
+        val characters = mutableCharacters.value!!
+        return characters.map { it.id }.toTypedArray()
+    }
+
     fun getSelectedCharacter(): PlayerCharacter? {
         return mutableCharacters.value!![currentCharacterInd]
     }
@@ -527,16 +554,17 @@ class DungeonExplorationViewModel : ViewModel() {
     }
 
     fun cycleSelectedCharacter() {
-        _currentCharacterInd.value = (currentCharacterInd + 1) % getPartySize()
-    }
-
-    fun removePartyMember(ind: Int) {
-        mutableCharacters.value!!.removeAt(ind)
-        if (mutableCharacters.value!!.isNotEmpty()) {
-            _currentCharacterInd.value = currentCharacterInd % getPartySize()
-        } else {
-            setPartyHasDied()
+        if (partyDied.value!!) return
+        _currentCharacterInd.value = (currentCharacterInd + 1) % getPartySize() // Force next character
+        var i = 0
+        while (!getCharacter(_currentCharacterInd.value!!)!!.isAlive()) { // Find first alive character
+            _currentCharacterInd.value = (currentCharacterInd + 1) % getPartySize()
+            if (i++ > 3) {
+                setPartyHasDied()
+                break
+            } // whole party is dead, doesn't matter
         }
+
     }
 
     fun getRandomCharacter(): Pair<Int, PlayerCharacter> {
@@ -547,10 +575,6 @@ class DungeonExplorationViewModel : ViewModel() {
 
     fun getPartySize(): Int {
         return mutableCharacters.value!!.size
-    }
-
-    fun resetSelectedCharacter() {
-        _currentCharacterInd.value = 0
     }
 
     fun getEnemy(): EnemyCharacter? {

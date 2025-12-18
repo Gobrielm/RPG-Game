@@ -12,8 +12,16 @@ import com.example.bikinggame.homepage.inventory.InventoryFragment.InventoryMode
 
 data class Item(val imageResId: Int, val text: String)
 
-class InventoryManager(private val items: List<Item>, private val onItemClick: (Int) -> Unit) :
-    RecyclerView.Adapter<InventoryManager.ItemViewHolder>() {
+data class ItemWID(
+    val id: Int,
+    val item: Item
+)
+
+class InventoryManager<T>(
+    private val items: List<T>,
+    private val onItemClick: (position: Int, item: T) -> Unit,
+    private val bind: (holder: ItemViewHolder, item: T) -> Unit
+) : RecyclerView.Adapter<InventoryManager.ItemViewHolder>() {
 
     class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageButton: ImageButton = view.findViewById(R.id.imageButton)
@@ -28,11 +36,10 @@ class InventoryManager(private val items: List<Item>, private val onItemClick: (
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = items[position]
-        holder.imageButton.setImageResource(item.imageResId)
-        holder.imageButton.scaleType = ImageView.ScaleType.CENTER_CROP
-        holder.text.text = item.text
+        bind(holder, item)
+
         holder.imageButton.setOnClickListener {
-            onItemClick(position)
+            onItemClick(position, item)
         }
     }
 

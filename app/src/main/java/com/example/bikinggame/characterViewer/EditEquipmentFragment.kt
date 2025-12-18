@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -50,7 +51,12 @@ class EditEquipmentFragment: Fragment() {
         val root: View = binding.root
 
         binding.equipmentList.layoutManager = LinearLayoutManager(context)
-        binding.equipmentList.adapter = InventoryManager(inventoryList, ::selectedEquipment)
+
+        binding.equipmentList.adapter = InventoryManager(inventoryList, ::selectedEquipment) { holder, item ->
+            holder.imageButton.setImageResource(item.imageResId)
+            holder.imageButton.scaleType = ImageView.ScaleType.CENTER_CROP
+            holder.text.text = item.text
+        }
 
         binding.backButton.setOnClickListener {
             val navController = findNavController()
@@ -138,7 +144,7 @@ class EditEquipmentFragment: Fragment() {
         inventoryList.clear()
     }
 
-    fun selectedEquipment(ind: Int) {
+    fun selectedEquipment(ind: Int, item: Item) {
         val characterID = viewModel.getSelectedCharacterID()!!
         val character = PlayerInventory.getCharacter(characterID)
 
