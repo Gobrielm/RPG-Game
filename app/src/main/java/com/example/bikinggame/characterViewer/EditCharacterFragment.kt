@@ -16,10 +16,12 @@ import com.example.bikinggame.R
 import com.example.bikinggame.databinding.FragmentEditCharacterBinding
 import com.example.bikinggame.homepage.inventory.InventoryManager
 import com.example.bikinggame.homepage.inventory.Item
+import com.example.bikinggame.homepage.inventory.ItemWID
 import com.example.bikinggame.homepage.inventory.PlayerInventory
 import com.example.bikinggame.homepage.inventory.PlayerInventory.playerCharacters
 import com.example.bikinggame.homepage.inventory.saveCharacter
 import com.example.bikinggame.playerCharacter.Attack
+import com.example.bikinggame.playerCharacter.Shield
 import com.example.bikinggame.requests.getUserJson
 import com.example.bikinggame.requests.makeDeleteRequest
 import kotlinx.coroutines.delay
@@ -36,9 +38,8 @@ class EditCharacterFragment: Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: CharacterViewerViewModel by activityViewModels()
-    private var attacksToChooseFrom: ArrayList<Pair<Attack, Boolean>> = arrayListOf()
     private var attackSlot: Int = -1
-    private val inventoryList: LinkedList<Item> = LinkedList<Item>()
+    private val inventoryList: LinkedList<ItemWID> = LinkedList<ItemWID>()
     private var triedDeleteCharacter: Boolean = false
 
     override fun onCreateView(
@@ -48,11 +49,12 @@ class EditCharacterFragment: Fragment() {
         _binding = FragmentEditCharacterBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        binding.attackList.layoutManager = LinearLayoutManager(context)
-        binding.attackList.adapter = InventoryManager(inventoryList, ::selectedAttackID, { holder, item ->
-            holder.imageButton.setImageResource(item.imageResId)
+        binding.recyclerView.layoutManager = LinearLayoutManager(context)
+
+        binding.recyclerView.adapter = InventoryManager(inventoryList, ::selectedAttackID, { holder, item ->
+            holder.imageButton.setImageResource(item.item.imageResId)
             holder.imageButton.scaleType = ImageView.ScaleType.CENTER_CROP
-            holder.text.text = item.text
+            holder.text.text = item.item.text
         })
 
         if (viewModel.getSelectedCharacterID() != null) {
@@ -67,6 +69,10 @@ class EditCharacterFragment: Fragment() {
             buttons[i].setOnClickListener { showAttackChooser(i) }
         }
 
+        binding.shieldButton.setOnClickListener {
+            showShieldChooser()
+        }
+
         binding.equipmentButton.setOnClickListener {
             val navController = findNavController()
             navController.navigate(R.id.editEquipmentFragment)
@@ -78,7 +84,7 @@ class EditCharacterFragment: Fragment() {
         }
 
         binding.closeMenuButton.setOnClickListener {
-            unShowAttackChooser()
+            unShowSelectorContainer()
         }
 
         binding.deleteCharacter.setOnClickListener {
@@ -136,36 +142,43 @@ class EditCharacterFragment: Fragment() {
         character.attacks.forEach { attack ->
             buttons[ind++].text = attack?.name ?: "None Chosen"
         }
+
+        binding.shieldButton.text = character.shield?.name ?: "None Chosen"
     }
 
     fun showAttackChooser(pAttackSlot: Int) {
         if (attackSlot != pAttackSlot) {
-            unShowAttackChooser()
-            attacksToChooseFrom.clear()
+            unShowSelectorContainer()
             inventoryList.clear()
             attackSlot = -1
         }
+
+        (binding.recyclerView.adapter as InventoryManager<ItemWID>).changeOnItemClick(::selectedAttackID)
 
         attackSlot = pAttackSlot
         val characterID = viewModel.getSelectedCharacterID()!!
         val character = PlayerInventory.getCharacter(characterID)
         if (character == null) return
+
         binding.equipmentButton.visibility = View.GONE
         binding.skillsButton.visibility = View.GONE
-        binding.closeMenuButton.visibility = View.VISIBLE
-        binding.attackList.visibility = View.VISIBLE
+        binding.selectorContainer.visibility = View.VISIBLE
 
-        attacksToChooseFrom = character.getAvailableAttacks(attackSlot)
+        val attacksToChooseFrom = character.getAvailableAttacks(attackSlot)
 
         inventoryList.clear()
         attacksToChooseFrom.forEach { (attack, isReassigned) ->
             var text = attack.toString()
             if (isReassigned) text = "(Reassigned) $text"
-            inventoryList.add(Item(R.drawable.truck, text))
+            inventoryList.add(
+                ItemWID(attack.id,
+                    Item(R.drawable.truck, text)
+                )
+            )
         }
     }
 
-    fun selectedAttackID(ind: Int, item: Item) {
+    fun selectedAttackID(ind: Int, item: ItemWID) {
         val characterID = viewModel.getSelectedCharacterID()!!
         val character = PlayerInventory.getCharacter(characterID)
         if (character == null) return
@@ -174,31 +187,70 @@ class EditCharacterFragment: Fragment() {
             Log.d("Selecting Attack", "Invalid Attack Slot")
         } else {
             val characterAttacks = character.attacks
-            val idToRemove = attacksToChooseFrom[ind].first.id
+            val idToRemove = item.id
             for (slot in 0 until 4) {
                 if (characterAttacks[slot] != null && characterAttacks[slot]!!.id == idToRemove) {
                     characterAttacks[slot] = null
                 }
             }
-            characterAttacks[attackSlot] = attacksToChooseFrom[ind].first
+            characterAttacks[attackSlot] = Attack.getAttack(item.id)
 
         }
 
-        attacksToChooseFrom.clear()
         attackSlot = -1
 
         updateInfo()
-        unShowAttackChooser()
+        unShowSelectorContainer()
         lifecycleScope.launch {
             saveCharacter(characterID)
         }
 
     }
 
-    fun unShowAttackChooser() {
+    fun unShowSelectorContainer() {
         binding.equipmentButton.visibility = View.VISIBLE
         binding.skillsButton.visibility = View.VISIBLE
-        binding.attackList.visibility = View.GONE
-        binding.closeMenuButton.visibility = View.GONE
+        binding.selectorContainer.visibility = View.GONE
     }
+
+    fun showShieldChooser() {
+        (binding.recyclerView.adapter as InventoryManager<ItemWID>).changeOnItemClick(::selectShieldID)
+
+        val characterID = viewModel.getSelectedCharacterID()!!
+        val character = PlayerInventory.getCharacter(characterID)
+        if (character == null) return
+
+        binding.equipmentButton.visibility = View.GONE
+        binding.skillsButton.visibility = View.GONE
+        binding.selectorContainer.visibility = View.VISIBLE
+
+        val shieldsToChooseFrom = character.getAvailableShields()
+
+        inventoryList.clear()
+        shieldsToChooseFrom.forEach { shield ->
+            val text = shield.toString()
+            inventoryList.add(
+                ItemWID(shield.id,
+                    Item(R.drawable.truck, text)
+                )
+            )
+        }
+
+    }
+
+    fun selectShieldID(ind: Int, item: ItemWID) {
+        val characterID = viewModel.getSelectedCharacterID()!!
+        val character = PlayerInventory.getCharacter(characterID)
+        if (character == null) return
+
+        character.shield = Shield.getShield(item.id)
+
+        updateInfo()
+        unShowSelectorContainer()
+        lifecycleScope.launch {
+            saveCharacter(characterID)
+        }
+    }
+
+
 }

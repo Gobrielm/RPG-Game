@@ -70,6 +70,16 @@ object SkillTrees {
             12 to Offset(0.71f, 0.71f),
 
             13 to Offset(1.21f, 1.576f),
+        ),
+
+        CharacterSubClass.TraditionalMagic to arrayOf(
+            1 to Offset(0f, 0f),
+
+            14 to Offset(-1.06f,0.6f),
+            15 to Offset(0.94f,0.04f),
+            16 to Offset(1.72f,0.6f),
+            17 to Offset(-1.82f,0.07f)
+
         )
     )
 
@@ -132,6 +142,10 @@ class Skill {
         val skillIDtoSkill = hashMapOf<Int, Skill>(
             // Start of TraditionalMagic Tree
             1 to Skill(1, "Humble Beginnings", emptyMap(), emptyArray(), 2, -1),
+            14 to Skill(14, "Magic Study", mapOf(BasicStats.Intelligence to 1), arrayOf(1), -1, -1),
+            15 to Skill(15, "Magic Practice", mapOf(BasicStats.Casting to 1), arrayOf(1), -1, -1),
+            16 to Skill(16, "Frost Study", emptyMap(), arrayOf(15), -1, 2),
+            17 to Skill(17, "Improved Casting", mapOf(BasicStats.Casting to 1), arrayOf(14), -1, -1),
 
             // Start of RitualMagic Tree
             2 to Skill(2, "Humble Beginnings", emptyMap(), emptyArray(), 2, -1),

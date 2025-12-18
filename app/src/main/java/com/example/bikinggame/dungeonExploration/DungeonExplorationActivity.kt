@@ -210,9 +210,7 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
         binding.characterUi.characterUi1.nameTextView.text = character1.playerClass.mainClass.toString()
         updateProgressBars(character1,
-            binding.characterUi.characterUi1.healthProgressbar,
-            binding.characterUi.characterUi1.manaProgressbar,
-            binding.characterUi.characterUi1.staminaProgressbar
+            binding.characterUi.characterUi1
         )
 
         updateStatusEffectsOnMainGui(character1, binding.characterUi.characterUi1)
@@ -234,9 +232,7 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
         binding.characterUi.characterUi2.nameTextView.text = character2.playerClass.mainClass.toString()
         updateProgressBars(character2,
-            binding.characterUi.characterUi2.healthProgressbar,
-            binding.characterUi.characterUi2.manaProgressbar,
-            binding.characterUi.characterUi2.staminaProgressbar
+            binding.characterUi.characterUi2
         )
 
         updateStatusEffectsOnMainGui(character2, binding.characterUi.characterUi2)
@@ -258,9 +254,7 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
         binding.characterUi.characterUi3.nameTextView.text = character3.playerClass.mainClass.toString()
         updateProgressBars(character3,
-            binding.characterUi.characterUi3.healthProgressbar,
-            binding.characterUi.characterUi3.manaProgressbar,
-            binding.characterUi.characterUi3.staminaProgressbar
+            binding.characterUi.characterUi3
         )
 
         binding.characterUi.characterUi3
@@ -290,10 +284,11 @@ class DungeonExplorationActivity: AppCompatActivity() {
         }
     }
 
-    fun updateProgressBars(character: PlayerCharacter, healthProgressBar: ProgressBar, manaProgressBar: ProgressBar, staminaProgressBar: ProgressBar) {
-        healthProgressBar.progress = (character.currentStats.getHealth().toDouble() / character.baseStats.getHealth() * 100.0).toInt()
-        manaProgressBar.progress = (character.currentStats.getMana().toDouble() / character.baseStats.getMana() * 100.0).toInt()
-        staminaProgressBar.progress = (character.currentStats.getStamina().toDouble() / character.baseStats.getStamina() * 100.0).toInt()
+    fun updateProgressBars(character: PlayerCharacter, container: DungeonCharacterUiBinding) {
+        container.healthProgressbar.progress = (character.currentStats.getHealth().toDouble() / character.baseStats.getHealth() * 100.0).toInt()
+        container.manaProgressbar.progress = (character.currentStats.getMana().toDouble() / character.baseStats.getMana() * 100.0).toInt()
+        container.staminaProgressbar.progress = (character.currentStats.getStamina().toDouble() / character.baseStats.getStamina() * 100.0).toInt()
+        container.shieldProgressbar.progress = (character.getShieldHitPoints().toDouble() / character.baseStats.getHealth() * 100).toInt()
     }
 
     fun setAttacks() {

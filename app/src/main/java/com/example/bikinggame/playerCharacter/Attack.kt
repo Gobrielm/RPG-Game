@@ -55,7 +55,7 @@ class Attack {
     fun getRandomHitType(): HitTypes {
         val rand: Int = Random.nextInt(0, 100)
         val chanceToMiss = 100 - accuracy
-        val glanceChance = (accuracy - chanceToMiss) * 0.4 + chanceToMiss
+        val glanceChance = (accuracy - chanceToMiss) * 0.3 + chanceToMiss
         return if (rand < chanceToMiss) {
             HitTypes.MISS
         } else if (rand < glanceChance) {

@@ -1,10 +1,10 @@
 package com.example.bikinggame.playerCharacter
 
 data class StatusEffect (
-    private var length: Int, /* Rounds it will last */
-    val statDecrease: Pair<BasicStats, Int>?, /* Reduce stat perm, for health/stamina/mana*/
-    val statDebuff: Pair<BasicStats, Int>?, /* Reduce strength, const, etc.*/
     val id: Int, /* Unique */
+    private var length: Int, /* Rounds it will last */
+    val statChangePerRound: Pair<BasicStats, Int>?, /* Reduce stat perm, for health/stamina/mana*/
+    val statChange: Pair<BasicStats, Int>?, /* Reduce strength, const, etc.*/
     val name: String
 ) {
 
@@ -22,12 +22,12 @@ data class StatusEffect (
 
     companion object {
         val statusEffects = mapOf(
-            1 to StatusEffect(3, Pair(BasicStats.BaseHealth, 3), null, 1, "Poison"),
-            2 to StatusEffect(3, null, Pair(BasicStats.Strength, 5), 2, "Weakness")
+            1 to StatusEffect(1, 3, Pair(BasicStats.BaseHealth, -3), null, "Poison"),
+            2 to StatusEffect(2, 3, null, Pair(BasicStats.Strength, -5), "Weakness")
         )
 
         fun getStatusEffect(id: Int): StatusEffect? {
-            return statusEffects[id]
+            return statusEffects[id]?.copy()
         }
     }
 

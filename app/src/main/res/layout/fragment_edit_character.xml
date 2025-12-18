@@ -23,15 +23,15 @@
         android:layout_height="50dp"
         android:layout_marginTop="70dp"
         android:layout_marginEnd="75dp"
-        android:text="Button"
-
-        android:autoSizeTextType="uniform"
-        android:autoSizeMinTextSize="8sp"
         android:autoSizeMaxTextSize="18sp"
+
+        android:autoSizeMinTextSize="8sp"
         android:autoSizeStepGranularity="1sp"
+        android:autoSizeTextType="uniform"
+        android:text="Ak2"
 
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/statsPreview"/>
+        app:layout_constraintTop_toBottomOf="@+id/statsPreview" />
 
 
     <Button
@@ -40,12 +40,12 @@
         android:layout_height="50dp"
         android:layout_marginTop="27dp"
         android:layout_marginEnd="75dp"
-        android:text="Button"
-
-        android:autoSizeTextType="uniform"
-        android:autoSizeMinTextSize="8sp"
         android:autoSizeMaxTextSize="18sp"
+
+        android:autoSizeMinTextSize="8sp"
         android:autoSizeStepGranularity="1sp"
+        android:autoSizeTextType="uniform"
+        android:text="Ak4"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mv2Button" />
@@ -56,12 +56,12 @@
         android:layout_height="50dp"
         android:layout_marginStart="75dp"
         android:layout_marginTop="297dp"
-        android:text="Button"
-
-        android:autoSizeTextType="uniform"
-        android:autoSizeMinTextSize="8sp"
         android:autoSizeMaxTextSize="18sp"
+
+        android:autoSizeMinTextSize="8sp"
         android:autoSizeStepGranularity="1sp"
+        android:autoSizeTextType="uniform"
+        android:text="Atk1"
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -72,34 +72,15 @@
         android:layout_height="50dp"
         android:layout_marginStart="75dp"
         android:layout_marginTop="27dp"
-        android:text="Button"
-
-        android:autoSizeTextType="uniform"
-        android:autoSizeMinTextSize="8sp"
         android:autoSizeMaxTextSize="18sp"
+
+        android:autoSizeMinTextSize="8sp"
         android:autoSizeStepGranularity="1sp"
+        android:autoSizeTextType="uniform"
+        android:text="Ak3"
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mv1Button" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/attackList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="460dp"
-        android:visibility="gone">
-
-    </androidx.recyclerview.widget.RecyclerView>
-
-    <ImageButton
-        android:id="@+id/closeMenuButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:visibility="gone"
-        android:layout_marginTop="460dp"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/equipmentButton"
@@ -144,5 +125,54 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/deleteCharacter" />
 
+    <Button
+        android:id="@+id/shieldButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="160dp"
+        android:layout_marginTop="31dp"
+        android:layout_marginEnd="160dp"
+        android:text="Shield"
+
+        android:autoSizeMaxTextSize="18sp"
+        android:autoSizeMinTextSize="8sp"
+        android:autoSizeStepGranularity="1sp"
+        android:autoSizeTextType="uniform"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mv4Button" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/selectorContainer"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:background="#CAC3DB"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <ImageButton
+            android:id="@+id/closeMenuButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

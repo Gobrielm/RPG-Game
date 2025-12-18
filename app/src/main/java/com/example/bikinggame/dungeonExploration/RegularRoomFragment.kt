@@ -98,19 +98,24 @@ class RegularRoomFragment : Fragment() {
         launchAttackAnimation(1000, str)
 
 
-        if (!enemyCharacter.isAlive()) {
-            viewModel.setReadyForNextRoom()
-            val dungeon = viewModel.getDungeon()
-            if (dungeon == null) return
-            val exp = dungeon.getExpForEnemy()
-            viewModel.addExpEarned(exp)
-            return
-        }
+        val status = checkRoomCleared(enemyCharacter)
+        if (status) return
 
         delay(200)
 
-
         simulateEnemyAttack(enemyCharacter)
+    }
+
+    fun checkRoomCleared(enemyCharacter: EnemyCharacter): Boolean {
+        if (!enemyCharacter.isAlive()) {
+            viewModel.setReadyForNextRoom()
+            val dungeon = viewModel.getDungeon()
+            if (dungeon == null) return true
+            val exp = dungeon.getExpForEnemy()
+            viewModel.addExpEarned(exp)
+            return true
+        }
+        return false
     }
 
     suspend fun simulateEnemyAttack(enemyCharacter: EnemyCharacter) {
@@ -128,13 +133,24 @@ class RegularRoomFragment : Fragment() {
 
         launchAttackAnimation(1000, str)
 
-        if (characterOnDefense.isAlive()) characterOnDefense.updateNewTurn()
-        if (enemyCharacter.isAlive()) enemyCharacter.updateNewTurn()
+        simulateRoundChange(characterOnDefense, enemyCharacter)
 
         (requireContext() as DungeonExplorationActivity).updateStats()
         updateStats()
 
+        delay(350)
+
+        // Status Effects could have killed
+        val status = checkRoomCleared(enemyCharacter)
+        if (status) return
+
         moveToNextCharacter()
+    }
+
+    // Also simulates status effects
+    fun simulateRoundChange(characterOnDefense: PlayerCharacter, enemyCharacter: EnemyCharacter) {
+        if (characterOnDefense.isAlive()) characterOnDefense.updateNewTurn()
+        if (enemyCharacter.isAlive()) enemyCharacter.updateNewTurn()
     }
 
     fun moveToNextCharacter() {
@@ -164,6 +180,8 @@ class RegularRoomFragment : Fragment() {
                     / enemyCharacter.baseStats.getMana().toDouble() * 100.0).toInt()
             binding.staminaProgressbar.progress = (enemyCharacter.currentStats.getStamina().toDouble()
                     / enemyCharacter.baseStats.getStamina().toDouble() * 100.0).toInt()
+            binding.shieldProgressbar.progress = (enemyCharacter.getShieldHitPoints().toDouble()
+                    / enemyCharacter.baseStats.getHealth().toDouble() * 100.0).toInt()
             updateStatusEffectsOnMainGui(enemyCharacter)
         } catch (e: Exception) {
             Log.d("Battle Fragment", e.toString())

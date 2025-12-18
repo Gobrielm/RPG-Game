@@ -23,6 +23,19 @@ class Shield {
         currentHitPoints = fortitude
     }
 
+    constructor(shield: Shield) {
+        id = shield.id
+        name = shield.name
+        deflection = shield.deflection
+        fortitude = shield.fortitude
+        regeneration = shield.regeneration
+        currentHitPoints = fortitude
+    }
+
+    fun getHitPoints(): Int {
+        return currentHitPoints
+    }
+
     fun regenShield() {
         if (currentHitPoints == 0) return
         currentHitPoints += regeneration
@@ -70,13 +83,13 @@ class Shield {
         val shieldIDToShield = hashMapOf<Int, Shield>(
             1 to Shield(1, "Basic Shield", 10, 8, 0),
 
-            2 to Shield(2, "Basic Magic Shield", 10, 4, 1),
+            2 to Shield(2, "Frost Shield", 10, 4, 1),
 
             3 to Shield(3, "Improvised Block", 2, 2, 0)
         )
 
         fun getShield(shieldID: Int): Shield? {
-            return if (shieldIDToShield.contains(shieldID)) shieldIDToShield[shieldID] else null
+            return if (shieldIDToShield.contains(shieldID)) Shield(shieldIDToShield[shieldID]!!) else null
         }
     }
 }

@@ -72,7 +72,7 @@ class CharacterStats {
         val blocked = getDamageBlockedForAttack(attack.type)
         var damage = max(0, damage - blocked)
 
-        if (damage < 0) return ""
+        if (damage <= 0) return ""
 
         var msg = ""
         if (canDodge) {
@@ -176,6 +176,10 @@ class CharacterStats {
         return characterStats[BasicStats.Dexterity]!! - getDebuffForStat(BasicStats.Dexterity)
     }
 
+    fun changeStat(stat: BasicStats, amount: Int) {
+        characterStats[stat] = max(0, characterStats[stat]!!  + amount)
+    }
+
     fun raiseStat(stat: BasicStats, amount: Int) {
         characterStats[stat] = characterStats[stat]!! + amount
     }
@@ -189,7 +193,7 @@ class CharacterStats {
         var total = 0
         for (i in 0 until statusEffects.size) {
             val statusEffect = statusEffects[i]
-            if (statusEffect.statDebuff?.first == stat) total += statusEffect.statDebuff.second
+            if (statusEffect.statChange?.first == stat) total += statusEffect.statChange.second
         }
         return total
     }
@@ -210,9 +214,9 @@ class CharacterStats {
             if (statusEffect.updateNewTurn()) {
                 iterator.remove()
             } else {
-                if (statusEffect.statDecrease == null) continue
-                val (stat, decrease) = statusEffect.statDecrease
-                lowerStat(stat, decrease)
+                if (statusEffect.statChangePerRound == null) continue
+                val (stat, amount) = statusEffect.statChangePerRound
+                changeStat(stat, amount)
             }
         }
     }

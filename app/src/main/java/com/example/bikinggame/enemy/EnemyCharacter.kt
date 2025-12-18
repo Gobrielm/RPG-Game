@@ -2,6 +2,7 @@ package com.example.bikinggame.enemy
 
 import com.example.bikinggame.playerCharacter.Attack
 import com.example.bikinggame.playerCharacter.CharacterStats
+import com.example.bikinggame.playerCharacter.Shield
 import com.example.bikinggame.playerCharacter.StatusEffect
 import kotlin.math.abs
 import kotlin.random.Random
@@ -12,6 +13,7 @@ class EnemyCharacter {
     var currentStats: CharacterStats = CharacterStats()
 
     var attacks: Array<Attack?> = arrayOfNulls(4)
+    var shield: Shield? = null
 
     // Used for creating the first character
     constructor(pId: Int, pBaseStats: CharacterStats, pAttacks: ArrayList<Attack>) {
@@ -23,25 +25,41 @@ class EnemyCharacter {
         }
     }
 
-    constructor(pBaseStats: CharacterStats, pAttacks: ArrayList<Attack>) {
+    constructor(pBaseStats: CharacterStats, pAttacks: ArrayList<Attack>, pShield: Shield? = null) {
         id = abs(Random.nextInt())
         baseStats = pBaseStats
         currentStats = CharacterStats(baseStats)
         pAttacks.forEachIndexed { index, attack ->
             attacks[index] = attack
         }
+        shield = pShield
     }
 
     override fun toString(): String {
         return "$id: $currentStats"
     }
 
+    fun getShieldHitPoints(): Int {
+        return shield?.getHitPoints() ?: 0
+    }
+
     /**
      *  @return (Whether or not this character has gone below 0 health, Msg of Attack)
      */
     fun takeAttack(damage: Int, attack: Attack, hitType: Attack.HitTypes): String {
-        val msg = currentStats.getAttacked(damage, attack, hitType, true)
-        return msg
+        var damage: Int = damage
+        var msg = ""
+        var canDodge = true // Can either dodge or use shield
+        if (getShieldHitPoints() > 0) {
+            canDodge = false
+            val (newDamage, newMsg) = shield!!.blockHit(attack, damage, hitType)
+            damage = newDamage
+            msg = newMsg
+        }
+
+        val otherMsg = currentStats.getAttacked(damage, attack, hitType, canDodge)
+
+        return msg.ifEmpty { otherMsg }
     }
 
     fun calculateDamageForAttack(attack: Attack): Pair<Int, Attack.HitTypes> {
@@ -64,6 +82,7 @@ class EnemyCharacter {
     fun updateNewTurn() {
         currentStats.regenStamina(baseStats.getStamina())
         currentStats.regenMana(baseStats.getMana())
+        currentStats.updateNewTurn()
     }
 
     fun getStatusEffects(): ArrayList<StatusEffect> {

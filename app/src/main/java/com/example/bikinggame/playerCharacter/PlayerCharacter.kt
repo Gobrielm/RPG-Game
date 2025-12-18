@@ -20,7 +20,7 @@ class PlayerCharacter {
     val currentStats: CharacterStats
     val skillTree: CharacterSkillTree
     val attacks: Array<Attack?> = arrayOfNulls(4)
-    val shields: ArrayList<Shield> = arrayListOf()
+    var shield: Shield? = null
 
     val currentEquipment = arrayOfNulls<Equipment>(EquipmentSlot.entries.size)
 
@@ -79,13 +79,8 @@ class PlayerCharacter {
             }
 
         }
-        val shieldsSize = jsonArray.get(offset.value++) as Int
-        for (i in 0 until shieldsSize) {
-            val id = jsonArray[offset.value++] as Int
-            val shield = Shield.getShield(id)
-            if (shield != null) shields.add(shield)
-        }
-        shields.sortWith<Shield>(Comparator { shield1, shield2 -> shield1.fortitude - shield2.fortitude })
+        val shieldID = jsonArray.get(offset.value++) as Int
+        shield = Shield.getShield(shieldID)
     }
 
 
@@ -106,9 +101,10 @@ class PlayerCharacter {
                 jsonArray.put(attacks[i]!!.id)
             }
         }
-        jsonArray.put(shields.size)
-        for (i in 0 until shields.size) {
-            jsonArray.put(shields[i].id)
+        if (shield != null) {
+            jsonArray.put(shield!!.id)
+        } else {
+            jsonArray.put(-1)
         }
         return jsonArray
     }
@@ -165,8 +161,8 @@ class PlayerCharacter {
      * Used to update shields, status affects, regenerating
      */
     fun updateNewTurn() {
-        shields.forEach { shield ->
-            shield.regenShield()
+        if (shield != null) {
+            shield!!.regenShield()
         }
         currentStats.regenStamina(baseStats.getStamina())
         currentStats.regenMana(baseStats.getMana())
@@ -193,6 +189,10 @@ class PlayerCharacter {
         currentStats.lowerStat(stat, amt)
     }
 
+    fun getShieldHitPoints(): Int {
+        return shield?.getHitPoints() ?: 0
+    }
+
     /**
      *  @return (Msg of Event)
      */
@@ -200,14 +200,12 @@ class PlayerCharacter {
         var damage: Int = damage
         var msg = ""
         var canDodge = true // Can either dodge or use shield
-        for (shield in shields) {
-            if (shield.currentHitPoints > 0) {
-                canDodge = false
-                val (newDamage, newMsg) = shield.blockHit(attack, damage, hitType)
-                damage = newDamage
-                msg = newMsg
-                break // Can only block with one shield at max
-            }
+        if (getShieldHitPoints() > 0) {
+            canDodge = false
+            val (newDamage, newMsg) = shield!!.blockHit(attack, damage, hitType)
+            damage = newDamage
+            msg = newMsg
+
         }
         val otherMsg = currentStats.getAttacked(damage, attack, hitType, canDodge)
 
@@ -245,6 +243,25 @@ class PlayerCharacter {
         }
 
         return attacksToReturn
+    }
+
+    fun getAvailableShields(): ArrayList<Shield> {
+        val shieldsToReturn = ArrayList<Shield>()
+        val idToAvoid = shield?.id ?: -1
+
+        currentEquipment.forEach { equipment ->
+            if (equipment != null && equipment.shield != null && equipment.shield.id != idToAvoid) {
+                shieldsToReturn.add(equipment.shield)
+            }
+        }
+
+        skillTree.skillsUnlocked.forEach { skill ->
+            if (skill.shield != null && skill.shield!!.id != idToAvoid) {
+                shieldsToReturn.add(skill.shield!!)
+            }
+        }
+
+        return shieldsToReturn
     }
 
     fun healCharacter(percentage: Double) {

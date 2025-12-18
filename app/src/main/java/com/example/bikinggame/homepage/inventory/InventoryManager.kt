@@ -19,13 +19,17 @@ data class ItemWID(
 
 class InventoryManager<T>(
     private val items: List<T>,
-    private val onItemClick: (position: Int, item: T) -> Unit,
+    private var onItemClick: (position: Int, item: T) -> Unit,
     private val bind: (holder: ItemViewHolder, item: T) -> Unit
 ) : RecyclerView.Adapter<InventoryManager.ItemViewHolder>() {
 
     class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageButton: ImageButton = view.findViewById(R.id.imageButton)
         val text: TextView = view.findViewById(R.id.itemText)
+    }
+
+    fun changeOnItemClick(pOnItemClick: (position: Int, item: T) -> Unit) {
+        onItemClick = pOnItemClick
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
