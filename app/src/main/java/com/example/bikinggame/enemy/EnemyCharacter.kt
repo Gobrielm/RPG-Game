@@ -14,19 +14,11 @@ class EnemyCharacter {
 
     var attacks: Array<Attack?> = arrayOfNulls(4)
     var shield: Shield? = null
+    val name: String
 
-    // Used for creating the first character
-    constructor(pId: Int, pBaseStats: CharacterStats, pAttacks: ArrayList<Attack>) {
-        id = pId
-        baseStats = pBaseStats
-        currentStats = CharacterStats(baseStats)
-        pAttacks.forEachIndexed { index, attack ->
-            attacks[index] = attack
-        }
-    }
-
-    constructor(pBaseStats: CharacterStats, pAttacks: ArrayList<Attack>, pShield: Shield? = null) {
+    constructor(pName: String, pBaseStats: CharacterStats, pAttacks: ArrayList<Attack>, pShield: Shield? = null) {
         id = abs(Random.nextInt())
+        name = pName
         baseStats = pBaseStats
         currentStats = CharacterStats(baseStats)
         pAttacks.forEachIndexed { index, attack ->

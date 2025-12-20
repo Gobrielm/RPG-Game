@@ -3,18 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="120dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:background="@drawable/ui_border"
+    android:padding="2dp">
 
     <TextView
         android:id="@+id/nameTextView"
         android:layout_width="match_parent"
-        android:layout_height="14dp"
+        android:layout_height="0dp"
 
         android:layout_marginEnd="40dp"
         android:text="Name"
 
         android:textAlignment="center"
-        app:autoSizeMaxTextSize="18sp"
+        app:autoSizeMaxTextSize="24sp"
         app:autoSizeMinTextSize="6sp"
         app:autoSizeStepGranularity="1sp"
         app:autoSizeTextType="uniform"
@@ -26,13 +27,15 @@
         android:id="@+id/health_progressbar"
         style="@style/Widget.ProgressBar.Horizontal"
         android:layout_width="0dp"
-        android:layout_height="14dp"
+        android:layout_height="0dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
         android:max="100"
         android:progress="80"
         android:progressTint="#F80000"
+        app:layout_constraintBottom_toTopOf="@+id/mana_progressbar"
         app:layout_constraintEnd_toStartOf="@+id/status_effect2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
@@ -41,29 +44,33 @@
         android:id="@+id/shield_progressbar"
         style="@style/Widget.ProgressBar.HorizontalTransparent"
         android:layout_width="0dp"
-        android:layout_height="7dp"
+        android:layout_height="0dp"
         android:layout_gravity="bottom"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
+        android:layout_marginBottom="9dp"
         android:indeterminate="false"
         android:progress="30"
         android:progressTint="#46D1CA"
+        app:layout_constraintBottom_toBottomOf="@+id/health_progressbar"
         app:layout_constraintEnd_toStartOf="@+id/status_effect1"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
+        app:layout_constraintTop_toTopOf="@+id/health_progressbar" />
 
     <ProgressBar
         android:id="@+id/mana_progressbar"
         style="@style/Widget.ProgressBar.Horizontal"
         android:layout_width="0dp"
-        android:layout_height="14dp"
+        android:layout_height="0dp"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
         android:max="100"
         android:progress="70"
         android:progressTint="#251BAF"
+        app:layout_constraintBottom_toTopOf="@+id/stamina_progressbar"
         app:layout_constraintEnd_toStartOf="@+id/status_effect2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/health_progressbar" />
@@ -72,46 +79,54 @@
         android:id="@+id/stamina_progressbar"
         style="@style/Widget.ProgressBar.Horizontal"
         android:layout_width="0dp"
-        android:layout_height="14dp"
+        android:layout_height="0dp"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
         android:max="100"
         android:progress="85"
         android:progressTint="#0BF613"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/status_effect2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mana_progressbar" />
 
     <ImageView
         android:id="@+id/status_effect1"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
 
         android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/status_effect2"
 
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/truck" />
 
     <ImageView
         android:id="@+id/status_effect2"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
 
         android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/status_effect3"
 
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/status_effect1"
         app:srcCompat="@drawable/truck" />
 
     <ImageView
         android:id="@+id/status_effect3"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
 
         android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
 
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/status_effect2"
         app:srcCompat="@drawable/truck" />

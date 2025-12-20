@@ -128,7 +128,8 @@ class DungeonExplorationActivity: AppCompatActivity() {
             }
         })
 
-        viewModel.partyDone.observe(this, Observer {
+        viewModel.partyDone.observe(this, Observer { hasFinished ->
+            if (!hasFinished) return@Observer
             binding.characterUi.finishText.visibility = VISIBLE
             binding.characterUi.blurRect.visibility = VISIBLE
             finished = true
@@ -194,72 +195,80 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
     fun updateStats() {
         if (viewModel.partyDied.value!!) return
-        val character1 = viewModel.getCharacter(0)!!
+        val character1 = viewModel.getCharacter(0)
 
-        if (character1 == viewModel.getSelectedCharacter()) {
-            highlightCharacter(binding.characterUi.characterUi1)
-        } else {
-            resetHighlights(binding.characterUi.characterUi1)
+        if (character1 != null) {
+            if (character1 == viewModel.getSelectedCharacter()) {
+                highlightCharacter(binding.characterUi.characterUi1)
+            } else {
+                resetHighlights(binding.characterUi.characterUi1)
+            }
+
+            if (!character1.isAlive()) {
+                binding.characterUi.characterUi1Container.visibility = View.INVISIBLE
+            } else {
+                binding.characterUi.characterUi1Container.visibility = View.VISIBLE
+            }
+
+            binding.characterUi.characterUi1.nameTextView.text =
+                character1.playerClass.mainClass.toString()
+            updateProgressBars(
+                character1,
+                binding.characterUi.characterUi1
+            )
+
+            updateStatusEffectsOnMainGui(character1, binding.characterUi.characterUi1)
         }
-
-        if (!character1.isAlive()) {
-            binding.characterUi.characterUi1Container.visibility = View.INVISIBLE
-        } else {
-            binding.characterUi.characterUi1Container.visibility = View.VISIBLE
-        }
-
-        binding.characterUi.characterUi1.nameTextView.text = character1.playerClass.mainClass.toString()
-        updateProgressBars(character1,
-            binding.characterUi.characterUi1
-        )
-
-        updateStatusEffectsOnMainGui(character1, binding.characterUi.characterUi1)
 
         val character2 = viewModel.getCharacter(1)
-        if (character2 == null) return
+        if (character2 != null) {
+            if (character2 == viewModel.getSelectedCharacter()) {
+                highlightCharacter(binding.characterUi.characterUi2)
+            } else {
+                resetHighlights(binding.characterUi.characterUi2)
+            }
 
-        if (character2 == viewModel.getSelectedCharacter()) {
-            highlightCharacter(binding.characterUi.characterUi2)
-        } else {
-            resetHighlights(binding.characterUi.characterUi2)
+            if (!character2.isAlive()) {
+                binding.characterUi.characterUi2Container.visibility = View.INVISIBLE
+            } else {
+                binding.characterUi.characterUi2Container.visibility = View.VISIBLE
+            }
+
+            binding.characterUi.characterUi2.nameTextView.text =
+                character2.playerClass.mainClass.toString()
+            updateProgressBars(
+                character2,
+                binding.characterUi.characterUi2
+            )
+
+            updateStatusEffectsOnMainGui(character2, binding.characterUi.characterUi2)
         }
-
-        if (!character2.isAlive()) {
-            binding.characterUi.characterUi2Container.visibility = View.INVISIBLE
-        } else {
-            binding.characterUi.characterUi2Container.visibility = View.VISIBLE
-        }
-
-        binding.characterUi.characterUi2.nameTextView.text = character2.playerClass.mainClass.toString()
-        updateProgressBars(character2,
-            binding.characterUi.characterUi2
-        )
-
-        updateStatusEffectsOnMainGui(character2, binding.characterUi.characterUi2)
 
         val character3 = viewModel.getCharacter(2)
-        if (character3 == null) return
+        if (character3 != null) {
+            if (character3 == viewModel.getSelectedCharacter()) {
+                highlightCharacter(binding.characterUi.characterUi3)
+            } else {
+                resetHighlights(binding.characterUi.characterUi3)
+            }
 
-        if (character3 == viewModel.getSelectedCharacter()) {
-            highlightCharacter(binding.characterUi.characterUi3)
-        } else {
-            resetHighlights(binding.characterUi.characterUi3)
-        }
+            if (!character3.isAlive()) {
+                binding.characterUi.characterUi3Container.visibility = View.INVISIBLE
+            } else {
+                binding.characterUi.characterUi3Container.visibility = View.VISIBLE
+            }
 
-        if (!character3.isAlive()) {
-            binding.characterUi.characterUi3Container.visibility = View.INVISIBLE
-        } else {
-            binding.characterUi.characterUi3Container.visibility = View.VISIBLE
-        }
+            binding.characterUi.characterUi3.nameTextView.text =
+                character3.playerClass.mainClass.toString()
+            updateProgressBars(
+                character3,
+                binding.characterUi.characterUi3
+            )
 
-        binding.characterUi.characterUi3.nameTextView.text = character3.playerClass.mainClass.toString()
-        updateProgressBars(character3,
             binding.characterUi.characterUi3
-        )
 
-        binding.characterUi.characterUi3
-
-        updateStatusEffectsOnMainGui(character3, binding.characterUi.characterUi3)
+            updateStatusEffectsOnMainGui(character3, binding.characterUi.characterUi3)
+        }
     }
 
     fun highlightCharacter(container: DungeonCharacterUiBinding) {
@@ -310,12 +319,13 @@ class DungeonExplorationActivity: AppCompatActivity() {
             return
         }
 
-        viewModel.setPlayerAttack(attack)
+        // TODO: If it is a friendly attack then choose target here
+        viewModel.setPlayerAttack(attack, -1)
     }
 
     fun skipAttack() {
         if (finished || pauseInputs) return
-        viewModel.setPlayerAttack(null)
+        viewModel.setPlayerAttack(null, -1)
     }
 
     fun blurIn() {
@@ -460,15 +470,18 @@ class DungeonExplorationViewModel : ViewModel() {
     private val _currentCharacterInd = MutableLiveData(0)
     private val currentCharacterInd get() = _currentCharacterInd.value!!
     private val mutableCharacters = MutableLiveData(arrayListOf<PlayerCharacter>())
-    private val mutableEnemy = MutableLiveData<EnemyCharacter>()
+    private val _currentEnemyInd = MutableLiveData(0)
+    private val currentEnemyInd get() = _currentEnemyInd.value!!
+    private val _mutableEnemies = MutableLiveData(arrayOf<EnemyCharacter?>(null, null, null))
+    private val mutableEnemies get() = _mutableEnemies.value!!
     private val mutableDungeon = MutableLiveData<Dungeon>()
-    private val mutablePlayerAttack = MutableLiveData(Attack(0, "Temp", 0, 0, 0, AttackTypes.PHY))
+    private val mutablePlayerAttack = MutableLiveData(Pair(Attack(0, "Temp", 0, 0, 0, AttackTypes.PHY), 0))
     private val mutableReadyForNextRoom = MutableLiveData<Boolean>()
     private val mutablePartyDied = MutableLiveData(false)
-    private val mutablePartyDone = MutableLiveData<Boolean>()
+    private val mutablePartyDone = MutableLiveData(false)
     private val lootEarned = MutableLiveData(mutableMapOf(-2 to 0, -1 to 0)) // XP first, then gold
 
-    val attack: LiveData<Attack> get() = mutablePlayerAttack
+    val attack: LiveData<Pair<Attack, Int>?> get() = mutablePlayerAttack
     val readyForNextRoom: LiveData<Boolean> get() = mutableReadyForNextRoom
     val partyDied: LiveData<Boolean> get() = mutablePartyDied
     val partyDone: LiveData<Boolean> get() = mutablePartyDone
@@ -477,16 +490,21 @@ class DungeonExplorationViewModel : ViewModel() {
         mutableCharacters.value!!.add(character)
     }
 
-    fun setEnemy(enemy: EnemyCharacter) {
-        mutableEnemy.value = enemy
+    fun addEnemy(enemy: EnemyCharacter) {
+        for (i in 0 until 3) {
+            if (mutableEnemies[i] == null) {
+                _mutableEnemies.value!![i] = enemy
+                break
+            }
+        }
     }
 
     fun setDungeon(dungeon: Dungeon) {
         mutableDungeon.value = dungeon
     }
 
-    fun setPlayerAttack(attack: Attack?) {
-        mutablePlayerAttack.value = attack
+    fun setPlayerAttack(attack: Attack?, target: Int) {
+        mutablePlayerAttack.value = if (attack == null) null else Pair(attack, target)
     }
 
     fun setReadyForNextRoom() {
@@ -527,7 +545,7 @@ class DungeonExplorationViewModel : ViewModel() {
         return characters.map { it.id }.toTypedArray()
     }
 
-    fun getSelectedCharacter(): PlayerCharacter? {
+    fun getSelectedCharacter(): PlayerCharacter {
         return mutableCharacters.value!![currentCharacterInd]
     }
 
@@ -559,7 +577,6 @@ class DungeonExplorationViewModel : ViewModel() {
                 break
             } // whole party is dead, doesn't matter
         }
-
     }
 
     fun getRandomCharacter(): Pair<Int, PlayerCharacter> {
@@ -572,8 +589,30 @@ class DungeonExplorationViewModel : ViewModel() {
         return mutableCharacters.value!!.size
     }
 
-    fun getEnemy(): EnemyCharacter? {
-        return mutableEnemy.value
+    fun getSelectedEnemy(): EnemyCharacter? {
+        return mutableEnemies[currentEnemyInd]
+    }
+
+    fun getEnemy(ind: Int): EnemyCharacter? {
+        if (ind >= mutableEnemies.size) return null
+        return mutableEnemies[ind]
+    }
+
+    fun cycleSelectedEnemy() {
+        if (partyDone.value!!) return
+        _currentEnemyInd.value = (currentEnemyInd + 1) % getEnemiesSize() // Force next character
+        var i = 0
+        while (getEnemy(_currentEnemyInd.value!!) != null && !getEnemy(_currentEnemyInd.value!!)!!.isAlive()) { // Find first alive character
+            _currentEnemyInd.value = (currentEnemyInd + 1) % getEnemiesSize()
+            if (i++ > 3) {
+                setPartyIsDone()
+                break
+            } // enemies dead, party is done
+        }
+    }
+
+    fun getEnemiesSize(): Int {
+        return mutableEnemies.size
     }
 
     fun getDungeon(): Dungeon? {

@@ -49,7 +49,7 @@ class InfiniteDungeon: Dungeon {
             BasicStats.Dexterity to (7 * modifier).toInt()
         ))
 
-        return EnemyCharacter(characterStats,
+        return EnemyCharacter("Goblin", characterStats,
             arrayListOf(Attack(-1, "AAAA", 1, 5,100, Attack.AttackTypes.PHY)),
             Shield.getShield(1)
         )

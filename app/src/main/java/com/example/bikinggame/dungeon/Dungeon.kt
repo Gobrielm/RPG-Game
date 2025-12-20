@@ -31,7 +31,7 @@ interface Dungeon {
 //        )
 
         val bosses = arrayListOf(
-            EnemyCharacter(CharacterStats(mutableMapOf(
+            EnemyCharacter("Rock Golem", CharacterStats(mutableMapOf(
                 BasicStats.BaseHealth to (100),
                 BasicStats.BaseMana to (15),
                 BasicStats.BaseStamina to (10),

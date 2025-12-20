@@ -5,68 +5,85 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="16dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/enemy_ui1_container"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:layout_marginHorizontal="0dp"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintEnd_toStartOf="@id/enemy_ui2_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <include
+            android:id="@+id/enemy_ui1"
+            layout="@layout/dungeon_character_ui"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/target1Button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00000000"
+            android:visibility="visible"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/enemy_ui2_container"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:layout_marginHorizontal="0dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@id/enemy_ui3_container"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toEndOf="@id/enemy_ui1_container"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <include
+            android:id="@+id/enemy_ui2"
+            layout="@layout/dungeon_character_ui"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/target2Button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00000000"
+            android:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/enemy_ui3_container"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:layout_marginHorizontal="0dp"
+        android:layout_marginStart="5dp"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/goblin" />
+        app:layout_constraintStart_toEndOf="@id/enemy_ui2_container"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <ProgressBar
-        android:id="@+id/health_progressbar"
-        style="@style/Widget.ProgressBar.Vertical"
-        android:layout_width="15dp"
-        android:layout_height="100dp"
-        android:layout_gravity="bottom"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="16dp"
-        android:progress="80"
-        android:progressTint="#F80000"
-        app:layout_constraintEnd_toStartOf="@+id/stamina_progressbar"
-        app:layout_constraintTop_toTopOf="parent" />
+        <include
+            android:id="@+id/enemy_ui3"
+            layout="@layout/dungeon_character_ui"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-    <ProgressBar
-        android:id="@+id/shield_progressbar"
-        style="@style/Widget.ProgressBar.VerticalTransparent"
-        android:layout_width="7dp"
-        android:layout_height="100dp"
-        android:layout_gravity="bottom"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="24dp"
-        android:indeterminate="false"
-        android:progress="30"
-        android:progressTint="#46D1CA"
-        app:layout_constraintEnd_toStartOf="@+id/stamina_progressbar"
-        app:layout_constraintTop_toTopOf="parent" />
+        <Button
+            android:id="@+id/target3Button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00000000"
+            android:visibility="visible"/>
 
-    <ProgressBar
-        android:id="@+id/mana_progressbar"
-        style="@style/Widget.ProgressBar.Vertical"
-        android:layout_width="15dp"
-        android:layout_height="100dp"
-        android:layout_gravity="bottom"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="16dp"
-        android:progress="70"
-        android:progressTint="#251BAF"
-        app:layout_constraintEnd_toStartOf="@+id/imageView3"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ProgressBar
-        android:id="@+id/stamina_progressbar"
-        style="@style/Widget.ProgressBar.Vertical"
-        android:layout_width="15dp"
-        android:layout_height="100dp"
-        android:layout_gravity="bottom"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="16dp"
-        android:progress="85"
-        android:progressTint="#0BF613"
-        app:layout_constraintEnd_toStartOf="@+id/mana_progressbar"
-        app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/attackAnimation"
@@ -87,44 +104,6 @@
         app:layout_constraintVertical_bias="0.3"
         app:lottie_fileName="Battle.json" />
 
-    <ImageView
-        android:id="@+id/statusEffect3"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="60dp"
-
-        android:layout_marginEnd="20dp"
-
-        android:scaleType="centerCrop"
-        app:layout_constraintEnd_toStartOf="@+id/statusEffect2"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/truck" />
-
-    <ImageView
-        android:id="@+id/statusEffect2"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="60dp"
-
-        android:layout_marginEnd="20dp"
-        android:scaleType="centerCrop"
-
-        app:layout_constraintEnd_toStartOf="@+id/statusEffect1"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/truck" />
-
-    <ImageView
-        android:id="@+id/statusEffect1"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="60dp"
-
-        android:layout_marginEnd="20dp"
-
-        android:scaleType="centerCrop"
-        app:layout_constraintEnd_toStartOf="@+id/health_progressbar"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/truck" />
 
     <TextView
         android:id="@+id/hitTypeText"
@@ -132,17 +111,24 @@
         android:layout_height="50dp"
 
         android:layout_marginStart="10dp"
-
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="5dp"
         android:autoSizeMaxTextSize="24sp"
         android:autoSizeMinTextSize="8sp"
         android:autoSizeStepGranularity="1sp"
         android:autoSizeTextType="uniform"
         android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@+id/attackAnimation"
+        app:layout_constraintStart_toEndOf="@+id/attackAnimation"
+        app:layout_constraintBottom_toBottomOf="@+id/attackAnimation"
+        app:layout_constraintTop_toTopOf="@+id/attackAnimation"
+        tools:layout_editor_absoluteY="129dp" />
+
+    <TextView
+        android:id="@+id/centeredText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
