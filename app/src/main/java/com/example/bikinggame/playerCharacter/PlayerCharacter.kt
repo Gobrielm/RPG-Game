@@ -1,13 +1,9 @@
 package com.example.bikinggame.playerCharacter
 
-import android.util.Log
+import com.example.bikinggame.attack.Attack
 import org.json.JSONArray
-import kotlin.math.abs
-import kotlin.math.floor
 import kotlin.math.min
-import kotlin.math.pow
 import kotlin.math.round
-import kotlin.random.Random
 
 class IntWrapper(var value: Int)
 
@@ -196,20 +192,44 @@ class PlayerCharacter {
     /**
      *  @return (Msg of Event)
      */
-    fun takeAttack(attack: Attack, damage: Int, hitType: Attack.HitTypes): String {
+    fun takeAttack(attack: Attack, damage: Int, hitType: Attack.HitTypes): Pair<Int, String> {
         var damage: Int = damage
         var msg = ""
         var canDodge = true // Can either dodge or use shield
+        var blocked = 0
         if (getShieldHitPoints() > 0) {
             canDodge = false
+            blocked = getShieldHitPoints()
             val (newDamage, newMsg) = shield!!.blockHit(attack, damage, hitType)
+            blocked = blocked - getShieldHitPoints()
             damage = newDamage
             msg = newMsg
 
         }
-        val otherMsg = currentStats.getAttacked(damage, attack, hitType, canDodge)
+        val (damageTaken, otherMsg) = currentStats.getAttacked(damage, attack, hitType, canDodge)
 
-        return msg.ifEmpty { otherMsg }
+        return Pair(damageTaken + blocked, msg.ifEmpty { otherMsg })
+    }
+
+    /**
+     * @return Amount of Healing Received
+     */
+    fun takeHealing(attack: Attack): Int {
+        if (!attack.friendlyAttack) return 0
+
+        val health = currentStats.getHealth()
+
+        currentStats.raiseHealth(baseStats.getHealth(), attack.getHealing())
+
+        if (attack.statusEffectInflictChance != null) {
+            val rand: Int = kotlin.random.Random.nextInt(0, 100)
+            val (chance, statusEffect) = attack.statusEffectInflictChance
+            if (chance > rand) {
+                addStatusEffect(statusEffect)
+            }
+        }
+
+        return currentStats.getHealth() - health
     }
 
     fun calculateDamageForAttack(attack: Attack): Pair<Int, Attack.HitTypes> {

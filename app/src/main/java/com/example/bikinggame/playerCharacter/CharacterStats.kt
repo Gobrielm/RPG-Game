@@ -1,6 +1,7 @@
 package com.example.bikinggame.playerCharacter
 
 import android.util.Log
+import com.example.bikinggame.attack.Attack
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
@@ -65,25 +66,25 @@ class CharacterStats {
     }
 
     /**
-     *  @return Msg
+     *  @return (Damage Dealt, Msg)
      */
-    fun getAttacked(damage: Int, attack: Attack, hitType: Attack.HitTypes, canDodge: Boolean): String {
+    fun getAttacked(damage: Int, attack: Attack, hitType: Attack.HitTypes, canDodge: Boolean): Pair<Int, String> {
 
         val blocked = getDamageBlockedForAttack(attack.type)
-        var damage = max(0, damage - blocked)
+        var damageAfterConstitution = max(0, damage - blocked)
 
-        if (damage <= 0) return ""
+        if (damageAfterConstitution <= 0) return Pair(0, "") // Dealt as much damage to block the same #
 
         var msg = ""
         if (canDodge) {
             val (status, newMsg) = attemptDodge(attack, hitType)
             if (status) {
-                damage = 0
+                damageAfterConstitution = 0
             }
             msg = newMsg
         }
 
-        if (damage != 0 && attack.statusEffectInflictChance != null) {
+        if (damageAfterConstitution != 0 && attack.statusEffectInflictChance != null) {
             val rand: Int = kotlin.random.Random.nextInt(0, 100)
             val (chance, statusEffect) = attack.statusEffectInflictChance
             if (chance > rand) {
@@ -92,9 +93,9 @@ class CharacterStats {
         }
 
         var health: Int = getHealth()
-        health -= damage
+        health -= damageAfterConstitution
         setHealth(if (health > 0) health else 0)
-        return msg
+        return Pair(damageAfterConstitution, msg)
     }
 
     /**
@@ -177,7 +178,7 @@ class CharacterStats {
     }
 
     fun changeStat(stat: BasicStats, amount: Int) {
-        characterStats[stat] = max(0, characterStats[stat]!!  + amount)
+        characterStats[stat] = max(0, characterStats[stat]!! + amount)
     }
 
     fun raiseStat(stat: BasicStats, amount: Int) {
@@ -223,6 +224,11 @@ class CharacterStats {
 
     fun removeAllStatusEffects() {
         statusEffects.clear()
+    }
+
+    fun raiseHealth(maxHealth: Int, amount: Int) {
+        val newHealth = min(maxHealth, getHealth() + amount)
+        setHealth(newHealth)
     }
 
     fun regenStamina(maxStamina: Int) {

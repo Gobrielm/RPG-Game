@@ -2,6 +2,7 @@ package com.example.bikinggame.playerCharacter
 
 import android.util.Log
 import androidx.compose.ui.geometry.Offset
+import com.example.bikinggame.attack.Attack
 import org.json.JSONArray
 import kotlin.math.floor
 import kotlin.math.max
@@ -76,9 +77,12 @@ object SkillTrees {
             1 to Offset(0f, 0f),
 
             14 to Offset(-1.06f,0.6f),
+                17 to Offset(-1.82f,0.07f),
+                18 to Offset(-0.8f, 1.3f),
+
             15 to Offset(0.94f,0.04f),
-            16 to Offset(1.72f,0.6f),
-            17 to Offset(-1.82f,0.07f)
+                16 to Offset(1.72f,0.6f),
+
 
         )
     )
@@ -146,6 +150,7 @@ class Skill {
             15 to Skill(15, "Magic Practice", mapOf(BasicStats.Casting to 1), arrayOf(1), -1, -1),
             16 to Skill(16, "Frost Study", emptyMap(), arrayOf(15), -1, 2),
             17 to Skill(17, "Improved Casting", mapOf(BasicStats.Casting to 1), arrayOf(14), -1, -1),
+            18 to Skill(18, "Path of Healing", emptyMap(), arrayOf(14), 6, -1),
 
             // Start of RitualMagic Tree
             2 to Skill(2, "Humble Beginnings", emptyMap(), emptyArray(), 2, -1),

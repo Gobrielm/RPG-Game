@@ -11,6 +11,7 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="30dp"
         app:defaultNavHost="true"
         app:navGraph="@navigation/dungeon_navigation" />
 
@@ -30,5 +31,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </FrameLayout>
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="110dp"
+        android:contentDescription="Go Back Button"
+        android:src="@android:drawable/btn_dialog" />
 
 </FrameLayout>

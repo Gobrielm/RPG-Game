@@ -1,5 +1,7 @@
 package com.example.bikinggame.playerCharacter
 
+import com.example.bikinggame.attack.Attack
+
 enum class EquipmentSlot {
     // Main Slots
     HEAD,

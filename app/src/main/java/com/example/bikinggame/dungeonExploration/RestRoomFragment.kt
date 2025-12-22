@@ -12,6 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.example.bikinggame.databinding.FragmentRegularRoomBinding
 import com.example.bikinggame.databinding.FragmentRestRoomBinding
+import com.example.bikinggame.dungeon.Dungeon
 import kotlin.getValue
 
 class RestRoomFragment : Fragment() {
@@ -38,6 +39,7 @@ class RestRoomFragment : Fragment() {
 
         binding.exitButton.setOnClickListener {
             viewModel.setPartyIsDone()
+            (requireActivity() as DungeonExplorationActivity).tryToLeaveDungeon()
         }
 
         return root

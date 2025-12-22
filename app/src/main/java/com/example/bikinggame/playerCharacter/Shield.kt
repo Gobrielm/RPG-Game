@@ -1,6 +1,7 @@
 package com.example.bikinggame.playerCharacter
 
-import org.json.JSONArray
+import com.example.bikinggame.attack.Attack
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
 import kotlin.math.sqrt
@@ -65,7 +66,7 @@ class Shield {
 
         val pierceRatio = min(0.5, pressure / 2.0 / fortitude)
 
-        val damageBlocked = round((1 - pierceRatio) * damage).toInt()
+        val damageBlocked = min(round((1 - pierceRatio) * damage).toInt(), currentHitPoints)
         currentHitPoints -= damageBlocked
 
         return Pair(damage - damageBlocked, if (currentHitPoints == 0) {

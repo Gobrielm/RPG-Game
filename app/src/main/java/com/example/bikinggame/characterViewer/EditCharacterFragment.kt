@@ -18,16 +18,13 @@ import com.example.bikinggame.homepage.inventory.InventoryManager
 import com.example.bikinggame.homepage.inventory.Item
 import com.example.bikinggame.homepage.inventory.ItemWID
 import com.example.bikinggame.homepage.inventory.PlayerInventory
-import com.example.bikinggame.homepage.inventory.PlayerInventory.playerCharacters
 import com.example.bikinggame.homepage.inventory.saveCharacter
-import com.example.bikinggame.playerCharacter.Attack
+import com.example.bikinggame.attack.Attack
 import com.example.bikinggame.playerCharacter.Shield
 import com.example.bikinggame.requests.getUserJson
 import com.example.bikinggame.requests.makeDeleteRequest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.util.LinkedList
 

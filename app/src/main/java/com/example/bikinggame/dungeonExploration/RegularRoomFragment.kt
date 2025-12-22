@@ -1,22 +1,19 @@
 package com.example.bikinggame.dungeonExploration
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.example.bikinggame.databinding.DungeonCharacterUiBinding
 import com.example.bikinggame.databinding.FragmentRegularRoomBinding
 import com.example.bikinggame.enemy.EnemyCharacter
-import com.example.bikinggame.playerCharacter.Attack
+import com.example.bikinggame.attack.Attack
 import com.example.bikinggame.playerCharacter.PlayerCharacter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 import kotlin.getValue
 
 class RegularRoomFragment : Fragment() {
@@ -52,7 +49,6 @@ class RegularRoomFragment : Fragment() {
                 chooseTarget(i)
             }
         }
-
 
         updateStats()
 
@@ -98,7 +94,11 @@ class RegularRoomFragment : Fragment() {
     fun simulateRound(playerAttack: Attack, target: Int) {
         lifecycleScope.launch {
             (requireContext() as DungeonExplorationActivity).startBlockingInputs()
-            simulatePlayerAttack(playerAttack, target)
+            if (playerAttack.friendlyAttack) {
+                simulateFriendlyPlayerAttack(playerAttack, target)
+            } else {
+                simulatePlayerAttack(playerAttack, target)
+            }
             (requireContext() as DungeonExplorationActivity).stopBlockingInputs()
         }
     }
@@ -106,7 +106,7 @@ class RegularRoomFragment : Fragment() {
     fun simulateSkipRound() {
         lifecycleScope.launch {
             (requireContext() as DungeonExplorationActivity).startBlockingInputs()
-            simulateEnemyAttack(viewModel.getSelectedEnemy()!!)
+            simulateEnemyAttack()
             (requireContext() as DungeonExplorationActivity).stopBlockingInputs()
         }
     }
@@ -114,11 +114,15 @@ class RegularRoomFragment : Fragment() {
     suspend fun simulatePlayerAttack(playerAttack: Attack, target: Int) {
         if (viewModel.partyDied.value!! || viewModel.partyDone.value!!) return
         val enemyCharacter = viewModel.getEnemy(target)!!
-        val playerCharacter = viewModel.getSelectedCharacter()
+        if (viewModel.getSelectedEnemy() == null) {
+            viewModel.setReadyForNextRoom()
+            return
+        }
+        val playerCharacter = viewModel.getSelectedCharacter()!!
 
         val (damage, hitType) = playerCharacter.calculateDamageForAttack(playerAttack)
 
-        val msg = enemyCharacter.takeAttack(damage, playerAttack, hitType)
+        val (damageTaken, msg) = enemyCharacter.takeAttack(damage, playerAttack, hitType)
         playerCharacter.takeCostFromAttackUsed(playerAttack)
 
         (requireContext() as DungeonExplorationActivity).updateStats()
@@ -126,43 +130,53 @@ class RegularRoomFragment : Fragment() {
 
         val str = "$hitType\n$msg"
 
-        launchAttackAnimation(1000, str)
-
-
-        val status = checkRoomCleared(enemyCharacter)
-        if (status) return
+        launchAttackAnimation(1000, str, damageTaken)
 
         delay(200)
 
-        simulateEnemyAttack(enemyCharacter)
-    }
-
-    fun checkRoomCleared(enemyCharacter: EnemyCharacter): Boolean {
         if (!enemyCharacter.isAlive()) {
-            viewModel.setReadyForNextRoom()
-            val dungeon = viewModel.getDungeon()
-            if (dungeon == null) return true
-            val exp = dungeon.getExpForEnemy()
-            viewModel.addExpEarned(exp)
-            return true
+            simulateRoundChange(playerCharacter, enemyCharacter)
+            moveToNextRound()
+            return
         }
-        return false
+
+        simulateEnemyAttack()
     }
 
-    suspend fun simulateEnemyAttack(enemyCharacter: EnemyCharacter) {
+    suspend fun simulateFriendlyPlayerAttack(playerAttack: Attack, target: Int) {
+        if (viewModel.partyDied.value!! || viewModel.partyDone.value!!) return
+        val targetCharacter = viewModel.getCharacter(target)!!
+        val playerCharacter = viewModel.getSelectedCharacter()!!
+
+        // Heal and apply status effects
+        val healing = targetCharacter.takeHealing(playerAttack)
+        playerCharacter.takeCostFromAttackUsed(playerAttack)
+
+        (requireContext() as DungeonExplorationActivity).updateStats()
+        updateStats()
+
+        launchHealAnimation(1000, healing)
+
+        delay(200)
+
+        simulateEnemyAttack()
+    }
+
+    suspend fun simulateEnemyAttack() {
+        val enemyCharacter = viewModel.getSelectedEnemy()!!
         val (ind, characterOnDefense) = viewModel.getRandomCharacter()
         (requireContext() as DungeonExplorationActivity).showAttackIndicatorOnCharacter(ind)
 
         val enemyAttack: Attack = enemyCharacter.chooseRandAttack()
         val (damage, hitType) = enemyCharacter.calculateDamageForAttack(enemyAttack)
 
-        val msg = characterOnDefense.takeAttack(enemyAttack, damage, hitType)
+        val (damageTaken, msg) = characterOnDefense.takeAttack(enemyAttack, damage, hitType)
 
         (requireContext() as DungeonExplorationActivity).updateStats()
 
         val str = "$hitType\n$msg"
 
-        launchAttackAnimation(1000, str)
+        launchAttackAnimation(1000, str, damageTaken)
 
         simulateRoundChange(characterOnDefense, enemyCharacter)
 
@@ -171,17 +185,13 @@ class RegularRoomFragment : Fragment() {
 
         delay(350)
 
-        // Status Effects could have killed
-        val status = checkRoomCleared(enemyCharacter)
-        if (status) return
-
         moveToNextRound()
     }
 
     // Also simulates status effects
-    fun simulateRoundChange(characterOnDefense: PlayerCharacter, enemyCharacter: EnemyCharacter) {
+    fun simulateRoundChange(characterOnDefense: PlayerCharacter, enemyCharacter: EnemyCharacter?) {
         if (characterOnDefense.isAlive()) characterOnDefense.updateNewTurn()
-        if (enemyCharacter.isAlive()) enemyCharacter.updateNewTurn()
+        if (enemyCharacter != null && enemyCharacter.isAlive()) enemyCharacter.updateNewTurn()
     }
 
     fun moveToNextRound() {
@@ -192,20 +202,37 @@ class RegularRoomFragment : Fragment() {
         (requireContext() as DungeonExplorationActivity).setAttacks()
     }
 
-    suspend fun launchAttackAnimation(len: Long, attackDesc: String) {
+    suspend fun launchAttackAnimation(len: Long, attackDesc: String, damage: Int) {
         binding.attackAnimation.visibility = View.VISIBLE
         binding.attackAnimation.speed = 600.0f / len
         binding.attackAnimation.playAnimation()
-        binding.hitTypeText.text = attackDesc
+
+        binding.hitDescriptionText.text = attackDesc
+        binding.damageAmountText.text = "Damage: $damage"
 
         delay(len)
 
-        binding.hitTypeText.text = ""
+        binding.hitDescriptionText.text = ""
+        binding.damageAmountText.text = ""
         binding.attackAnimation.visibility = View.GONE
+    }
+
+    suspend fun launchHealAnimation(len: Long, healing: Int) {
+        binding.healAnimation.visibility = View.VISIBLE
+        binding.healAnimation.speed = 600.0f / len
+        binding.healAnimation.playAnimation()
+
+        binding.damageAmountText.text = "Healing: $healing"
+
+        delay(len)
+
+        binding.damageAmountText.text = ""
+        binding.healAnimation.visibility = View.GONE
     }
 
     fun updateStats() {
         if (viewModel.partyDone.value!!) return
+        if (_binding == null) return
         val enemy1 = viewModel.getEnemy(0)
         if (enemy1 != null) {
             if (enemy1 == viewModel.getSelectedEnemy()) {
@@ -312,7 +339,7 @@ class RegularRoomFragment : Fragment() {
         container.healthProgressbar.progress = (enemy.currentStats.getHealth().toDouble() / enemy.baseStats.getHealth() * 100.0).toInt()
         container.manaProgressbar.progress = (enemy.currentStats.getMana().toDouble() / enemy.baseStats.getMana() * 100.0).toInt()
         container.staminaProgressbar.progress = (enemy.currentStats.getStamina().toDouble() / enemy.baseStats.getStamina() * 100.0).toInt()
-        container.shieldProgressbar.progress = (enemy.getShieldHitPoints().toDouble() / enemy.baseStats.getHealth() * 100).toInt()
+        container.shieldProgressbar.progress = (enemy.getShieldHitPoints().toDouble() / enemy.baseStats.getHealth() * 100.0).toInt()
     }
 
 }

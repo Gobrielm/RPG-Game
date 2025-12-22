@@ -1,9 +1,12 @@
-package com.example.bikinggame.playerCharacter
+package com.example.bikinggame.attack
 
-import org.json.JSONArray
+import com.example.bikinggame.playerCharacter.BasicStats
+import com.example.bikinggame.playerCharacter.StatusEffect
+import kotlin.math.min
 import kotlin.random.Random
 
 class Attack {
+    // TODO: Figure out how to allow friend attacks, either complexity or interface
     val id: Int
     val name: String
     val mass: Int
@@ -12,6 +15,7 @@ class Attack {
     val type: AttackTypes
     val statCost: Pair<BasicStats, Int>?
     val statusEffectInflictChance: Pair<Int, StatusEffect>? // (0 - 100, Status Effect)
+    val friendlyAttack: Boolean
 
     constructor(pId: Int, pName: String, pMass: Int, pVelocity: Int, pAccuracy: Int, pType: AttackTypes) {
         id = pId
@@ -22,6 +26,7 @@ class Attack {
         type = pType
         statCost = null
         statusEffectInflictChance = null
+        friendlyAttack = false
     }
 
     constructor(pId: Int, pName: String, pMass: Int, pVelocity: Int, pAccuracy: Int,
@@ -34,6 +39,7 @@ class Attack {
         type = pType
         statCost = pStatCost
         statusEffectInflictChance = pStatusEffectInflictChance
+        friendlyAttack = false
     }
 
     constructor(pId: Int, pName: String, pMass: Int, pVelocity: Int, pAccuracy: Int,
@@ -46,6 +52,23 @@ class Attack {
         type = pType
         statCost = null
         statusEffectInflictChance = pStatusEffectInflictChance
+        friendlyAttack = false
+    }
+
+    /**
+     * Used for Creating Friendly Attacks
+     */
+    constructor(pId: Int, pName: String, pHealing: Int, pStatCost: Pair<BasicStats, Int>?,
+                pStatusEffectInflictChance: Pair<Int, StatusEffect>?) {
+        id = pId
+        mass = 1
+        name = pName
+        velocity = pHealing
+        accuracy = 100
+        type = AttackTypes.MAG
+        statCost = pStatCost
+        statusEffectInflictChance = pStatusEffectInflictChance
+        friendlyAttack = true
     }
 
     fun getMomentum(): Int {
@@ -53,9 +76,9 @@ class Attack {
     }
 
     fun getRandomHitType(): HitTypes {
-        val rand: Int = Random.nextInt(0, 100)
+        val rand: Int = Random.Default.nextInt(0, 100)
         val chanceToMiss = 100 - accuracy
-        val glanceChance = (accuracy - chanceToMiss) * 0.3 + chanceToMiss
+        val glanceChance = min((accuracy - chanceToMiss) * 0.3, 20.0) + chanceToMiss
         return if (rand < chanceToMiss) {
             HitTypes.MISS
         } else if (rand < glanceChance) {
@@ -66,7 +89,24 @@ class Attack {
     }
 
     override fun toString(): String {
-        return "$name --- Mass: $mass  Velocity: $velocity  Accuracy: $accuracy"
+        var str = if (friendlyAttack) {
+            "$name --- Healing: ${getHealing()}\n"
+        } else {
+            "$name --- Mass: $mass  Velocity: $velocity  Accuracy: $accuracy\n"
+        }
+
+
+        if (statusEffectInflictChance != null) {
+            str += "Inflicts: ${statusEffectInflictChance.second.name} ${statusEffectInflictChance.first}% Chance"
+        }
+        return str
+    }
+
+    // For Attack as Healing
+
+    fun getHealing(): Int {
+        if (!friendlyAttack) return 0
+        return getMomentum()
     }
 
     enum class HitTypes {
@@ -109,8 +149,11 @@ class Attack {
 
             4 to Attack(4, "Intermediate Hit", 4, 5, 90, AttackTypes.PHY),
 
-            5 to Attack(5, "Poison Arrow", 2, 5, 85, AttackTypes.PHY, Pair<Int, StatusEffect>(100, StatusEffect.getStatusEffect(1)!!))
+            5 to Attack(5, "Poison Arrow", 2, 5, 85, AttackTypes.PHY, Pair<Int, StatusEffect>(100, StatusEffect.Companion.getStatusEffect(1)!!)),
+
+            6 to Attack(6, "Healing Touch", 8, Pair(BasicStats.BaseMana, 4),null)
         )
+
 
         fun getAttack(attackID: Int): Attack? {
             return if (attackIDToAttack.contains(attackID)) attackIDToAttack[attackID] else null

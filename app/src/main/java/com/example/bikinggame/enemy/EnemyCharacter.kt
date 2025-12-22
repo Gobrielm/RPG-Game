@@ -1,6 +1,6 @@
 package com.example.bikinggame.enemy
 
-import com.example.bikinggame.playerCharacter.Attack
+import com.example.bikinggame.attack.Attack
 import com.example.bikinggame.playerCharacter.CharacterStats
 import com.example.bikinggame.playerCharacter.Shield
 import com.example.bikinggame.playerCharacter.StatusEffect
@@ -36,22 +36,26 @@ class EnemyCharacter {
     }
 
     /**
-     *  @return (Whether or not this character has gone below 0 health, Msg of Attack)
+     *  @return (Msg of Attack)
      */
-    fun takeAttack(damage: Int, attack: Attack, hitType: Attack.HitTypes): String {
+    fun takeAttack(damage: Int, attack: Attack, hitType: Attack.HitTypes): Pair<Int, String> {
         var damage: Int = damage
         var msg = ""
         var canDodge = true // Can either dodge or use shield
+        var blocked = 0
+
         if (getShieldHitPoints() > 0) {
             canDodge = false
+            blocked = getShieldHitPoints()
             val (newDamage, newMsg) = shield!!.blockHit(attack, damage, hitType)
+            blocked = blocked - getShieldHitPoints()
             damage = newDamage
             msg = newMsg
         }
 
-        val otherMsg = currentStats.getAttacked(damage, attack, hitType, canDodge)
+        val (damageTaken, otherMsg) = currentStats.getAttacked(damage, attack, hitType, canDodge)
 
-        return msg.ifEmpty { otherMsg }
+        return Pair(damageTaken + blocked, msg.ifEmpty { otherMsg })
     }
 
     fun calculateDamageForAttack(attack: Attack): Pair<Int, Attack.HitTypes> {

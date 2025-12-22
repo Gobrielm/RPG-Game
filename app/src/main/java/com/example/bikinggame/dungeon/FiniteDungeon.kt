@@ -1,7 +1,7 @@
 //package com.example.bikinggame.dungeon
 //
 //import com.example.bikinggame.enemy.EnemyCharacter
-//import com.example.bikinggame.playerCharacter.Attack
+//import com.example.bikinggame.Attack.Attack
 //import com.example.bikinggame.playerCharacter.BasicStats
 //import com.example.bikinggame.playerCharacter.CharacterStats
 //
