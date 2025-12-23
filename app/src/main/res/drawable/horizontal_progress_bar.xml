@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item android:id="@android:id/background">
         <shape>
             <corners android:radius="5dip" />
@@ -12,6 +13,7 @@
                 />
         </shape>
     </item>
+
     <item android:id="@android:id/secondaryProgress">
         <clip android:clipOrientation="horizontal" android:gravity="start">
             <shape>
@@ -26,6 +28,7 @@
             </shape>
         </clip>
     </item>
+
     <item android:id="@android:id/progress">
         <clip android:clipOrientation="horizontal" android:gravity="start">
             <shape>

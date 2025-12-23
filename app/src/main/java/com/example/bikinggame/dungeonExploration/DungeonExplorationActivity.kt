@@ -317,7 +317,9 @@ class DungeonExplorationActivity: AppCompatActivity() {
     }
 
     fun updateProgressBars(character: PlayerCharacter, container: DungeonCharacterUiBinding) {
-        container.healthProgressbar.progress = (character.currentStats.getHealth().toDouble() / character.baseStats.getHealth() * 100.0).toInt()
+        container.healthProgressbar.max = character.baseStats.getHealth()
+        container.healthProgressbar.progress = character.currentStats.getHealth()
+
         container.manaProgressbar.progress = (character.currentStats.getMana().toDouble() / character.baseStats.getMana() * 100.0).toInt()
         container.staminaProgressbar.progress = (character.currentStats.getStamina().toDouble() / character.baseStats.getStamina() * 100.0).toInt()
         container.shieldProgressbar.progress = (character.getShieldHitPoints().toDouble() / character.baseStats.getHealth() * 100).toInt()
@@ -338,6 +340,11 @@ class DungeonExplorationActivity: AppCompatActivity() {
         if (attack == null) return
 
         if (!playerCharacter.canChooseAttack(attack)) {
+            lifecycleScope.launch {
+                binding.characterUi.centeredText.text = "Need "
+                delay(1000)
+
+            }
             // TODO: Show err msg
             return
         }

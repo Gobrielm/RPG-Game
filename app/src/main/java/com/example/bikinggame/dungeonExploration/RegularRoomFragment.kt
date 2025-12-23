@@ -345,7 +345,9 @@ class RegularRoomFragment : Fragment() {
     }
 
     fun updateProgressBars(enemy: EnemyCharacter, container: DungeonCharacterUiBinding) {
-        container.healthProgressbar.progress = (enemy.currentStats.getHealth().toDouble() / enemy.baseStats.getHealth() * 100.0).toInt()
+        container.healthProgressbar.max = enemy.baseStats.getHealth()
+        container.healthProgressbar.progress = enemy.currentStats.getHealth()
+
         container.manaProgressbar.progress = (enemy.currentStats.getMana().toDouble() / enemy.baseStats.getMana() * 100.0).toInt()
         container.staminaProgressbar.progress = (enemy.currentStats.getStamina().toDouble() / enemy.baseStats.getStamina() * 100.0).toInt()
         container.shieldProgressbar.progress = (enemy.getShieldHitPoints().toDouble() / enemy.baseStats.getHealth() * 100.0).toInt()

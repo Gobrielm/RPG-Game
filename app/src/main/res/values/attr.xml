@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TickedProgressBar">
+        <!-- Progress values -->
+        <attr name="max" format="integer" />
+        <attr name="progress" format="integer" />
+        <attr name="secondaryProgress" format="integer" />
+
+        <!-- Visual customization -->
+        <attr name="progressColor" format="color" />
+        <attr name="secondaryProgressColor" format="color" />
+        <attr name="tickColor" format="color" />
+        <attr name="tickInterval" format="integer" />
+        <attr name="progressSlant" format="dimension" />
+
+    </declare-styleable>
+</resources>
