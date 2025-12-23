@@ -22,7 +22,7 @@ class DungeonPrepActivity: AppCompatActivity() {
 
     private val viewModel: DungeonPrepViewModel by viewModels()
     private var selectedCharacterButtonInd: Int = -1
-
+    var startingDepth: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,7 +108,7 @@ class DungeonPrepActivity: AppCompatActivity() {
             val character = charactersSelected[i]
             intent.putExtra(slots[i], character.id)
         }
-
+        intent.putExtra("STARTING_DEPTH", startingDepth)
         startActivity(intent)
     }
 

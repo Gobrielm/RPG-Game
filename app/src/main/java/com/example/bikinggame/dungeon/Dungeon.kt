@@ -4,6 +4,7 @@ import com.example.bikinggame.enemy.EnemyCharacter
 import com.example.bikinggame.attack.Attack
 import com.example.bikinggame.playerCharacter.BasicStats
 import com.example.bikinggame.playerCharacter.CharacterStats
+import com.example.bikinggame.playerCharacter.StatusEffect
 
 interface Dungeon {
 
@@ -13,7 +14,7 @@ interface Dungeon {
 
     fun rollRandomBoss(): EnemyCharacter
 
-    fun rollRandomLoot(): ArrayList<Int>
+    fun rollRandomLoot(roomInd: Int): ArrayList<Int>
     fun rollRandomCoins(): Int
 
     fun getExpForEnemy(): Int
@@ -22,16 +23,24 @@ interface Dungeon {
 
     companion object {
 
-//        val dungeons = mapOf(
-//            // Forest Dungeon
-//            1 to FiniteDungeon(1, 1, DungeonLayout(5, 0, 0.15f)),
-//
-//            // Cave Dungeon
-//            2 to FiniteDungeon(2, 2, DungeonLayout(7, 1, 0.15f)),
-//        )
+        val enemies = mapOf(
+            1 to EnemyCharacter("Goblin", CharacterStats(mutableMapOf(
+                BasicStats.BaseHealth to (15),
+                BasicStats.BaseMana to (7),
+                BasicStats.BaseStamina to (7),
+                BasicStats.Strength to (8),
+                BasicStats.Casting to (3),
+                BasicStats.Constitution to (4),
+                BasicStats.Intelligence to (3),
+                BasicStats.Dexterity to (6)
+            )), arrayListOf(
+                Attack(-1, "Dagger Attack", 3, 4, 90, Attack.AttackTypes.PHY),
+                Attack(-1, "Poison Dart", 1, 5, 85, Attack.AttackTypes.RAN, Pair(100, StatusEffect.getStatusEffect(1)!!))
+            ))
+        )
 
-        val bosses = arrayListOf(
-            EnemyCharacter("Rock Golem", CharacterStats(mutableMapOf(
+        val bosses = mapOf(
+            1 to EnemyCharacter("Rock Golem", CharacterStats(mutableMapOf(
                 BasicStats.BaseHealth to (100),
                 BasicStats.BaseMana to (15),
                 BasicStats.BaseStamina to (10),
@@ -48,8 +57,25 @@ interface Dungeon {
             ))
         )
 
-//        fun getDungeon(dungeonID: Int): FiniteDungeon? {
-//            return dungeons[dungeonID]
-//        }
+        fun getRandomEnemy(): EnemyCharacter {
+            val randInd = enemies.keys.random()
+            return EnemyCharacter(enemies[randInd]!!)
+        }
+
+        fun getRandomBoss(): EnemyCharacter {
+            val randInd = bosses.keys.random()
+            return EnemyCharacter(bosses[randInd]!!)
+        }
+
+        fun getEnemy(id: Int): EnemyCharacter? {
+            if (enemies.contains(0)) return null
+            return EnemyCharacter(enemies[id]!!)
+        }
+
+        fun getBoss(id: Int): EnemyCharacter? {
+            if (bosses.contains(0)) return null
+            return EnemyCharacter(bosses[id]!!)
+        }
+
     }
 }

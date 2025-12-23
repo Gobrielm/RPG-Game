@@ -59,10 +59,10 @@ class CharacterStats {
     fun getDamageBlockedForAttack(attackType: Attack.AttackTypes): Int {
         if (attackType == Attack.AttackTypes.PHY) {
             return round(getConstitution() / 2.0f).toInt()
-        } else if (attackType == Attack.AttackTypes.RAN) {
-            return round(getConstitution() / 4.0f).toInt()
+        } else if (attackType == Attack.AttackTypes.MAG) {
+            return round(getConstitution() / 5.0f).toInt()
         }
-        return 0
+        return round(getConstitution() / 4.0f).toInt()
     }
 
     /**
@@ -237,7 +237,7 @@ class CharacterStats {
     }
 
     fun regenMana(maxMana: Int) {
-        val newMana = min(maxMana, round(getMana() + getIntelligence() / 2.0f).toInt())
+        val newMana = min(maxMana, round(getMana() + getIntelligence() / 3.0f).toInt())
         setMana(newMana)
     }
 
@@ -302,11 +302,11 @@ class CharacterStats {
 
         val baseManaMap: Map<CharacterSubClass, Int> = mapOf(
             CharacterSubClass.TraditionalMagic to 15,
-            CharacterSubClass.RitualMagic to 10,
+            CharacterSubClass.RitualMagic to 12,
             CharacterSubClass.Knight to 5,
             CharacterSubClass.North to 5,
             CharacterSubClass.TraditionalRanged to 5,
-            CharacterSubClass.NonTraditionalRanged to 10
+            CharacterSubClass.NonTraditionalRanged to 7
         )
 
         val baseStaminaMap: Map<CharacterSubClass, Int> = mapOf(

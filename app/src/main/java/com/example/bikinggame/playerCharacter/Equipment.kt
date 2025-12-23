@@ -51,14 +51,15 @@ class Equipment {
     }
 
     companion object {
-        val equipmentIDtoEquipment = hashMapOf<Int, Equipment>(
+        val equipmentIDtoEquipment = mapOf<Int, Equipment>(
             1 to Equipment(1, "Rusty Sword", EquipmentSlot.MAIN_HAND,
             arrayOf(Pair(BasicStats.Strength, 2)),
-            null, null)
+            null, null
+            )
         )
 
         fun getEquipment(equipmentID: Int): Equipment? {
-            return if (equipmentIDtoEquipment.contains(equipmentID)) equipmentIDtoEquipment[equipmentID] else null
+            return equipmentIDtoEquipment[equipmentID]
         }
     }
 }

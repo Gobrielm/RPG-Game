@@ -27,6 +27,18 @@ class EnemyCharacter {
         shield = pShield
     }
 
+    constructor(enemyCharacter: EnemyCharacter) {
+        id = enemyCharacter.id
+        name = enemyCharacter.name
+        baseStats = CharacterStats(enemyCharacter.baseStats)
+        currentStats = CharacterStats(enemyCharacter.currentStats)
+
+        enemyCharacter.attacks.forEachIndexed { index, attack ->
+            attacks[index] = attack
+        }
+        shield = if (enemyCharacter.shield != null) Shield(enemyCharacter.shield!!) else null
+    }
+
     override fun toString(): String {
         return "$id: $currentStats"
     }
@@ -73,6 +85,10 @@ class EnemyCharacter {
 
     fun isAlive(): Boolean {
         return currentStats.getHealth() > 0
+    }
+
+    fun isDead(): Boolean {
+        return currentStats.getHealth() <= 0
     }
 
     fun updateNewTurn() {

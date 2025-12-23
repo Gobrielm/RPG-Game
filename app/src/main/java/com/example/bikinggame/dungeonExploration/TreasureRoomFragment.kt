@@ -18,9 +18,7 @@ import kotlin.getValue
 
 class TreasureRoomFragment : Fragment() {
     private var _binding: FragmentTreasureRoomBinding? = null
-
     private val binding get() = _binding!!
-
     private val viewModel: DungeonExplorationViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -31,7 +29,8 @@ class TreasureRoomFragment : Fragment() {
         val root: View = binding.root
 
         binding.openChestButton.setOnClickListener {
-            val loot = viewModel.getDungeon()!!.rollRandomLoot()// TODO: Do stuff with loot
+            val roomInd = (requireActivity() as DungeonExplorationActivity).getCurrentRoom()
+            val loot = viewModel.getDungeon()!!.rollRandomLoot(roomInd)
             val coins = viewModel.getDungeon()!!.rollRandomCoins()
             viewModel.addLootEarned(loot)
             viewModel.addCoinsEarned(coins)

@@ -4,6 +4,7 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -26,12 +27,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val currentUser = Firebase.auth.currentUser
-        if (currentUser != null) {
-//            Firebase.auth.signOut()
-            checkAccountHaveUsername()
-        }
-
         binding = LoginScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -44,6 +39,13 @@ class MainActivity : AppCompatActivity() {
         binding.switchToCreateAccount.setOnClickListener {
             val intent = Intent(this, PasswordSetup::class.java)
             startActivity(intent)
+        }
+
+        val currentUser = Firebase.auth.currentUser
+        if (currentUser != null) {
+//            Firebase.auth.signOut()
+            showLoadingScreen()
+            checkAccountHaveUsername()
         }
     }
 
@@ -83,6 +85,11 @@ class MainActivity : AppCompatActivity() {
                 goToHomePage()
             }
         }
+    }
+
+    fun showLoadingScreen() {
+        binding.fragmentContainer.visibility = View.VISIBLE
+        binding.mainContent.visibility = View.GONE
     }
     fun goToHomePage() {
         val intent = Intent(this, HomePage::class.java)

@@ -1,5 +1,6 @@
 package com.example.bikinggame.dungeonExploration
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -51,9 +52,9 @@ class DungeonFinishFragment: Fragment() {
         inventoryList.add(Item(R.drawable.truck, "Exp: $exp"))
         val expEach = exp / viewModel.getPartySize()
 
-        viewModel.getSelectedCharacter()!!.addExp(expEach)
-        viewModel.getNextCharacter()?.addExp(expEach)
-        viewModel.getNextNextCharacter()?.addExp(expEach)
+        viewModel.getCharacter(0)?.addExp(expEach)
+        viewModel.getCharacter(1)?.addExp(expEach)
+        viewModel.getCharacter(2)?.addExp(expEach)
 
         inventoryList.add(Item(R.drawable.truck, "Coins: $coins"))
         PlayerInventory.setCoins(PlayerInventory.getCoins() + coins)
@@ -92,6 +93,19 @@ class DungeonFinishFragment: Fragment() {
         }
 
 
+        // Save Deepest Floor
+        val deepestRoomRoundTen = ((requireContext() as DungeonExplorationActivity).getCurrentRoom() / 10) * 10
+        val filename = "deepest_room"
+        val data = deepestRoomRoundTen.toString()
+
+        try {
+            requireContext().openFileOutput(filename, Context.MODE_PRIVATE).use {
+                it.write(data.toByteArray())
+            }
+
+        } catch (err: Exception) {
+            Log.d("DungeonFinishFragment", err.toString())
+        }
 
         return root
     }

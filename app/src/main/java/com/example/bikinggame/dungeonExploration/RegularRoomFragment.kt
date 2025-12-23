@@ -1,6 +1,7 @@
 package com.example.bikinggame.dungeonExploration
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -65,6 +66,7 @@ class RegularRoomFragment : Fragment() {
             if (target == -1) {
                 allowChoosingTarget()
             } else {
+                disallowChoosingTarget()
                 simulateRound(attack, target)
             }
         }
@@ -81,12 +83,16 @@ class RegularRoomFragment : Fragment() {
         binding.centeredText.text = "Pick a Target"
     }
 
+    fun disallowChoosingTarget() {
+        choosingTarget = false
+        binding.centeredText.text = ""
+    }
+
     fun chooseTarget(ind: Int) {
         if (!choosingTarget) return
 
         if (viewModel.getEnemy(ind) == null) return
-        binding.centeredText.text = ""
-        choosingTarget = false
+        disallowChoosingTarget()
 
         simulateRound(viewModel.attack.value!!.first, ind)
     }
@@ -114,7 +120,8 @@ class RegularRoomFragment : Fragment() {
     suspend fun simulatePlayerAttack(playerAttack: Attack, target: Int) {
         if (viewModel.partyDied.value!! || viewModel.partyDone.value!!) return
         val enemyCharacter = viewModel.getEnemy(target)!!
-        if (viewModel.getSelectedEnemy() == null) {
+        val enemyThatWillAttack = viewModel.getSelectedEnemy()
+        if (enemyThatWillAttack == null) {
             viewModel.setReadyForNextRoom()
             return
         }
@@ -134,8 +141,10 @@ class RegularRoomFragment : Fragment() {
 
         delay(200)
 
-        if (!enemyCharacter.isAlive()) {
-            simulateRoundChange(playerCharacter, enemyCharacter)
+
+
+        if (enemyThatWillAttack.isDead()) {
+            simulateRoundChange(playerCharacter, enemyThatWillAttack)
             moveToNextRound()
             return
         }
