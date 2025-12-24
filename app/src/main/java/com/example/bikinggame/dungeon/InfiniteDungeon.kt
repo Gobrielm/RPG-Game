@@ -19,13 +19,17 @@ class InfiniteDungeon: Dungeon {
         if (roomInd % 10 == 0 && roomInd != 0) {
             difficulty += 0.4f
         }
+        if (roomInd % 10 == 9) {
+            return DungeonRooms.BOSS
+        }
+
         val currentRoom: DungeonRooms = when (lastRoom) {
             DungeonRooms.BOSS -> DungeonRooms.TREASURE
             DungeonRooms.TREASURE -> DungeonRooms.REST
             DungeonRooms.REST -> DungeonRooms.REGULAR
 
             else -> {
-                val odds = arrayOf(DungeonRooms.REGULAR, DungeonRooms.REGULAR, DungeonRooms.REGULAR, DungeonRooms.REGULAR, DungeonRooms.REGULAR, DungeonRooms.REGULAR, DungeonRooms.BOSS, DungeonRooms.TREASURE)
+                val odds = arrayOf(DungeonRooms.REGULAR, DungeonRooms.REGULAR, DungeonRooms.REGULAR, DungeonRooms.REGULAR, DungeonRooms.REGULAR, DungeonRooms.REGULAR, DungeonRooms.TREASURE)
                 DungeonRooms.TREASURE
 //                odds[Random().nextInt(odds.size)]
             }
@@ -52,13 +56,19 @@ class InfiniteDungeon: Dungeon {
     }
 
     override fun rollRandomLoot(roomInd: Int): ArrayList<Int> {
-        val a = arrayListOf<Int>()
-        for ((levelAvail, itemID) in lootAvailable) {
+        val lootAvail = arrayListOf<Int>()
+        for ((itemID, levelAvail) in lootAvailable) {
             if (roomInd >= levelAvail) {
-                a.add(itemID)
+                lootAvail.add(itemID)
             }
         }
-        return a
+
+        val loot = ArrayList<Int>()
+        for (i in 0 until Random().nextInt(3) + 1) {
+            loot.add(lootAvail.random())
+        }
+
+        return loot
     }
 
     override fun rollRandomCoins(): Int {
@@ -66,17 +76,67 @@ class InfiniteDungeon: Dungeon {
     }
 
     override fun getExpForEnemy(): Int {
-        return round(10 * difficulty).toInt()
+        return round((Random().nextInt(4) + 8) * difficulty).toInt()
     }
 
     override fun getExpForBoss(): Int {
-        return round(40 * difficulty).toInt()
+        return round(Random().nextInt(20) + 30 * difficulty).toInt()
     }
 
     companion object {
-        // First Level available to Equipment ID
+        // Equipment ID to first Level available
         val lootAvailable = mapOf(
-            0 to 1 // TODO: Loot generation
+            1 to 0,
+            2 to 0,
+            3 to 0,
+
+            4 to 10,
+            5 to 10,
+            6 to 10,
+
+            7 to 10,
+            8 to 10,
+            9 to 10,
+
+            10 to 10,
+            11 to 10,
+            12 to 10,
+
+            13 to 0,
+            14 to 10,
+            15 to 10,
+
+            16 to 0,
+            17 to 10,
+            18 to 10,
+            19 to 0,
+
+            20 to 0,
+            21 to 0,
+            22 to 10,
+            23 to 10,
+
+            24 to 0,
+            25 to 0,
+            26 to 10,
+            27 to 10,
+
+            28 to 0,
+            29 to 0,
+            30 to 10,
+            31 to 10,
+
+            32 to 0,
+            33 to 0,
+            34 to 0,
+
+            35 to 10,
+            36 to 10,
+            37 to 10,
+
+            38 to 10,
+            39 to 10,
+            40 to 10,
         )
     }
 }

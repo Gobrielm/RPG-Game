@@ -112,7 +112,7 @@ class CharacterStats {
 
             setStamina(getStamina() - cost)
 
-            val chanceToFail = 100 - round(velocity / 2.0f / getDexterity() * 100).toInt()
+            val chanceToFail = 100 - round((getDexterity() - velocity) * 10).toInt()
 
             val msg = if (rand < chanceToFail) {
                 "Failed Dodge"

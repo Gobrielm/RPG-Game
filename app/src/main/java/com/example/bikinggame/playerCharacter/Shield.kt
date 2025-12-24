@@ -38,7 +38,6 @@ class Shield {
     }
 
     fun regenShield() {
-        if (currentHitPoints == 0) return
         currentHitPoints += regeneration
         currentHitPoints = min(currentHitPoints, fortitude)
     }
@@ -47,8 +46,9 @@ class Shield {
      * @return With the (damage after blocking with Shield, Description of Event)
      */
     fun blockHit(attack: Attack, damage: Int, hitType: Attack.HitTypes): Pair<Int, String> {
-        if (damage == 0 || hitType.getMultiplier() == 0f) return Pair(0, "Miss")
-        if (currentHitPoints == 0) return Pair(damage, "Shield Broken")
+        if (damage == 0 || hitType.getMultiplier() == 0f) return Pair(0, "")
+        if (currentHitPoints == 0) return Pair(damage, "")
+
         val rand: Int = Random.nextInt(0, 100)
         val area = sqrt(attack.mass.toDouble())
         val pressure = (damage / area)
@@ -82,11 +82,13 @@ class Shield {
 
     companion object {
         val shieldIDToShield = hashMapOf<Int, Shield>(
-            1 to Shield(1, "Basic Shield", 10, 8, 0),
-
             2 to Shield(2, "Frost Shield", 10, 4, 1),
 
-            3 to Shield(3, "Improvised Block", 2, 2, 0)
+            3 to Shield(3, "Improvised Block", 2, 2, 0),
+
+            1 to Shield(1, "Buckler", 8, 5, 0),
+            4 to Shield(1, "Tower Shield", 6, 15, 0),
+            5 to Shield(1, "Plate Shield", 10, 13, 0),
         )
 
         fun getShield(shieldID: Int): Shield? {

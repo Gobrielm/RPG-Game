@@ -30,6 +30,7 @@ import com.example.bikinggame.homepage.inventory.PlayerInventory
 import com.example.bikinggame.attack.Attack
 import com.example.bikinggame.playerCharacter.Equipment
 import com.example.bikinggame.playerCharacter.PlayerCharacter
+import com.example.bikinggame.playerCharacter.StatusEffect
 import com.example.bikinggame.requests.getUserName
 import com.example.bikinggame.requests.getUserToken
 import com.example.bikinggame.requests.makePutRequest
@@ -147,12 +148,6 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
     fun tryToLeaveDungeon() {
         if (finished) return
-        // Award Exp
-        val dungeon = viewModel.getDungeon()
-        if (dungeon != null) {
-            val exp = dungeon.getExpForEnemy()
-            viewModel.addExpEarned(exp)
-        }
 
         binding.characterUi.finishText.visibility = VISIBLE
         binding.characterUi.blurRect.visibility = VISIBLE
@@ -307,8 +302,9 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
         val statusEffectImages = arrayOf(container.statusEffect1, container.statusEffect2, container.statusEffect3)
         for (i in 0 until 3) {
-            if (i < statusEffects.size - 1) {
-                // TODO: Set Img here
+            if (i < statusEffects.size) {
+                val imgID = StatusEffect.getImgFromID(statusEffects[i].id)
+                if (imgID != null) statusEffectImages[i].setImageResource(imgID)
                 statusEffectImages[i].visibility = View.VISIBLE
             } else {
                 statusEffectImages[i].visibility = View.INVISIBLE
@@ -320,9 +316,18 @@ class DungeonExplorationActivity: AppCompatActivity() {
         container.healthProgressbar.max = character.baseStats.getHealth()
         container.healthProgressbar.progress = character.currentStats.getHealth()
 
-        container.manaProgressbar.progress = (character.currentStats.getMana().toDouble() / character.baseStats.getMana() * 100.0).toInt()
-        container.staminaProgressbar.progress = (character.currentStats.getStamina().toDouble() / character.baseStats.getStamina() * 100.0).toInt()
-        container.shieldProgressbar.progress = (character.getShieldHitPoints().toDouble() / character.baseStats.getHealth() * 100).toInt()
+        container.manaProgressbar.max = character.baseStats.getMana()
+        container.manaProgressbar.progress = character.currentStats.getMana()
+
+        container.staminaProgressbar.max = character.baseStats.getStamina()
+        container.staminaProgressbar.progress = character.currentStats.getStamina()
+
+        if (character.getShieldHitPoints() > 0) {
+            container.healthProgressbar.max += character.getShieldHitPoints()
+            container.healthProgressbar.secondaryProgress = character.getShieldHitPoints() + character.currentStats.getHealth()
+        } else {
+            container.healthProgressbar.secondaryProgress = 0
+        }
     }
 
     fun setAttacks() {
@@ -555,13 +560,8 @@ class DungeonExplorationViewModel : ViewModel() {
         }
     }
 
-    fun addEnemy(enemy: EnemyCharacter) {
-        for (i in 0 until 3) {
-            if (mutableEnemies[i] == null) {
-                _mutableEnemies.value!![i] = enemy
-                break
-            }
-        }
+    fun addEnemy(enemy: EnemyCharacter, ind: Int) {
+        mutableEnemies[ind] = enemy
     }
 
     fun setDungeon(dungeon: Dungeon) {
@@ -630,10 +630,10 @@ class DungeonExplorationViewModel : ViewModel() {
     fun cycleSelectedCharacter() {
         if (partyDied.value!!) return
         removeDeadCharacters()
-        _currentCharacterInd.value = (currentCharacterInd + 1) % getPartySize() // Force next character
+        _currentCharacterInd.value = (currentCharacterInd + 1) % 3 // Force next character
         var i = 0
         while (getCharacter(_currentCharacterInd.value!!) == null || !getCharacter(_currentCharacterInd.value!!)!!.isAlive()) { // Find first alive character
-            _currentCharacterInd.value = (currentCharacterInd + 1) % getPartySize()
+            _currentCharacterInd.value = (currentCharacterInd + 1) % 3
             if (i++ > 3) {
                 setPartyHasDied()
                 break
@@ -661,7 +661,11 @@ class DungeonExplorationViewModel : ViewModel() {
     }
 
     fun getPartySize(): Int {
-        return mutableCharacters.size
+        var count = 0
+        for (i in 0 until 3) {
+            if (mutableCharacters[i] != null) count++
+        }
+        return count
     }
 
     fun getSelectedEnemy(): EnemyCharacter? {
@@ -676,15 +680,19 @@ class DungeonExplorationViewModel : ViewModel() {
     fun cycleSelectedEnemy() {
         if (mutableReadyForNextRoom.value!!) return
         removeDeadEnemies()
-        _currentEnemyInd.value = (currentEnemyInd + 1) % getEnemiesSize() // Force next character
+        _currentEnemyInd.value = (currentEnemyInd + 1) % 3 // Force next character
         var i = 0
         while (getEnemy(currentEnemyInd) == null || getEnemy(currentEnemyInd)!!.isDead()) { // Find first alive character
-            _currentEnemyInd.value = (currentEnemyInd + 1) % getEnemiesSize()
+            _currentEnemyInd.value = (currentEnemyInd + 1) % 3
             if (i++ > 3) {
                 mutableReadyForNextRoom.value = true
                 break
             } // enemies dead, party is done w/room
         }
+    }
+
+    fun setSelectedEnemy(ind: Int) {
+        _currentEnemyInd.value = ind
     }
 
     fun removeDeadEnemies() {
@@ -696,7 +704,11 @@ class DungeonExplorationViewModel : ViewModel() {
     }
 
     fun getEnemiesSize(): Int {
-        return mutableEnemies.size
+        var count = 0
+        for (i in 0 until 3) {
+            if (mutableEnemies[i] != null) count++
+        }
+        return count
     }
 
     fun getDungeon(): Dungeon? {

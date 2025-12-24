@@ -29,9 +29,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="5dp"
 
         app:layout_constraintBottom_toTopOf="@+id/mana_progressbar"
         app:layout_constraintEnd_toStartOf="@+id/status_effect2"
@@ -48,57 +47,36 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:progressColor="#923B3B" />
-
-        <ProgressBar
-            android:id="@+id/shield_progressbar"
-            style="@style/Widget.ProgressBar.HorizontalTransparent"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_gravity="top"
-            android:progress="30"
-            android:progressTint="#46D1CA"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_percent="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:progressColor="#FF0000"
+            app:secondaryProgressColor="#46D1CA"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ProgressBar
+    <com.example.bikinggame.gui.TickedProgressBar
         android:id="@+id/mana_progressbar"
-        style="@style/Widget.ProgressBar.Horizontal"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="5dp"
-        android:max="100"
-        android:progress="70"
-        android:progressTint="#251BAF"
+
         app:layout_constraintBottom_toTopOf="@+id/stamina_progressbar"
         app:layout_constraintEnd_toStartOf="@+id/status_effect2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/health_progressbar_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/health_progressbar_layout"
+        app:progressColor="#5C51FF" />
 
-    <ProgressBar
+    <com.example.bikinggame.gui.TickedProgressBar
         android:id="@+id/stamina_progressbar"
-        style="@style/Widget.ProgressBar.Horizontal"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="5dp"
-        android:max="100"
-        android:progress="85"
-        android:progressTint="#0BF613"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/status_effect2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mana_progressbar" />
-
+        app:layout_constraintTop_toBottomOf="@+id/mana_progressbar"
+        app:progressColor="#0BF613" />
 
     <ImageView
         android:id="@+id/status_effect1"

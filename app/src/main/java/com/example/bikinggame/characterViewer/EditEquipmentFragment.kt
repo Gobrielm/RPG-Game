@@ -67,12 +67,10 @@ class EditEquipmentFragment: Fragment() {
             closeEquipmentList()
         }
 
-        val map = mapOf<EquipmentSlot, ImageButton>(
+        val map = mapOf(
             EquipmentSlot.HEAD to binding.helmetButton, EquipmentSlot.NECK to binding.neckButton,
-            EquipmentSlot.TORSO to binding.chestButton, EquipmentSlot.BELT to binding.beltButton,
-            EquipmentSlot.LEGS to binding.legButton, EquipmentSlot.FEET to binding.bootButton,
-            EquipmentSlot.MAIN_HAND to binding.mainHandButton, EquipmentSlot.OFF_HAND to binding.offHandButton,
-            EquipmentSlot.RING to binding.ringButton
+            EquipmentSlot.TORSO to binding.chestButton, EquipmentSlot.MAIN_HAND to binding.mainHandButton,
+            EquipmentSlot.OFF_HAND to binding.offHandButton, EquipmentSlot.RING to binding.ringButton
         )
 
         map.forEach { slot, button ->
@@ -92,18 +90,14 @@ class EditEquipmentFragment: Fragment() {
     fun updateView() {
         val map = mapOf(
             EquipmentSlot.HEAD to binding.helmetButton, EquipmentSlot.NECK to binding.neckButton,
-            EquipmentSlot.TORSO to binding.chestButton, EquipmentSlot.BELT to binding.beltButton,
-            EquipmentSlot.LEGS to binding.legButton, EquipmentSlot.FEET to binding.bootButton,
-            EquipmentSlot.MAIN_HAND to binding.mainHandButton, EquipmentSlot.OFF_HAND to binding.offHandButton,
-            EquipmentSlot.RING to binding.ringButton
+            EquipmentSlot.TORSO to binding.chestButton, EquipmentSlot.MAIN_HAND to binding.mainHandButton,
+            EquipmentSlot.OFF_HAND to binding.offHandButton, EquipmentSlot.RING to binding.ringButton
         )
 
         val defaultImageMap = mapOf(
             binding.helmetButton to R.drawable.helmetslot, binding.neckButton to R.drawable.neckslot,
-            binding.chestButton to R.drawable.chestslot, binding.beltButton to R.drawable.beltslot,
-            binding.legButton to R.drawable.legsslot, binding.bootButton to R.drawable.bootslot,
-            binding.mainHandButton to R.drawable.mainhandslot, binding.offHandButton to R.drawable.offhandslot,
-            binding.ringButton to R.drawable.ringslot
+            binding.chestButton to R.drawable.chestslot, binding.mainHandButton to R.drawable.mainhandslot,
+            binding.offHandButton to R.drawable.offhandslot, binding.ringButton to R.drawable.ringslot
         )
 
         val characterID = viewModel.getSelectedCharacterID()!!

@@ -39,15 +39,15 @@ class CharacterSkillTree {
     }
 
     companion object {
+        const val EXP_COEFFICIENT = 60
+        const val EXP_FACTOR = 0.825
         fun getCurrentLevel(exp: Int): Int {
-            val exp = min(exp, getExpRequiredForLevel(30))
-
-            return floor((exp / 28).toDouble().pow(0.625)).toInt()
+            return min(30, floor((exp / EXP_COEFFICIENT).toDouble().pow(EXP_FACTOR)).toInt())
         }
 
         fun getExpRequiredForLevel(level: Int): Int {
             val level = min(level, 30)
-            return (level.toDouble().pow(1.6) * 28).toInt()
+            return (level.toDouble().pow(1 / EXP_FACTOR) * EXP_COEFFICIENT).toInt()
         }
     }
 }

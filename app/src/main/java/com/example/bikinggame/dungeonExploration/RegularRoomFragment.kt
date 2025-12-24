@@ -13,8 +13,10 @@ import com.example.bikinggame.databinding.FragmentRegularRoomBinding
 import com.example.bikinggame.enemy.EnemyCharacter
 import com.example.bikinggame.attack.Attack
 import com.example.bikinggame.playerCharacter.PlayerCharacter
+import com.example.bikinggame.playerCharacter.StatusEffect
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.Random
 import kotlin.getValue
 
 class RegularRoomFragment : Fragment() {
@@ -37,10 +39,20 @@ class RegularRoomFragment : Fragment() {
 
         // TODO: ADd more enemies
         if (bossRoom) {
-            viewModel.addEnemy(viewModel.getDungeon()!!.rollRandomBoss())
+            viewModel.addEnemy(viewModel.getDungeon()!!.rollRandomBoss(), 1)
         } else {
-            viewModel.addEnemy(viewModel.getDungeon()!!.rollRandomEnemy())
-            viewModel.addEnemy(viewModel.getDungeon()!!.rollRandomEnemy())
+            val rand = Random()
+            for (i in 2 downTo 0) {
+                if (rand.nextInt(2) == 1) {
+                    viewModel.addEnemy(viewModel.getDungeon()!!.rollRandomEnemy(), i)
+                    viewModel.setSelectedEnemy(i)
+                }
+            }
+            if (viewModel.getEnemiesSize() == 0) {
+                val randInd = Random().nextInt(3)
+                viewModel.addEnemy(viewModel.getDungeon()!!.rollRandomEnemy(), randInd)
+                viewModel.setSelectedEnemy(randInd)
+            }
         }
 
         val buttons = arrayOf(binding.target1Button, binding.target2Button, binding.target3Button)
@@ -203,6 +215,14 @@ class RegularRoomFragment : Fragment() {
         if (enemyCharacter != null && enemyCharacter.isAlive()) enemyCharacter.updateNewTurn()
     }
 
+    fun awardExpForEnemyKilled() {
+        val dungeon = viewModel.getDungeon()
+        if (dungeon != null) {
+            val exp = if (bossRoom) dungeon.getExpForBoss() else dungeon.getExpForEnemy()
+            viewModel.addExpEarned(exp)
+        }
+    }
+
     fun moveToNextRound() {
         viewModel.cycleSelectedCharacter()
         viewModel.cycleSelectedEnemy()
@@ -335,8 +355,9 @@ class RegularRoomFragment : Fragment() {
 
         val statusEffectImages = arrayOf(container.statusEffect1, container.statusEffect2, container.statusEffect3)
         for (i in 0 until 3) {
-            if (i < statusEffects.size - 1) {
-                // TODO: Set Img here
+            if (i < statusEffects.size) {
+                val imgID = StatusEffect.getImgFromID(statusEffects[i].id)
+                if (imgID != null) statusEffectImages[i].setImageResource(imgID)
                 statusEffectImages[i].visibility = View.VISIBLE
             } else {
                 statusEffectImages[i].visibility = View.INVISIBLE
@@ -348,9 +369,19 @@ class RegularRoomFragment : Fragment() {
         container.healthProgressbar.max = enemy.baseStats.getHealth()
         container.healthProgressbar.progress = enemy.currentStats.getHealth()
 
-        container.manaProgressbar.progress = (enemy.currentStats.getMana().toDouble() / enemy.baseStats.getMana() * 100.0).toInt()
-        container.staminaProgressbar.progress = (enemy.currentStats.getStamina().toDouble() / enemy.baseStats.getStamina() * 100.0).toInt()
-        container.shieldProgressbar.progress = (enemy.getShieldHitPoints().toDouble() / enemy.baseStats.getHealth() * 100.0).toInt()
+        container.manaProgressbar.max = enemy.baseStats.getMana()
+        container.manaProgressbar.progress = enemy.currentStats.getMana()
+
+        container.staminaProgressbar.max = enemy.baseStats.getStamina()
+        container.staminaProgressbar.progress = enemy.currentStats.getStamina()
+
+        if (enemy.getShieldHitPoints() > 0) {
+            container.healthProgressbar.max += enemy.getShieldHitPoints()
+            container.healthProgressbar.secondaryProgress = enemy.getShieldHitPoints() + enemy.currentStats.getHealth()
+        } else {
+            container.healthProgressbar.secondaryProgress = 0
+        }
+
     }
 
 }

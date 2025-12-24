@@ -25,7 +25,6 @@ class TickedProgressBar @JvmOverloads constructor(
         set(value) { field = value; invalidate() }
 
     private var progressSlant = dp(6f)
-    private val progressPath = Path()
     private val cornerRadius = dp(5f)
 
 
@@ -35,10 +34,18 @@ class TickedProgressBar @JvmOverloads constructor(
     private val secondaryPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val progressPaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-    private val tickPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.argb(120, 0, 0, 0)
-        strokeWidth = dp(2f)
+    private val tickFillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.argb(150, 255, 255, 255)
+        style = Paint.Style.FILL
     }
+
+    private val tickStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.argb(150, 0, 0, 0)
+        style = Paint.Style.STROKE
+        strokeWidth = dp(1.5f)
+        strokeJoin = Paint.Join.MITER
+    }
+
 
     private val rect = RectF()
 
@@ -67,12 +74,12 @@ class TickedProgressBar @JvmOverloads constructor(
 
         secondaryProgressColor = a.getColor(
             R.styleable.TickedProgressBar_secondaryProgressColor,
-            Color.parseColor("#80FFD300")
+            Color.parseColor("#00FF00")
         )
 
-        tickPaint.color = a.getColor(
+        tickStrokePaint.color = a.getColor(
             R.styleable.TickedProgressBar_tickColor,
-            tickPaint.color
+            tickStrokePaint.color
         )
 
         a.recycle()
@@ -149,15 +156,10 @@ class TickedProgressBar @JvmOverloads constructor(
         canvas.drawRoundRect(rect, cornerRadius, cornerRadius, backgroundPaint)
 
         /* ---------- Secondary Progress ---------- */
-        if (secondaryProgress > 0) {
-            val secWidth = width * (secondaryProgress / max.toFloat())
-            rect.set(0f, top, secWidth, bottom)
-            canvas.drawRoundRect(rect, cornerRadius, cornerRadius, secondaryPaint)
-        }
+        drawAngledSecondaryProgress(canvas, top, bottom)
 
         /* ---------- Main Progress ---------- */
-        val progWidth = width * (progress / max.toFloat())
-        drawAngledProgress(canvas, top, bottom, progWidth)
+        drawAngledProgress(canvas, top, bottom)
 
         drawTicks(canvas, top, bottom)
     }
@@ -165,28 +167,59 @@ class TickedProgressBar @JvmOverloads constructor(
     private fun drawAngledProgress(
         canvas: Canvas,
         top: Float,
-        bottom: Float,
-        widthPx: Float
+        bottom: Float
     ) {
+        val widthPx = width * (progress / max.toFloat())
         if (widthPx <= 0f) return
 
-        val slant = min(progressSlant, widthPx)
+        if (progress == max) {
+            rect.set(0f, top, width.toFloat(), bottom)
+            canvas.drawRoundRect(rect, cornerRadius, cornerRadius, progressPaint)
+            return
+        }
 
-        progressPath.reset()
-
-        progressPath.moveTo(cornerRadius, top)
-        progressPath.lineTo(widthPx, top)
-
-        progressPath.lineTo(widthPx - slant, bottom)
-        progressPath.lineTo(cornerRadius, bottom)
-
-        progressPath.quadTo(0f, bottom, 0f, bottom - cornerRadius)
-        progressPath.lineTo(0f, top + cornerRadius)
-        progressPath.quadTo(0f, top, cornerRadius, top)
-
-        progressPath.close()
+        val progressPath = getPathForProgress(top, bottom, widthPx)
 
         canvas.drawPath(progressPath, progressPaint)
+    }
+
+    private fun drawAngledSecondaryProgress(
+        canvas: Canvas,
+        top: Float,
+        bottom: Float
+    ) {
+        val widthPx = width * (secondaryProgress / max.toFloat())
+        if (widthPx <= 0f) return
+
+        if (secondaryProgress == max) {
+            rect.set(0f, top, width.toFloat(), bottom)
+            canvas.drawRoundRect(rect, cornerRadius, cornerRadius, secondaryPaint)
+            return
+        }
+
+        val secondaryProgressPath = getPathForProgress(top, bottom, widthPx)
+
+        canvas.drawPath(secondaryProgressPath, secondaryPaint)
+    }
+
+    private fun getPathForProgress(top: Float, bottom: Float, widthPx: Float): Path {
+        val slant = min(progressSlant, widthPx)
+
+        val path = Path()
+
+        path.moveTo(cornerRadius, top)
+        path.lineTo(widthPx, top)
+
+        path.lineTo(widthPx - slant, bottom)
+        path.lineTo(cornerRadius, bottom)
+
+        path.quadTo(0f, bottom, 0f, bottom - cornerRadius)
+        path.lineTo(0f, top + cornerRadius)
+        path.quadTo(0f, top, cornerRadius, top)
+
+        path.close()
+
+        return path
     }
 
 
@@ -195,17 +228,28 @@ class TickedProgressBar @JvmOverloads constructor(
 
         val tickCount = max / tickInterval
         val slant = progressSlant
+        val thickness = dp(3f)
 
         for (i in 1 until tickCount) {
             val x = width * (i * tickInterval / max.toFloat())
 
-            canvas.drawLine(
-                x - slant,
-                bottom,
-                x,
-                top,
-                tickPaint
-            )
+            val path = Path()
+
+            // Top edge
+            path.moveTo(x, top)
+            path.lineTo(x + thickness, top)
+
+            // Bottom edge (slanted)
+            path.lineTo(x + thickness - slant, bottom)
+            path.lineTo(x - slant, bottom)
+
+            path.close()
+
+            // Fill
+            canvas.drawPath(path, tickFillPaint)
+
+            // Stroke
+            canvas.drawPath(path, tickStrokePaint)
         }
     }
 

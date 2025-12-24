@@ -142,16 +142,21 @@ class Attack {
     companion object {
         val attackIDToAttack = hashMapOf<Int, Attack>(
             1 to Attack(1, "Basic Hit", 2, 5, 90, AttackTypes.PHY),
-
-            2 to Attack(2, "Mana Blast", 1, 8, 80, AttackTypes.MAG, Pair(BasicStats.BaseMana, 3)),
+            4 to Attack(4, "Intermediate Hit", 4, 5, 90, AttackTypes.PHY),
+            7 to Attack(7, "Bear Strike", 10, 3, 80, AttackTypes.PHY),
 
             3 to Attack(3, "Normal Shot", 1, 7, 85, AttackTypes.RAN),
+            5 to Attack(5, "Poison Arrow", 2, 5, 85, AttackTypes.PHY, Pair(100, StatusEffect.Companion.getStatusEffect(1)!!)),
+            8 to Attack(8, "Eagle Shot", 3, 10, 85, AttackTypes.PHY),
+            11 to Attack(11, "Knife Stab", 3, 6, 90, AttackTypes.PHY, Pair(100, StatusEffect.getStatusEffect(4)!!)),
 
-            4 to Attack(4, "Intermediate Hit", 4, 5, 90, AttackTypes.PHY),
-
-            5 to Attack(5, "Poison Arrow", 2, 5, 85, AttackTypes.PHY, Pair<Int, StatusEffect>(100, StatusEffect.Companion.getStatusEffect(1)!!)),
-
-            6 to Attack(6, "Healing Touch", 8, Pair(BasicStats.BaseMana, 4),null)
+            2 to Attack(2, "Mana Blast", 1, 8, 80, AttackTypes.MAG, Pair(BasicStats.BaseMana, 3)),
+            6 to Attack(6, "Healing Touch", 8, Pair(BasicStats.BaseMana, 4), null),
+            9 to Attack(9, "Forest Blast", 5, 6, 85, AttackTypes.MAG, Pair(BasicStats.BaseMana, 6)),
+            10 to Attack(10, "Burning Wisp", 3, 3, 80, AttackTypes.MAG,
+                Pair(BasicStats.BaseMana, 4),
+                Pair(80, StatusEffect.getStatusEffect(3)!!)
+            ),
         )
 
 

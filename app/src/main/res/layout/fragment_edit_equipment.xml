@@ -29,8 +29,8 @@
 
     <ImageButton
         android:id="@+id/neckButton"
-        android:layout_width="100dp"
-        android:layout_height="40dp"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
         android:layout_marginStart="144dp"
         android:layout_marginTop="25dp"
         android:layout_marginEnd="144dp"
@@ -54,52 +54,14 @@
         app:srcCompat="@drawable/chestslot" />
 
     <ImageButton
-        android:id="@+id/beltButton"
-        android:layout_width="100dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="144dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginEnd="144dp"
-        android:contentDescription="Belt Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chestButton"
-        app:srcCompat="@drawable/beltslot" />
-
-    <ImageButton
-        android:id="@+id/legButton"
-        android:layout_width="100dp"
-        android:layout_height="135dp"
-        android:layout_marginStart="144dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginEnd="144dp"
-        android:contentDescription="Leg Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/beltButton"
-        app:srcCompat="@drawable/legsslot" />
-
-    <ImageButton
-        android:id="@+id/bootButton"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="144dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginEnd="144dp"
-        android:contentDescription="Boots Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/legButton"
-        app:srcCompat="@drawable/bootslot" />
-
-    <ImageButton
         android:id="@+id/mainHandButton"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginStart="9dp"
-        android:layout_marginTop="239dp"
         android:layout_marginEnd="9dp"
         android:contentDescription="Main Hand Button"
+        app:layout_constraintVertical_bias="0.35"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/chestButton"
         app:layout_constraintTop_toTopOf="parent"
@@ -110,9 +72,10 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginStart="9dp"
-        android:layout_marginTop="239dp"
         android:layout_marginEnd="9dp"
         android:contentDescription="Off Hand Button"
+        app:layout_constraintVertical_bias="0.35"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/chestButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -122,12 +85,12 @@
         android:id="@+id/ringButton"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginStart="9dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginEnd="9dp"
+        android:layout_marginStart="27dp"
+        android:layout_marginTop="26dp"
+        android:layout_marginEnd="27dp"
         android:contentDescription="Ring Button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/beltButton"
+        app:layout_constraintStart_toEndOf="@+id/chestButton"
         app:layout_constraintTop_toBottomOf="@+id/mainHandButton"
         app:srcCompat="@drawable/ringslot" />
 
