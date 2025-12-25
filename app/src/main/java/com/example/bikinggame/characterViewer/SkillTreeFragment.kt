@@ -69,12 +69,9 @@ class SkillTreeFragment: Fragment() {
 
     private fun createSkillTreeGraphic() {
         if (viewModel.getSelectedCharacterID() == null) return
-        Log.d("AAA", viewModel.getSelectedCharacterID().toString())
         val character = PlayerInventory.getCharacter(viewModel.getSelectedCharacterID()!!)
         if (character == null) return
-        Log.d("AAA", character.playerClass.subClass.toString())
-        val skillTree = SkillTrees.getSkillTree(character.playerClass.subClass)
-        Log.d("AAA", skillTree.size.toString())
+        val skillTree = SkillTrees.getSkillTree(character.playerClass.mainClass)
         val zoomContainer = binding.zoomContainer
 
         val skillsUnlocked = character.skillTree.skillsUnlocked
@@ -90,7 +87,7 @@ class SkillTreeFragment: Fragment() {
 
             val button = Button(requireContext()).apply {
                 this.id = View.generateViewId()
-                text = skill!!.name
+                text = "${skill!!.name}: ${skill!!.id}" // TODO: Change to name
                 background = ContextCompat.getDrawable(
                     requireContext(),
                     R.drawable.circle_button

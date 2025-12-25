@@ -43,8 +43,8 @@ import java.util.Random
 
 class DungeonExplorationActivity: AppCompatActivity() {
 
-    private lateinit var binding: ActivityDungeonExplorationBinding
 
+    private lateinit var binding: ActivityDungeonExplorationBinding
     private val viewModel: DungeonExplorationViewModel by viewModels()
     private var currentRoom: Int = 0
     private var finished: Boolean = false

@@ -53,8 +53,8 @@ class CharacterSkillTree {
 }
 
 object SkillTrees {
-    var skillTrees: Map<CharacterSubClass, Array<Pair<Int, Offset>>> = mapOf(
-        CharacterSubClass.Knight to arrayOf(
+    var skillTrees: Map<CharacterMainClass, Array<Pair<Int, Offset>>> = mapOf(
+        CharacterMainClass.MELEE to arrayOf(
             3 to Offset(0f, 0f),
 
             7 to Offset(0f, -1f),
@@ -65,7 +65,7 @@ object SkillTrees {
             11 to Offset(1.21f, 1.576f),
         ),
 
-        CharacterSubClass.NonTraditionalRanged to arrayOf(
+        CharacterMainClass.RANGED to arrayOf(
             6 to Offset(0f, 0f),
 
             12 to Offset(0.71f, 0.71f),
@@ -73,22 +73,59 @@ object SkillTrees {
             13 to Offset(1.21f, 1.576f),
         ),
 
-        CharacterSubClass.TraditionalMagic to arrayOf(
-            1 to Offset(0f, 0f),
+        CharacterMainClass.MAGIC to arrayOf(
 
-            14 to Offset(-1.06f,0.6f),
-                17 to Offset(-1.82f,0.07f),
-                18 to Offset(-0.8f, 1.3f),
+            // Root
+            1 to Offset(0f, -2f),
 
-            15 to Offset(0.94f,0.04f),
-                16 to Offset(1.72f,0.6f),
+            // Core magic
+            14 to Offset(0f, 0f),
+            15 to Offset(0f, 1.5f),
+            17 to Offset(0f, 3f),
+            30 to Offset(0f, 4.5f),
 
+            // Magic study chain
+            24 to Offset(1f, 1.5f),
+            25 to Offset(1f, 3f),
 
+            // Frost branch
+            16 to Offset(-2f, 1.5f),
+            22 to Offset(-3.5f, 3f),
+            29 to Offset(-5f, 4.5f),
+            36 to Offset(-1.2f, 3f),
+            39 to Offset(-3.5f, 4.5f),
+            31 to Offset(-5f, 6f),
+
+            // Fire branch
+            19 to Offset(1.8f, 1.5f),
+            23 to Offset(3.5f, 3f),
+            28 to Offset(5f, 4.5f),
+            33 to Offset(6.5f, 6f),
+            38 to Offset(1.8f, 3f),
+            32 to Offset(5f, 6f),
+
+            // Healing branch
+            18 to Offset(-1.8f, 3f),
+            40 to Offset(-1.8f, 4.5f),
+            20 to Offset(0f, 6f), // requires 18 + 25
+
+            // Forbidden / banned magic
+            21 to Offset(3.5f, 1.5f),
+            26 to Offset(5.5f, 3f),
+            27 to Offset(3.5f, 3f),
+            41 to Offset(4.5f, 3.5f),
+            42 to Offset(3.5f, 6f),
+
+            // High-tier / combined
+            37 to Offset(1.8f, 4.5f),
+            34 to Offset(0.9f, 6.5f), // Casting III + Magic Study III
+            35 to Offset(4f, 7f)  // Fire III + Banned Magic II
         )
+
     )
 
-    fun getSkillTree(subClass: CharacterSubClass): Array<Pair<Int, Offset>> {
-        return skillTrees[subClass] ?: Array(0) { Pair(0, Offset(0f, 0f))}
+    fun getSkillTree(mainClass: CharacterMainClass): Array<Pair<Int, Offset>> {
+        return skillTrees[mainClass] ?: Array(0) { Pair(0, Offset(0f, 0f))}
     }
 }
 
@@ -147,13 +184,43 @@ class Skill {
             // Start of TraditionalMagic Tree
             1 to Skill(1, "Humble Beginnings", emptyMap(), emptyArray(), 2, -1),
             14 to Skill(14, "Magic Study", mapOf(BasicStats.Intelligence to 1), arrayOf(1), -1, -1),
-            15 to Skill(15, "Magic Practice", mapOf(BasicStats.Casting to 1), arrayOf(1), -1, -1),
-            16 to Skill(16, "Frost Study", emptyMap(), arrayOf(15), -1, 2),
-            17 to Skill(17, "Improved Casting", mapOf(BasicStats.Casting to 1), arrayOf(14), -1, -1),
+            16 to Skill(16, "Frost Study", emptyMap(), arrayOf(1), -1, -1), //TODO
+            19 to Skill(19, "Fire Study", emptyMap(), arrayOf(1), -1, -1), //TODO
+
+            15 to Skill(15, "Casting", mapOf(BasicStats.Casting to 1), arrayOf(14), -1, -1), //TODO
             18 to Skill(18, "Path of Healing", emptyMap(), arrayOf(14), 6, -1),
+            21 to Skill(21, "Banned Magic", emptyMap(), arrayOf(14), -1, -1), // TODO
+            22 to Skill(22, "Frost Shield", emptyMap(), arrayOf(16), -1, -1), // TODO: Add Shield
+            23 to Skill(23, "Fire Attack", emptyMap(), arrayOf(19), -1, -1), // TODO: ADd Atk
+            24 to Skill(24, "Magic Study II", emptyMap(), arrayOf(14), -1, -1), // TODO
+            36 to Skill(36, "Frost Blast", emptyMap(), arrayOf(16), -1, -1), // TODO: Add atk
+            38 to Skill(38, "Burning Passion", emptyMap(), arrayOf(19), -1, -1), // TODO
+
+            17 to Skill(17, "Casting II", mapOf(BasicStats.Casting to 1), arrayOf(15), -1, -1), //TODO
+            25 to Skill(25, "Magic Study III", emptyMap(), arrayOf(24), -1, -1), // TODO
+            26 to Skill(26, "Drain Attack", emptyMap(), arrayOf(21), -1, -1), // TODO: Add drain atk
+            27 to Skill(27, "Banned Magic II", emptyMap(), arrayOf(21), -1, -1), // TODO
+            28 to Skill(28, "Fire Study II", emptyMap(), arrayOf(23), -1, -1), // TODO
+            29 to Skill(29, "Frost Study II", emptyMap(), arrayOf(22), -1, -1), // TODO
+            37 to Skill(37, "Mana Blast", emptyMap(), arrayOf(24), -1, -1), // TODO: Add atk
+            39 to Skill(39, "Icy Veins", emptyMap(), arrayOf(22), -1, -1), // TODO
+            40 to Skill(40, "Healthy Fortitude", emptyMap(), arrayOf(18), -1, -1), // TODO
+            41 to Skill(41, "Forbidden Knowledge", emptyMap(), arrayOf(21), -1, -1), // TODO
+
+            20 to Skill(20, "Healing Improved", emptyMap(), arrayOf(18, 25), -1, -1), // TODO: Add IMP Healing
+            30 to Skill(30, "Casting III", emptyMap(), arrayOf(17), -1, -1), // TODO
+            31 to Skill(31, "Frost Attack", emptyMap(), arrayOf(29), -1, -1), // TODO: Frost Atk
+            32 to Skill(32, "Fire Attack", emptyMap(), arrayOf(28), -1, -1), // TODO: Fire Atk
+            33 to Skill(33, "Fire Study III", emptyMap(), arrayOf(28), -1, -1), // TODO
+            42 to Skill(42, "Undead Fortification", emptyMap(), arrayOf(27), -1, -1), // TODO
+
+            34 to Skill(34, "Magic Spear", emptyMap(), arrayOf(30, 25), -1, -1), // TODO: Spear Atk
+            35 to Skill(35, "Explosion Attack", emptyMap(), arrayOf(33, 27), -1, -1), // TODO: Explosion Atk
+
+
 
             // Start of RitualMagic Tree
-            2 to Skill(2, "Humble Beginnings", emptyMap(), emptyArray(), 2, -1),
+//            2 to Skill(2, "Humble Beginnings", emptyMap(), emptyArray(), 2, -1),
 
             // Start of Knight Tree
             3 to Skill(3, "Humble Beginnings", emptyMap(), emptyArray(), 1, -1),
@@ -164,10 +231,10 @@ class Skill {
             11 to Skill(11, "Improved Heartiness", mapOf(BasicStats.BaseHealth to 2), arrayOf(8), -1, -1),
 
             // Start of North Tree
-            4 to Skill(4, "Humble Beginnings", emptyMap(), emptyArray(), 1, -1),
+//            4 to Skill(4, "Humble Beginnings", emptyMap(), emptyArray(), 1, -1),
 
             // Start of TraditionalRanged Tree
-            5 to Skill(5, "Humble Beginnings", emptyMap(), emptyArray(), 3, -1),
+//            5 to Skill(5, "Humble Beginnings", emptyMap(), emptyArray(), 3, -1),
 
             // Start of NonTraditionalRanged Tree
             6 to Skill(6, "Humble Beginnings", emptyMap(), emptyArray(), 3, -1),
