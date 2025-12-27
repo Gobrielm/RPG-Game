@@ -82,13 +82,11 @@ class Shield {
 
     companion object {
         val shieldIDToShield = hashMapOf<Int, Shield>(
-            2 to Shield(2, "Frost Shield", 10, 4, 1),
-
-            3 to Shield(3, "Improvised Block", 2, 2, 0),
-
             1 to Shield(1, "Buckler", 8, 5, 0),
-            4 to Shield(1, "Tower Shield", 6, 15, 0),
-            5 to Shield(1, "Plate Shield", 10, 13, 0),
+            2 to Shield(2, "Frost Shield", 10, 6, 2),
+            3 to Shield(3, "Improvised Block", 2, 2, 0),
+            4 to Shield(4, "Tower Shield", 6, 15, 0),
+            5 to Shield(5, "Plate Shield", 10, 13, 0),
         )
 
         fun getShield(shieldID: Int): Shield? {

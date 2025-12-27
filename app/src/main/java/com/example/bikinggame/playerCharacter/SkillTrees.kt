@@ -272,38 +272,38 @@ class Skill {
             // Start of Magic Tree
             1 to Skill(1, "Humble Beginnings", emptyMap(), emptyArray(), 2, -1),
             14 to Skill(14, "Magic Study", mapOf(BasicStats.Intelligence to 1), arrayOf(1), -1, -1),
-            16 to Skill(16, "Frost Study", emptyMap(), arrayOf(1), -1, -1), //TODO
-            19 to Skill(19, "Fire Study", emptyMap(), arrayOf(1), -1, -1), //TODO
+            16 to Skill(16, "Frost Study", mapOf(BasicStats.BaseMana to 3), arrayOf(1), -1, -1),
+            19 to Skill(19, "Fire Study", mapOf(BasicStats.Casting to 1), arrayOf(1), -1, -1),
 
-            15 to Skill(15, "Casting", mapOf(BasicStats.Casting to 1), arrayOf(14), -1, -1), //TODO
-            18 to Skill(18, "Path of Healing", emptyMap(), arrayOf(14), 6, -1),
-            21 to Skill(21, "Banned Magic", emptyMap(), arrayOf(14), -1, -1), // TODO
-            22 to Skill(22, "Frost Shield", emptyMap(), arrayOf(16), -1, -1), // TODO: Add Shield
-            23 to Skill(23, "Fire Attack", emptyMap(), arrayOf(19), -1, -1), // TODO: ADd Atk
-            24 to Skill(24, "Magic Study II", emptyMap(), arrayOf(14), -1, -1), // TODO
-            36 to Skill(36, "Frost Blast", emptyMap(), arrayOf(16), -1, -1), // TODO: Add atk
-            38 to Skill(38, "Burning Passion", emptyMap(), arrayOf(19), -1, -1), // TODO
+            15 to Skill(15, "Casting", mapOf(BasicStats.Casting to 1), arrayOf(14), -1, -1),
+            18 to Skill(18, "Path of Healing", mapOf(BasicStats.BaseHealth to 3, BasicStats.BaseMana to 2), arrayOf(14), 6, -1),
+            21 to Skill(21, "Banned Magic", mapOf(BasicStats.Intelligence to 1, BasicStats.Casting to 1), arrayOf(14), -1, -1),
+            22 to Skill(22, "Frost Shield", mapOf(BasicStats.BaseMana to 3), arrayOf(16), -1, 2),
+            23 to Skill(23, "Fire Attack", mapOf(BasicStats.Casting to 1), arrayOf(19), 12, -1),
+            24 to Skill(24, "Magic Study II", mapOf(BasicStats.Intelligence to 2, BasicStats.BaseMana to 5), arrayOf(14), -1, -1),
+            36 to Skill(36, "Frost Blast", mapOf(BasicStats.BaseMana to 2), arrayOf(16), 13, -1),
+            38 to Skill(38, "Burning Passion", mapOf(BasicStats.Casting to 2, BasicStats.BaseHealth to 3), arrayOf(19), -1, -1),
 
-            17 to Skill(17, "Casting II", mapOf(BasicStats.Casting to 1), arrayOf(15), -1, -1), //TODO
-            25 to Skill(25, "Magic Study III", emptyMap(), arrayOf(24), -1, -1), // TODO
-            26 to Skill(26, "Drain Attack", emptyMap(), arrayOf(21), -1, -1), // TODO: Add drain atk
-            27 to Skill(27, "Banned Magic II", emptyMap(), arrayOf(21), -1, -1), // TODO
-            28 to Skill(28, "Fire Study II", emptyMap(), arrayOf(23), -1, -1), // TODO
-            29 to Skill(29, "Frost Study II", emptyMap(), arrayOf(22), -1, -1), // TODO
-            37 to Skill(37, "Mana Blast", emptyMap(), arrayOf(24), -1, -1), // TODO: Add atk
-            39 to Skill(39, "Icy Veins", emptyMap(), arrayOf(22), -1, -1), // TODO
-            40 to Skill(40, "Healthy Fortitude", emptyMap(), arrayOf(18), -1, -1), // TODO
-            41 to Skill(41, "Forbidden Knowledge", emptyMap(), arrayOf(21), -1, -1), // TODO
+            17 to Skill(17, "Casting II", mapOf(BasicStats.Casting to 2), arrayOf(15), -1, -1),
+            25 to Skill(25, "Magic Study III", mapOf(BasicStats.Intelligence to 3, BasicStats.BaseMana to 4), arrayOf(24), -1, -1),
+            26 to Skill(26, "Drain Attack", emptyMap(), arrayOf(21), 14, -1),
+            27 to Skill(27, "Banned Magic II", mapOf(BasicStats.Intelligence to 3), arrayOf(21), -1, -1),
+            28 to Skill(28, "Fire Study II", mapOf(BasicStats.Casting to 1), arrayOf(23), -1, -1),
+            29 to Skill(29, "Frost Study II", mapOf(BasicStats.Casting to 2), arrayOf(22), -1, -1),
+            37 to Skill(37, "Super Mana Blast", emptyMap(), arrayOf(24), 15, -1),
+            39 to Skill(39, "Icy Veins", mapOf(BasicStats.BaseMana to 5, BasicStats.Constitution to 2), arrayOf(22), -1, -1),
+            40 to Skill(40, "Healthy Fortitude", mapOf(BasicStats.BaseHealth to 10), arrayOf(18), -1, -1),
+            41 to Skill(41, "Forbidden Knowledge", mapOf(BasicStats.Intelligence to 4), arrayOf(21), -1, -1),
 
-            20 to Skill(20, "Healing Improved", emptyMap(), arrayOf(18, 25), -1, -1), // TODO: Add IMP Healing
-            30 to Skill(30, "Casting III", emptyMap(), arrayOf(17), -1, -1), // TODO
-            31 to Skill(31, "Frost Attack", emptyMap(), arrayOf(29), -1, -1), // TODO: Frost Atk
-            32 to Skill(32, "Fire Attack", emptyMap(), arrayOf(28), -1, -1), // TODO: Fire Atk
-            33 to Skill(33, "Fire Study III", emptyMap(), arrayOf(28), -1, -1), // TODO
-            42 to Skill(42, "Undead Fortification", emptyMap(), arrayOf(27), -1, -1), // TODO
+            20 to Skill(20, "Healing Improved", emptyMap(), arrayOf(18, 25), 16, -1),
+            30 to Skill(30, "Casting III", mapOf(BasicStats.Casting to 4), arrayOf(17), -1, -1),
+            31 to Skill(31, "Frost Attack", emptyMap(), arrayOf(29), 17, -1),
+            32 to Skill(32, "Fire Attack", emptyMap(), arrayOf(28), 18, -1),
+            33 to Skill(33, "Fire Study III", mapOf(BasicStats.Casting to 2), arrayOf(28), -1, -1),
+            42 to Skill(42, "Undead Fortification", mapOf(BasicStats.BaseHealth to 5, BasicStats.Constitution to 2), arrayOf(27), -1, -1),
 
-            34 to Skill(34, "Magic Spear", emptyMap(), arrayOf(30, 25), -1, -1), // TODO: Spear Atk
-            35 to Skill(35, "Explosion Attack", emptyMap(), arrayOf(33, 27), -1, -1), // TODO: Explosion Atk
+            34 to Skill(34, "Light Lance", emptyMap(), arrayOf(30, 25), 19, -1),
+            35 to Skill(35, "Explosion Attack", emptyMap(), arrayOf(33, 27), 20, -1),
 
 
 

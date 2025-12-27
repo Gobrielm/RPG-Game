@@ -28,6 +28,10 @@ data class StatusEffect (
             2 to StatusEffect(2, 3, null, Pair(BasicStats.Strength, -5), "Weakness"),
             3 to StatusEffect(3, 3, Pair(BasicStats.BaseHealth, -4), Pair(BasicStats.Dexterity, -2), "Burning"),
             4 to StatusEffect(4, 3, Pair(BasicStats.BaseHealth, -5), Pair(BasicStats.Casting, -2), "Bleeding"),
+            5 to StatusEffect(5, 2, null, Pair(BasicStats.Dexterity, -4), "Frozen"),
+            6 to StatusEffect(6, 1, null, Pair(BasicStats.BaseMana, -12), "Drained"),
+            7 to StatusEffect(7, 3, Pair(BasicStats.BaseHealth, -9), null, "Burning+"),
+            8 to StatusEffect(8, 3, null, Pair(BasicStats.Dexterity, -8), "Frozen+"),
         )
 
         val idToImg = mapOf(
@@ -35,14 +39,19 @@ data class StatusEffect (
             2 to R.drawable.weakness,
             3 to R.drawable.fire,
             4 to R.drawable.bleeding,
+            5 to R.drawable.frost,
+            6 to R.drawable.drained,
+            7 to R.drawable.fireplus,
+            8 to R.drawable.frostplus,
+            0 to R.drawable.truck,
         )
 
         fun getStatusEffect(id: Int): StatusEffect? {
             return statusEffects[id]?.copy()
         }
 
-        fun getImgFromID(id: Int): Int? {
-            return idToImg[id]
+        fun getImgFromID(id: Int): Int {
+            return idToImg[id] ?: idToImg[0]!!
         }
     }
 

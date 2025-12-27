@@ -117,6 +117,12 @@ class SkillTreeFragment: Fragment() {
 
     private fun openSkillInfoPanel(skillID: Int) {
         skillIDSelected = skillID
+        val character = PlayerInventory.getCharacter(viewModel.getSelectedCharacterID()!!)!!
+        if (character.hasSkill(skillID)) {
+            binding.unlockSkillButton.visibility = View.INVISIBLE
+        } else {
+            binding.unlockSkillButton.visibility = View.VISIBLE
+        }
         binding.skillMenu.visibility = View.VISIBLE
         binding.skillText.text = Skill.getSkill(skillID).toString()
     }

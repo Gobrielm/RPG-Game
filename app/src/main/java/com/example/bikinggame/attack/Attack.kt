@@ -157,6 +157,38 @@ class Attack {
                 Pair(BasicStats.BaseMana, 4),
                 Pair(80, StatusEffect.getStatusEffect(3)!!)
             ),
+            12 to Attack(12, "Fireball", 4, 4, 80, AttackTypes.MAG,
+                Pair(BasicStats.BaseMana, 6),
+                Pair(70, StatusEffect.getStatusEffect(3)!!)
+            ),
+            13 to Attack(13, "Frost Snap", 5, 3, 85, AttackTypes.MAG,
+                Pair(BasicStats.BaseMana, 6),
+                Pair(70, StatusEffect.getStatusEffect(5)!!)
+            ),
+            14 to Attack(14, "Drain Attack", 5, 5, 80, AttackTypes.MAG,
+                Pair(BasicStats.BaseMana, 9),
+                Pair(70, StatusEffect.getStatusEffect(6)!!)
+            ),
+            15 to Attack(15, "Super Mana Blast", 8, 5, 90, AttackTypes.MAG,
+                Pair(BasicStats.BaseMana, 13), null
+            ),
+            16 to Attack(16, "Improved Healing", 25,
+                Pair(BasicStats.BaseMana, 10), null
+            ),
+            17 to Attack(17, "Blizzard Strike", 8, 6, 80, AttackTypes.MAG,
+                Pair(BasicStats.BaseMana, 15),
+                Pair(60, StatusEffect.getStatusEffect(8)!!)
+            ),
+            18 to Attack(18, "Firestorm", 8, 6, 80, AttackTypes.MAG,
+                Pair(BasicStats.BaseMana, 15),
+                Pair(60, StatusEffect.getStatusEffect(7)!!)
+            ),
+            19 to Attack(19, "Light Lance", 5, 13, 80, AttackTypes.MAG,
+                Pair(BasicStats.BaseMana, 25), null
+            ),
+            20 to Attack(20, "Explosion Burst", 12, 7, 75, AttackTypes.MAG,
+                Pair(BasicStats.BaseMana, 23), null
+            ),
         )
 
 
