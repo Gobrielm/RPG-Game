@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.FragmentDungeonFinishBinding
+import com.example.bikinggame.dungeonPrep.deepestRoomAllowed
 import com.example.bikinggame.homepage.inventory.InventoryManager
 import com.example.bikinggame.homepage.inventory.Item
 import com.example.bikinggame.homepage.inventory.PlayerInventory
@@ -95,16 +96,18 @@ class DungeonFinishFragment: Fragment() {
 
         // Save Deepest Floor
         val deepestRoomRoundTen = ((requireContext() as DungeonExplorationActivity).getCurrentRoom() / 10) * 10
-        val filename = "deepest_room"
-        val data = deepestRoomRoundTen.toString()
+        if (deepestRoomRoundTen > deepestRoomAllowed.deepestRoom) {
+            val filename = "deepest_room"
+            val data = deepestRoomRoundTen.toString()
 
-        try {
-            requireContext().openFileOutput(filename, Context.MODE_PRIVATE).use {
-                it.write(data.toByteArray())
+            try {
+                requireContext().openFileOutput(filename, Context.MODE_PRIVATE).use {
+                    it.write(data.toByteArray())
+                }
+
+            } catch (err: Exception) {
+                Log.d("DungeonFinishFragment", err.toString())
             }
-
-        } catch (err: Exception) {
-            Log.d("DungeonFinishFragment", err.toString())
         }
 
         return root

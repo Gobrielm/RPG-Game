@@ -25,13 +25,15 @@ import kotlin.collections.iterator
 import kotlin.getValue
 import kotlin.math.min
 
+object deepestRoomAllowed {
+    var deepestRoom: Int = 0
+}
 
 class SelectDungeonFragment : Fragment() {
 
     private var _binding: FragmentSelectDungeonBinding? = null
     private val binding get() = _binding!!
     private val viewModel: DungeonPrepViewModel by activityViewModels()
-    private var deepestRoomAllowed: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,7 +63,7 @@ class SelectDungeonFragment : Fragment() {
         binding.floorTextBox.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 var closestTen = (binding.floorTextBox.text.toString().toInt() / 10) * 10 // Takes floor to nearest ten
-                closestTen = min(closestTen, deepestRoomAllowed)
+                closestTen = min(closestTen, deepestRoomAllowed.deepestRoom)
                 binding.floorTextBox.setText(closestTen.toString())
                 (requireContext() as DungeonPrepActivity).startingDepth = closestTen
             }
@@ -75,36 +77,6 @@ class SelectDungeonFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    fun loadDeepestRoom() {
-        val filename = "deepest_room"
-        try {
-            requireContext().openFileInput(filename).bufferedReader().useLines { lines ->
-                for (line in lines) {
-                    deepestRoomAllowed = line.toInt()
-                }
-            }
-
-        } catch (err: Exception) {
-            Log.d("SelectDungeonFragment", err.toString())
-            saveDeepestRoom() // Just save a 0 to avoid future errors
-        }
-        binding.deepestRoomText.text = "Deepest Room: ${deepestRoomAllowed}"
-    }
-
-    fun saveDeepestRoom() {
-        val filename = "deepest_room"
-        val data = deepestRoomAllowed.toString()
-
-        try {
-            requireContext().openFileOutput(filename, Context.MODE_PRIVATE).use {
-                it.write(data.toByteArray())
-            }
-
-        } catch (err: Exception) {
-            Log.d("SelectDungeonFragment", err.toString())
-        }
     }
 
 }

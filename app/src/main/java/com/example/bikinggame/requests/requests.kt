@@ -143,7 +143,7 @@ suspend fun makeRequestWithResponse(request: Request): JSONObject =
                 try {
                     response.use {
                         if (!response.isSuccessful) {
-                            logResErr(response)
+                            logResErr(request, response)
                             if (!cont.isCompleted) cont.resume(JSONObject()) { cause, _, _ -> (cause) }
                             return
                         }
@@ -183,7 +183,7 @@ fun makeRequestTemp(request: Request, callback: (JSONObject) -> Unit) {
         override fun onResponse(call: Call, response: Response) {
             response.use {
                 if (!response.isSuccessful) {
-                    logResErr(response)
+                    logResErr(request, response)
                 } else {
                     if (response.body == null) return
                     val body: ResponseBody = (response.body) as ResponseBody
@@ -241,10 +241,11 @@ fun logRes(json: JSONObject) {
     Log.d("HTTPS Request", json.toString())
 }
 
-fun logResErr(response: Response) {
+fun logResErr(request: Request, response: Response) {
+    val url = request.url
     response.body?.let { body ->
         val jsonText = body.string()
-        Log.d("HTTPS Request", jsonText)
+        Log.d("HTTPS Request: $url", jsonText)
         try {
             val json = JSONObject(jsonText)
             if (json.has("error")) Log.e("HTTPS Request Error: ", json.get("error").toString())

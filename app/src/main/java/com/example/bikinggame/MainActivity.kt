@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.bikinggame.characterCreation.CharacterCreationActivity
 import com.example.bikinggame.databinding.LoginScreenBinding
+import com.example.bikinggame.gameState.loadGameState
 import com.example.bikinggame.homepage.HomePage
 import com.example.bikinggame.requests.getUserJson
 import com.example.bikinggame.requests.makeGetRequest
@@ -82,6 +83,7 @@ class MainActivity : AppCompatActivity() {
                 intent.putExtra("usernameSetup", true)
                 startActivity(intent)
             } else {
+                tryLoadGameState()
                 goToHomePage()
             }
         }
@@ -91,6 +93,11 @@ class MainActivity : AppCompatActivity() {
         binding.fragmentContainer.visibility = View.VISIBLE
         binding.mainContent.visibility = View.GONE
     }
+
+    suspend fun tryLoadGameState() {
+        loadGameState(this)
+    }
+
     fun goToHomePage() {
         val intent = Intent(this, HomePage::class.java)
         startActivity(intent)

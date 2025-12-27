@@ -6,7 +6,6 @@ import kotlin.math.min
 import kotlin.random.Random
 
 class Attack {
-    // TODO: Figure out how to allow friend attacks, either complexity or interface
     val id: Int
     val name: String
     val mass: Int
@@ -227,7 +226,6 @@ class Attack {
                 Pair(BasicStats.BaseMana, 23), null
             ),
         )
-
 
         fun getAttack(attackID: Int): Attack? {
             return if (attackIDToAttack.contains(attackID)) attackIDToAttack[attackID] else null
