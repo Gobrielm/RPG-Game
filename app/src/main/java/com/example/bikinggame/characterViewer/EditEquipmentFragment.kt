@@ -88,7 +88,7 @@ class EditEquipmentFragment: Fragment() {
     }
 
     fun updateView() {
-        val map = mapOf(
+        val buttonMap = mapOf(
             EquipmentSlot.HEAD to binding.helmetButton, EquipmentSlot.NECK to binding.neckButton,
             EquipmentSlot.TORSO to binding.chestButton, EquipmentSlot.MAIN_HAND to binding.mainHandButton,
             EquipmentSlot.OFF_HAND to binding.offHandButton, EquipmentSlot.RING to binding.ringButton
@@ -103,7 +103,7 @@ class EditEquipmentFragment: Fragment() {
         val characterID = viewModel.getSelectedCharacterID()!!
         val character = PlayerInventory.getCharacter(characterID)!!
 
-        map.forEach { slot, button ->
+        buttonMap.forEach { slot, button ->
             val equipment = character.currentEquipment[slot.ordinal]
             if (equipment != null) {
                 // TODO: Get image from Equipment probably
@@ -125,8 +125,16 @@ class EditEquipmentFragment: Fragment() {
 
         inventoryList.add(Item(R.drawable.nothing, "Unequip Item"))
 
-        equipmentToChooseFrom.forEach { pair ->
-            if (pair.second > 0) inventoryList.add(Item(R.drawable.truck, pair.first.toString() + "   x${pair.second}"))
+        val defaultImageMap = mapOf(
+            EquipmentSlot.HEAD to R.drawable.helmetslot, EquipmentSlot.NECK to R.drawable.neckslot,
+            EquipmentSlot.TORSO to R.drawable.chestslot, EquipmentSlot.MAIN_HAND to R.drawable.mainhandslot,
+            EquipmentSlot.OFF_HAND to R.drawable.offhandslot, EquipmentSlot.RING to R.drawable.ringslot
+        )
+
+        equipmentToChooseFrom.forEach { (equipment, amount) ->
+            if (amount > 0) {
+                inventoryList.add(Item(defaultImageMap[equipment.slot]!!, equipment.toString() + "   x${amount}"))
+            }
         }
     }
 

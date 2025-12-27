@@ -32,6 +32,8 @@ data class StatusEffect (
             6 to StatusEffect(6, 1, null, Pair(BasicStats.BaseMana, -12), "Drained"),
             7 to StatusEffect(7, 3, Pair(BasicStats.BaseHealth, -9), null, "Burning+"),
             8 to StatusEffect(8, 3, null, Pair(BasicStats.Dexterity, -8), "Frozen+"),
+            9 to StatusEffect(9, 3, null, Pair(BasicStats.Strength, -8), "Weakness+"),
+            10 to StatusEffect(10, 3, Pair(BasicStats.BaseHealth, -10), null, "Poison+"),
         )
 
         val idToImg = mapOf(
@@ -43,6 +45,8 @@ data class StatusEffect (
             6 to R.drawable.drained,
             7 to R.drawable.fireplus,
             8 to R.drawable.frostplus,
+            9 to R.drawable.weaknessplus,
+            10 to R.drawable.poisonplus,
             0 to R.drawable.truck,
         )
 

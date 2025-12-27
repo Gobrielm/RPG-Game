@@ -90,12 +90,12 @@ object SkillTrees {
 
             // Mixed Fortitude nodes
             55 to Offset(-1.7f, 2.3f),    // Strength + Fortitude
-            62 to Offset(1.8f, 3f),     // Fortitude + Heartiness
+            62 to Offset(1.5f, 3f),     // Fortitude + Heartiness
 
             // ───────────── Heartiness / HP / Dex branch (RIGHT) ─────────────
             11 to Offset(3f, 1.5f),
 
-            49 to Offset(3f, 3f),
+            49 to Offset(2.6f, 3f),
             58 to Offset(4.8f, 3f),
 
             50 to Offset(2f, 5.3f),
@@ -314,38 +314,38 @@ class Skill {
             3 to Skill(3, "Humble Beginnings", emptyMap(), emptyArray(), 1, -1),
             7 to Skill(7, "Path of Strength", mapOf(BasicStats.Strength to 1), arrayOf(3), -1, -1),
             8 to Skill(8, "Path of Fortitude", mapOf(BasicStats.Constitution to 1), arrayOf(3), -1, -1),
-            9 to Skill(9, "Path of Heartiness", mapOf(BasicStats.BaseHealth to 2), arrayOf(3), -1, -1),
+            9 to Skill(9, "Path of Heartiness", mapOf(BasicStats.BaseHealth to 4), arrayOf(3), -1, -1),
 
-            10 to Skill(10, "Improvised Block", emptyMap(), arrayOf(8), -1, 3), // TODO: Buff Block
-            11 to Skill(11, "Heartiness II", mapOf(BasicStats.BaseHealth to 2), arrayOf(8), -1, -1),
-            43 to Skill(43, "Strong Strike", emptyMap(), arrayOf(7), -1, -1),// TODO: Add Atk
-            47 to Skill(47, "Fortitude II", emptyMap(), arrayOf(8), -1, -1),// TODO
-            54 to Skill(54, "Strength and Weakness", emptyMap(), arrayOf(8), -1, -1),// TODO
-            61 to Skill(61, "Additional Workout", emptyMap(), arrayOf(7), -1, -1), // TODO
-            62 to Skill(62, "Stone Skin", emptyMap(), arrayOf(8, 9), -1, -1),// TODO
+            10 to Skill(10, "Improvised Block", mapOf(BasicStats.BaseHealth to 4), arrayOf(8), -1, 3),
+            11 to Skill(11, "Heartiness II", mapOf(BasicStats.BaseHealth to 8), arrayOf(8), -1, -1),
+            43 to Skill(43, "Intermediate Hit", emptyMap(), arrayOf(7), 4, -1),
+            47 to Skill(47, "Fortitude II", mapOf(BasicStats.Constitution to 2), arrayOf(8), -1, -1),
+            54 to Skill(54, "Weakening Attacks", mapOf(BasicStats.BaseMana to 5), arrayOf(8), -1, -1),
+            61 to Skill(61, "Additional Workout", mapOf(BasicStats.Strength to 2, BasicStats.Constitution to 1), arrayOf(7), -1, -1),
+            62 to Skill(62, "Stone Skin", mapOf(BasicStats.BaseHealth to 5, BasicStats.Constitution to 3), arrayOf(8, 9), -1, -1),
 
-            44 to Skill(44, "Strength II", emptyMap(), arrayOf(43), -1, -1),// TODO
-            55 to Skill(55, "Weakening Strike", emptyMap(), arrayOf(43, 54), -1, -1),// TODO: Add Atk
-            48 to Skill(48, "Impenetrable Shield", emptyMap(), arrayOf(47), -1, -1),// TODO: Add Shield
-            49 to Skill(49, "Path of Sacrifice", emptyMap(), arrayOf(11), -1, -1),// TODO
-            56 to Skill(56, "Heartiness III", emptyMap(), arrayOf(11), -1, -1),// TODO
-            58 to Skill(58, "Path of Dexterity", emptyMap(), arrayOf(11), -1, -1),// TODO
+            44 to Skill(44, "Strength II", mapOf(BasicStats.Strength to 2), arrayOf(43), -1, -1),
+            55 to Skill(55, "Weakening Strike", emptyMap(), arrayOf(43, 54), 21, -1),
+            48 to Skill(48, "Impenetrable Shield", emptyMap(), arrayOf(47), -1, 6),
+            49 to Skill(49, "Path of Sacrifice", mapOf(BasicStats.BaseHealth to -3), arrayOf(11), -1, -1),
+            56 to Skill(56, "Heartiness III", mapOf(BasicStats.BaseHealth to 16), arrayOf(11), -1, -1),
+            58 to Skill(58, "Path of Dexterity", mapOf(BasicStats.Dexterity to 2), arrayOf(11), -1, -1),
 
-            45 to Skill(45, "Strength III", emptyMap(), arrayOf(44), -1, -1),// TODO
-            46 to Skill(46, "Strength Strike", emptyMap(), arrayOf(44), -1, -1),// TODO: Add atk
-            50 to Skill(50, "Sacrifice II", emptyMap(), arrayOf(49), -1, -1),// TODO
-            51 to Skill(51, "Empowering Sacrifice", emptyMap(), arrayOf(47, 49), -1, -1),// TODO: Add atk
-            53 to Skill(53, "Fortitude III", emptyMap(), arrayOf(48), -1, -1),// TODO
-            57 to Skill(57, "Pierce Strike", emptyMap(), arrayOf(48), -1, -1),// TODO: Add atk
-            59 to Skill(59, "Dexterity II", emptyMap(), arrayOf(58), -1, -1),// TODO
-            67 to Skill(67, "Strength Hyper-Focus", emptyMap(), arrayOf(44), -1, -1),// TODO
+            45 to Skill(45, "Strength III", mapOf(BasicStats.Strength to 4), arrayOf(44), -1, -1),
+            46 to Skill(46, "Overpowering Blow", emptyMap(), arrayOf(44), 22, -1),
+            50 to Skill(50, "Sacrifice II", mapOf(BasicStats.BaseHealth to -5), arrayOf(49), -1, -1),
+            51 to Skill(51, "Empowering Sacrifice", emptyMap(), arrayOf(47, 49), 23, -1),
+            53 to Skill(53, "Fortitude III", mapOf(BasicStats.Constitution to 4), arrayOf(48), -1, -1),
+            57 to Skill(57, "Pierce Strike", emptyMap(), arrayOf(48), 24, -1),
+            59 to Skill(59, "Dexterity II", mapOf(BasicStats.Dexterity to 4), arrayOf(58), -1, -1),
+            67 to Skill(67, "Strength Hyper-Focus", mapOf(BasicStats.Strength to 7, BasicStats.Constitution to -3), arrayOf(44), -1, -1),
 
-            52 to Skill(52, "Bludgeoning Blow", emptyMap(), arrayOf(45, 50), -1, -1),// TODO: Add Atk
-            60 to Skill(60, "Speed Attack", emptyMap(), arrayOf(45, 59), -1, -1),// TODO: Add Atk
-            63 to Skill(63, "Magical Melee Attacks", emptyMap(), arrayOf(50), -1, -1),// TODO
-            66 to Skill(66, "Constitution Hyper-Focus", emptyMap(), arrayOf(53), -1, -1),// TODO
+            52 to Skill(52, "Bludgeoning Blow", emptyMap(), arrayOf(45, 50), 25, -1),
+            60 to Skill(60, "Speed Attack", emptyMap(), arrayOf(45, 59), 26, -1),
+            63 to Skill(63, "Magical Melee Attacks", mapOf(BasicStats.BaseMana to 8, BasicStats.Intelligence to 3), arrayOf(50), -1, -1),
+            66 to Skill(66, "Constitution Hyper-Focus", mapOf(BasicStats.Constitution to 6, BasicStats.BaseHealth to -12), arrayOf(53), -1, -1),
 
-            69 to Skill(69, "Fire Sword", emptyMap(), arrayOf(63), -1, -1),// TODO: Add atk
+            69 to Skill(69, "Flaming Sword", emptyMap(), arrayOf(63), 27, -1),
 
             // Start of North Tree
 //            4 to Skill(4, "Humble Beginnings", emptyMap(), emptyArray(), 1, -1),
@@ -359,35 +359,35 @@ class Skill {
             73 to Skill(73, "Path of Stamina", mapOf(BasicStats.BaseStamina to 3), arrayOf(6), -1, -1),
             84 to Skill(84, "Path of Strength", mapOf(BasicStats.Strength to 1), arrayOf(6), -1, -1),
 
-            94 to Skill(94, "Ranged Magic", emptyMap(), arrayOf(12), -1, -1), // TODO
-            70 to Skill(70, "Dexterity II", emptyMap(), arrayOf(12), -1, -1),// TODO
-            71 to Skill(71, "Toxicology", emptyMap(), arrayOf(12), -1, -1),// TODO
-            90 to Skill(90, "Increased Health", emptyMap(), arrayOf(73), -1, -1), // TODO
-            74 to Skill(74, "Improvised Shield", emptyMap(), arrayOf(73), -1, -1),// TODO: Add shield
-            85 to Skill(85, "Strength II", emptyMap(), arrayOf(84), -1, -1),// TODO
+            94 to Skill(94, "Ranged Magic", mapOf(BasicStats.BaseMana to 5, BasicStats.Intelligence to 1), arrayOf(12), -1, -1),
+            70 to Skill(70, "Dexterity II", mapOf(BasicStats.Dexterity to 3), arrayOf(12), -1, -1),
+            71 to Skill(71, "Toxicology", mapOf(BasicStats.BaseMana to 3, BasicStats.Dexterity to 1), arrayOf(12), -1, -1),
+            90 to Skill(90, "Increased Health", mapOf(BasicStats.BaseHealth to 6), arrayOf(73), -1, -1),
+            74 to Skill(74, "Improvised Shield", emptyMap(), arrayOf(73), -1, 3),
+            85 to Skill(85, "Strength II", mapOf(BasicStats.Strength to 2), arrayOf(84), -1, -1),
 
-            13 to Skill(13, "Poison Craft", emptyMap(), arrayOf(71), 5, -1), // TODO
-            95 to Skill(95, "Ranged Magic II", emptyMap(), arrayOf(94), -1, -1), // TODO
-            79 to Skill(79, "Dexterity III", emptyMap(), arrayOf(70), -1, -1), // TODO
-            80 to Skill(80, "Barrage Attack", emptyMap(), arrayOf(70), -1, -1), // TODO: ADd Attack
-            72 to Skill(72, "Toxicology II", emptyMap(), arrayOf(71), -1, -1), // TODO
-            91 to Skill(91, "Increased Health II", emptyMap(), arrayOf(90), -1, -1), // TODO
-            75 to Skill(75, "Stamina II", emptyMap(), arrayOf(74), -1, -1), // TODO
-            76 to Skill(76, "Improvised Shield II", emptyMap(), arrayOf(74), -1, -1), // TODO: Add shield
-            92 to Skill(92, "Strength Hyper-Focus", emptyMap(), arrayOf(85), -1, -1), // TODO
-            87 to Skill(87, "Increased Constitution", emptyMap(), arrayOf(85), -1, -1), // TODO
+            13 to Skill(13, "Poison Craft", emptyMap(), arrayOf(71), 5, -1),
+            95 to Skill(95, "Ranged Magic II", mapOf(BasicStats.BaseMana to 8, BasicStats.Intelligence to 2), arrayOf(94), -1, -1),
+            79 to Skill(79, "Dexterity III", mapOf(BasicStats.Dexterity to 5), arrayOf(70), -1, -1),
+            80 to Skill(80, "Barrage Attack", emptyMap(), arrayOf(70), 28, -1),
+            72 to Skill(72, "Toxicology II", mapOf(BasicStats.BaseMana to 5, BasicStats.Dexterity to 2), arrayOf(71), -1, -1),
+            91 to Skill(91, "Increased Health II", mapOf(BasicStats.BaseHealth to 12), arrayOf(90), -1, -1),
+            75 to Skill(75, "Stamina II", mapOf(BasicStats.BaseStamina to 8), arrayOf(74), -1, -1),
+            76 to Skill(76, "Improvised Shield II", emptyMap(), arrayOf(74), -1, 7),
+            92 to Skill(92, "Strength Hyper-Focus", mapOf(BasicStats.Strength to 6, BasicStats.Dexterity to -2), arrayOf(85), -1, -1),
+            87 to Skill(87, "Increased Constitution", mapOf(BasicStats.Constitution to 3), arrayOf(85), -1, -1),
 
-            77 to Skill(77, "Weakening Shots", emptyMap(), arrayOf(72), -1, -1), // TODO: Add Attack
-            78 to Skill(78, "Mana-Drain Shots", emptyMap(), arrayOf(72), -1, -1), // TODO: Add Attack
-            96 to Skill(96, "Elemental Arrow", emptyMap(), arrayOf(95), -1, -1), // TODO: ADd Attack
-            88 to Skill(88, "Dexterity Hyper-Focus", emptyMap(), arrayOf(79), -1, -1), // TODO
-            81 to Skill(81, "Toxicology III", emptyMap(), arrayOf(72), -1, -1), // TODO
-            93 to Skill(93, "Stamina III", emptyMap(), arrayOf(75), -1, -1), // TODO
+            77 to Skill(77, "Weakening Shots", emptyMap(), arrayOf(72), 29, -1),
+            78 to Skill(78, "Mana-Drain Shots", emptyMap(), arrayOf(72), 30, -1),
+            96 to Skill(96, "Elemental Arrow", emptyMap(), arrayOf(95), 31, -1),
+            88 to Skill(88, "Dexterity Hyper-Focus", mapOf(BasicStats.Dexterity to 6, BasicStats.BaseStamina to -8), arrayOf(79), -1, -1),
+            81 to Skill(81, "Toxicology III", mapOf(BasicStats.BaseMana to 8, BasicStats.Dexterity to 3), arrayOf(72), -1, -1),
+            93 to Skill(93, "Stamina III", mapOf(BasicStats.BaseStamina to 12), arrayOf(75), -1, -1),
 
-            82 to Skill(82, "Venom Arrow", emptyMap(), arrayOf(79, 81), -1, -1), // TODO: ADd Attack
-            83 to Skill(83, "Lightning Arrow", emptyMap(), arrayOf(79, 93), -1, -1), // TODO: ADd attack
-            86 to Skill(86, "Ballista Shot", emptyMap(), arrayOf(85, 93), -1, -1), // TODO: ADd attack
-            89 to Skill(89, "Stamina Hyper-Focus", emptyMap(), arrayOf(93), -1, -1), // TODO
+            82 to Skill(82, "Venom Arrow", emptyMap(), arrayOf(79, 81), 32, -1),
+            83 to Skill(83, "Lightning Arrow", emptyMap(), arrayOf(79, 93), 33, -1),
+            86 to Skill(86, "Ballista Shot", emptyMap(), arrayOf(85, 93), 34, -1),
+            89 to Skill(89, "Stamina Hyper-Focus", mapOf(BasicStats.BaseStamina to 20, BasicStats.Dexterity to -3), arrayOf(93), -1, -1),
         )
 
         init {

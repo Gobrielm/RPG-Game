@@ -82,6 +82,11 @@ class RegularRoomFragment : Fragment() {
                 simulateRound(attack, target)
             }
         }
+
+        viewModel.readyForNextRoom.observe(viewLifecycleOwner) {
+            awardExpForEnemyKilled()
+        }
+
         return root
     }
 

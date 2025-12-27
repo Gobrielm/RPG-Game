@@ -2,8 +2,10 @@ package com.example.bikinggame.playerCharacter
 
 import android.util.Log
 import com.example.bikinggame.attack.Attack
+import java.lang.Math.pow
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.pow
 import kotlin.math.round
 
 private const val TAG: String = "CharacterStats"
@@ -103,7 +105,7 @@ class CharacterStats {
      */
     fun attemptDodge(attack: Attack, hitType: Attack.HitTypes): Pair<Boolean, String> {
         val rand: Int = kotlin.random.Random.nextInt(0, 100)
-        val velocity = attack.velocity * hitType.getMultiplier()
+        val velocity = (attack.velocity * hitType.getMultiplier().toDouble()).pow(1.5) / 4
 
         // Can attempt dodge
         if (getDexterity() > velocity) {

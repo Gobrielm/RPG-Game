@@ -144,11 +144,48 @@ class Attack {
             1 to Attack(1, "Basic Hit", 2, 5, 90, AttackTypes.PHY),
             4 to Attack(4, "Intermediate Hit", 4, 5, 90, AttackTypes.PHY),
             7 to Attack(7, "Bear Strike", 10, 3, 80, AttackTypes.PHY),
+            21 to Attack(21, "Weakening Strike", 4, 5, 80, AttackTypes.PHY,
+                Pair(BasicStats.BaseMana, 6),
+                Pair(100, StatusEffect.getStatusEffect(2)!!)
+            ),
+            22 to Attack(22, "Overpowering Blow", 7, 5, 85, AttackTypes.PHY),
+            23 to Attack(23, "Suffering Strike", 10, 7, 85, AttackTypes.PHY,
+                Pair(BasicStats.BaseHealth, 10), null
+            ),
+            24 to Attack(24, "Piercing Hit", 3, 10, 85, AttackTypes.PHY),
+            25 to Attack(25, "Bludgeoning Blow", 11, 6, 85, AttackTypes.PHY),
+            26 to Attack(26, "Speed Attack", 6, 10, 85, AttackTypes.PHY),
+            27 to Attack(27, "Flaming Sword", 9, 9, 85, AttackTypes.PHY,
+                Pair(BasicStats.BaseMana, 20), null
+            ),
 
             3 to Attack(3, "Normal Shot", 1, 7, 85, AttackTypes.RAN),
-            5 to Attack(5, "Poison Arrow", 2, 5, 85, AttackTypes.PHY, Pair(100, StatusEffect.Companion.getStatusEffect(1)!!)),
+            5 to Attack(5, "Poison Arrow", 4, 8, 85, AttackTypes.PHY,
+                Pair(100,
+                    StatusEffect.Companion.getStatusEffect(1)!!)
+            ),
             8 to Attack(8, "Eagle Shot", 3, 10, 85, AttackTypes.PHY),
-            11 to Attack(11, "Knife Stab", 3, 6, 90, AttackTypes.PHY, Pair(100, StatusEffect.getStatusEffect(4)!!)),
+            11 to Attack(11, "Knife Stab", 3, 6, 90, AttackTypes.PHY,
+                Pair(100, StatusEffect.getStatusEffect(4)!!)
+            ),
+            28 to Attack(28, "Barrage Attack", 5, 7, 95, AttackTypes.PHY),
+            29 to Attack(29, "Weakening Shots", 3, 5, 90, AttackTypes.PHY,
+                Pair(BasicStats.BaseMana, 4),
+                Pair(100, StatusEffect.getStatusEffect(9)!!)
+            ),
+            30 to Attack(30, "Mana-Drain Shots", 3, 6, 90, AttackTypes.PHY,
+                Pair(BasicStats.BaseMana, 4),
+                Pair(100, StatusEffect.getStatusEffect(6)!!)
+            ),
+            31 to Attack(31, "Elemental Arrow", 5, 10, 85, AttackTypes.PHY,
+                Pair(BasicStats.BaseMana, 10), null
+            ),
+            32 to Attack(32, "Venom Arrow", 7, 8, 85, AttackTypes.PHY,
+                Pair(BasicStats.BaseMana, 10),
+                Pair(90, StatusEffect.getStatusEffect(10)!!)
+            ),
+            33 to Attack(33, "Lightning Arrow", 5, 15, 90, AttackTypes.PHY,),
+            34 to Attack(34, "Ballista Shot", 7, 12, 90, AttackTypes.PHY),
 
             2 to Attack(2, "Mana Blast", 1, 8, 80, AttackTypes.MAG, Pair(BasicStats.BaseMana, 3)),
             6 to Attack(6, "Healing Touch", 8, Pair(BasicStats.BaseMana, 4), null),
