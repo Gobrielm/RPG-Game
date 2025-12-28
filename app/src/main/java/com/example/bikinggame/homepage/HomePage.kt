@@ -27,8 +27,6 @@ import kotlinx.coroutines.launch
 
 
 class HomePage : AppCompatActivity() {
-
-    private val user = Firebase.auth.currentUser
     private lateinit var binding: ActivityHomePageBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,12 +46,7 @@ class HomePage : AppCompatActivity() {
         val currentItem = intent.getIntExtra("currentItem", 1)
         viewPager.currentItem = currentItem
 
-        if (PlayerInventory.getCoins() == 0) {
-            loadPointsLocally()
-            loadPointsReq()
-        } else {
-            setPoints(PlayerInventory.getCoins().toString())
-        }
+        setPoints(PlayerInventory.getCoins().toString())
 
         onBackPressedDispatcher.addCallback(this,
             object : OnBackPressedCallback(true) {
@@ -83,49 +76,6 @@ class HomePage : AppCompatActivity() {
     fun setPoints(points: String) {
         binding.pointsText.text = points
         PlayerInventory.setCoins(points.toInt())
-    }
-
-    fun loadPointsLocally() {
-        val filename = "user_data"
-        var points = "0"
-        try {
-            openFileInput(filename).bufferedReader().useLines { lines ->
-                points = (lines.elementAt(0) as String)
-            }
-
-        } catch (err: Exception) {
-            Log.d("PointsStorage", err.toString())
-        }
-
-        setPoints(points)
-    }
-
-    fun storePointsLocally(points: String) {
-        val filename = "user_data"
-        try {
-            openFileOutput(filename, Context.MODE_PRIVATE).use {
-                it.write(points.toByteArray())
-            }
-        } catch (err: Exception) {
-            Log.d("PointsStorage", err.toString())
-        }
-    }
-
-    fun loadPointsReq() {
-        if (user == null) return
-        lifecycleScope.launch {
-            val json = getUserJson()
-            if (json == null) return@launch
-            val data = makeGetRequest("https://bikinggamebackend.vercel.app/api/points", json.get("token") as String)
-            if (!data.has("data")) {
-                Log.e("HomePage", "No data in message")
-                return@launch
-            }
-            val points: String = data.get("data").toString()
-            storePointsLocally(points)
-            setPoints(points)
-            PlayerInventory.setCoins(points.toInt())
-        }
     }
 }
 

@@ -1,12 +1,9 @@
 package com.example.bikinggame.characterViewer
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -15,21 +12,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.FragmentEditEquipmentBinding
+import com.example.bikinggame.gameState.SaveManager
 import com.example.bikinggame.homepage.inventory.InventoryManager
 import com.example.bikinggame.homepage.inventory.Item
 import com.example.bikinggame.homepage.inventory.PlayerInventory
-import com.example.bikinggame.homepage.inventory.saveCharacter
 import com.example.bikinggame.playerCharacter.Equipment
 import com.example.bikinggame.playerCharacter.EquipmentSlot
 import com.example.bikinggame.playerCharacter.PlayerCharacter
-import com.example.bikinggame.requests.getUserJson
-import com.example.bikinggame.requests.makePutRequest
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
 import java.util.LinkedList
-import kotlin.getValue
 
 class EditEquipmentFragment: Fragment() {
 
@@ -167,9 +158,7 @@ class EditEquipmentFragment: Fragment() {
             PlayerInventory.usePieceOfEquipment(pieceOfEquipment.id)
         }
 
-        lifecycleScope.launch {
-            saveCharacter(characterID)
-        }
+        SaveManager.markDirty()
 
         updateView()
         closeEquipmentList()

@@ -18,8 +18,8 @@ import com.example.bikinggame.homepage.inventory.InventoryManager
 import com.example.bikinggame.homepage.inventory.Item
 import com.example.bikinggame.homepage.inventory.ItemWID
 import com.example.bikinggame.homepage.inventory.PlayerInventory
-import com.example.bikinggame.homepage.inventory.saveCharacter
 import com.example.bikinggame.attack.Attack
+import com.example.bikinggame.gameState.SaveManager
 import com.example.bikinggame.playerCharacter.Shield
 import com.example.bikinggame.requests.getUserJson
 import com.example.bikinggame.requests.makeDeleteRequest
@@ -198,9 +198,7 @@ class EditCharacterFragment: Fragment() {
 
         updateInfo()
         unShowSelectorContainer()
-        lifecycleScope.launch {
-            saveCharacter(characterID)
-        }
+        SaveManager.markDirty()
 
     }
 
@@ -244,9 +242,7 @@ class EditCharacterFragment: Fragment() {
 
         updateInfo()
         unShowSelectorContainer()
-        lifecycleScope.launch {
-            saveCharacter(characterID)
-        }
+        SaveManager.markDirty()
     }
 
 

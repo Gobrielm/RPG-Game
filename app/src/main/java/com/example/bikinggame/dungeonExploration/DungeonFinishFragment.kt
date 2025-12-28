@@ -9,21 +9,17 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.FragmentDungeonFinishBinding
 import com.example.bikinggame.dungeonPrep.deepestRoomAllowed
+import com.example.bikinggame.gameState.SaveManager
 import com.example.bikinggame.homepage.inventory.InventoryManager
 import com.example.bikinggame.homepage.inventory.Item
 import com.example.bikinggame.homepage.inventory.PlayerInventory
-import com.example.bikinggame.homepage.inventory.saveCharacter
-import com.example.bikinggame.homepage.inventory.savePoints
-import com.example.bikinggame.homepage.inventory.updateEquipmentCount
 import com.example.bikinggame.playerCharacter.Equipment
-import kotlinx.coroutines.launch
 import java.util.LinkedList
-import kotlin.getValue
+import kotlin.math.max
 
 class DungeonFinishFragment: Fragment() {
 
@@ -70,18 +66,7 @@ class DungeonFinishFragment: Fragment() {
             PlayerInventory.addEquipment(lootID, count)
         }
 
-
-        // Update on cloud
-        lifecycleScope.launch {
-            viewModel.getCharacterIDs().forEach { id ->
-                saveCharacter(id)
-            }
-            savePoints()
-
-            loot.forEach { (equipmentID, _) ->
-                if (equipmentID >= 0) updateEquipmentCount(equipmentID)
-            }
-        }
+        SaveManager.markDirty()
 
         val linearLayout = binding.lootEarned
 
@@ -96,19 +81,9 @@ class DungeonFinishFragment: Fragment() {
 
         // Save Deepest Floor
         val deepestRoomRoundTen = ((requireContext() as DungeonExplorationActivity).getCurrentRoom() / 10) * 10
-        if (deepestRoomRoundTen > deepestRoomAllowed.deepestRoom) {
-            val filename = "deepest_room"
-            val data = deepestRoomRoundTen.toString()
 
-            try {
-                requireContext().openFileOutput(filename, Context.MODE_PRIVATE).use {
-                    it.write(data.toByteArray())
-                }
-
-            } catch (err: Exception) {
-                Log.d("DungeonFinishFragment", err.toString())
-            }
-        }
+        deepestRoomAllowed.deepestRoom = max(deepestRoomRoundTen, deepestRoomAllowed.deepestRoom)
+        SaveManager.markDirty()
 
         return root
     }

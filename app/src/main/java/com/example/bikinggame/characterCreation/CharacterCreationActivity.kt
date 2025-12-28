@@ -14,9 +14,9 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.ActivityCharacterCreationBinding
+import com.example.bikinggame.gameState.SaveManager
 import com.example.bikinggame.homepage.HomePage
 import com.example.bikinggame.homepage.inventory.PlayerInventory
-import com.example.bikinggame.homepage.inventory.savePoints
 import com.example.bikinggame.playerCharacter.CharacterClass
 import com.example.bikinggame.playerCharacter.CharacterMainClass
 import com.example.bikinggame.playerCharacter.CharacterSubClass
@@ -81,7 +81,6 @@ class CharacterCreationActivity : AppCompatActivity() {
         PlayerInventory.setCoins(PlayerInventory.getCoins() - cost)
 
         lifecycleScope.launch {
-            savePoints()
 
             // Creates Character
             val json: JSONObject? = getUserJson()
@@ -94,12 +93,14 @@ class CharacterCreationActivity : AppCompatActivity() {
             val body = inputObject.toString().toRequestBody("application/json".toMediaTypeOrNull())
             val jsonObject = makePostRequest("https://bikinggamebackend.vercel.app/api/characters/", json.get("token") as String, body)
 
-
             val newCharacterJSON = jsonObject.get("data") as JSONArray
             PlayerInventory.addCharacter(PlayerCharacter(newCharacterJSON))
 
+            SaveManager.markDirty()
             goToHomePage()
         }
+
+
     }
 
     fun finishCharacterCreation(json: JSONObject) {

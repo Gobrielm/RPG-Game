@@ -68,13 +68,7 @@ class InventoryFragment() : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        refreshInventoryBinding()
-
-        if (inventoryList.isEmpty()) {
-            loadPlayerCharactersLocally()
-            loadPlayerCharactersReq()
-            loadPlayerEquipment()
-        }
+        refreshInventoryScreen()
 
         binding.newCharacterButton.setOnClickListener {
             (requireContext() as HomePage).openCharacterCreator()
@@ -126,112 +120,5 @@ class InventoryFragment() : Fragment() {
     fun selectCharacter(item: ItemWID) {
         (requireContext() as DungeonPrepActivity)
             .selectCharacter(PlayerInventory.getCharacter(item.id)!!, item.item.imageResId)
-    }
-
-    fun loadPlayerCharactersReq() {
-        if (user == null) return
-        lifecycleScope.launch {
-            val userData = getUserJson()
-            if (userData == null) return@launch
-
-            makeGetRequest(
-                "https://bikinggamebackend.vercel.app/api/characters/",
-                userData.get("token") as String,
-                ::loadPlayerCharactersRes
-            )
-        }
-    }
-
-    fun loadPlayerEquipment() {
-        if (user == null) return
-        lifecycleScope.launch {
-            val userData = getUserJson()
-            if (userData == null) return@launch
-            val res = makeGetRequest("https://bikinggamebackend.vercel.app/api/equipment/",
-                userData.get("token") as String
-            )
-
-            if (!res.has("data")) {
-                Log.e("InventoryFragment", "Missing 'data' in response: $res")
-                return@launch
-            }
-
-            try {
-                val data = res.get("data") as JSONObject
-
-                PlayerInventory.updatePlayerEquipment(data)
-            } catch (error: Exception) {
-                Log.d("InventoryFragment", error.toString())
-            }
-        }
-    }
-
-    fun loadPlayerCharactersRes(json: JSONObject) {
-        lifecycleScope.launch {
-            val localList: ArrayList<PlayerCharacter> = ArrayList()
-
-            if (!json.has("data")) {
-                Log.e("InventoryFragment", "Missing 'data' in response: $json")
-                return@launch
-            }
-
-            val playerCharacterJSON = json.get("data") as JSONObject
-
-            for (section: String in (playerCharacterJSON).keys()) {
-                try {
-                    val playerCharacterArray = playerCharacterJSON.get(section) as JSONArray
-                    val playerCharacter = PlayerCharacter(playerCharacterArray)
-                    localList.add(playerCharacter)
-                } catch (e: Exception) {
-                    Log.d("LoadPlayerCharacters", e.toString())
-                    return@launch
-                }
-            }
-
-            playerCharacters.clear()
-            localList.forEach { playerCharacter ->
-                PlayerInventory.addCharacter(playerCharacter)
-            }
-            savePlayerCharactersLocally()
-            refreshInventoryScreen()
-        }
-    }
-
-    fun loadPlayerCharactersLocally() {
-        val filename = "characters_data"
-        val localCharacters: ArrayList<PlayerCharacter> = ArrayList()
-        try {
-            requireContext().openFileInput(filename).bufferedReader().useLines { lines ->
-                for (line in lines) {
-                    val jsonArray = JSONArray(line) // parse the String into a JSONArray
-                    localCharacters.add(PlayerCharacter(jsonArray))
-                }
-            }
-
-        } catch (err: Exception) {
-            Log.d("PlayerCharacterStorage", err.toString())
-        }
-        playerCharacters.clear()
-        localCharacters.forEach { playerCharacter ->
-            PlayerInventory.addCharacter(playerCharacter)
-        }
-        refreshInventoryScreen()
-    }
-
-    fun savePlayerCharactersLocally() {
-        val filename = "characters_data"
-        var data = ""
-        for ((_, playerCharacter) in playerCharacters) {
-            data += playerCharacter.serialize().toString() + '\n'
-        }
-
-        try {
-            requireContext().openFileOutput(filename, Context.MODE_PRIVATE).use {
-                it.write(data.toByteArray())
-            }
-
-        } catch (err: Exception) {
-            Log.d("PlayerCharacterStorage", err.toString())
-        }
     }
 }

@@ -17,8 +17,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.bikinggame.R
 import com.example.bikinggame.databinding.FragmentSkillTreeBinding
+import com.example.bikinggame.gameState.SaveManager
 import com.example.bikinggame.homepage.inventory.PlayerInventory
-import com.example.bikinggame.homepage.inventory.saveCharacter
 import com.example.bikinggame.playerCharacter.CharacterSubClass
 import com.example.bikinggame.playerCharacter.Skill
 import com.example.bikinggame.playerCharacter.SkillTrees
@@ -161,9 +161,7 @@ class SkillTreeFragment: Fragment() {
         updateSkillPointerCount()
         closeSkillInfoPanel()
 
-        lifecycleScope.launch {
-            saveCharacter(character.id)
-        }
+        SaveManager.markDirty()
     }
 
     private fun showSkillButtonErr(errText: String) {
