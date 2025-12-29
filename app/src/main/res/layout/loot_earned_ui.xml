@@ -6,13 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".dungeonExploration.DungeonExplorationActivity">
 
-    <com.example.bikinggame.gui.CenteredFlowLayout
+    <com.mainApp.rpg.gui.CenteredFlowLayout
         android:id="@+id/lootContainer"
         android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center">
 
-    </com.example.bikinggame.gui.CenteredFlowLayout>
+    </com.mainApp.rpg.gui.CenteredFlowLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

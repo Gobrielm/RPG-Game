@@ -7,17 +7,17 @@
 
     <fragment
         android:id="@+id/editCharacterFragment"
-        android:name="com.example.bikinggame.characterViewer.EditCharacterFragment"
+        android:name="com.mainApp.rpg.characterViewer.EditCharacterFragment"
         android:label="EditCharacterFragment" />
 
     <fragment
         android:id="@+id/editEquipmentFragment"
-        android:name="com.example.bikinggame.characterViewer.EditEquipmentFragment"
+        android:name="com.mainApp.rpg.characterViewer.EditEquipmentFragment"
         android:label="EditEquipmentFragment"/>
 
     <fragment
         android:id="@+id/skillTreeFragment"
-        android:name="com.example.bikinggame.characterViewer.SkillTreeFragment"
+        android:name="com.mainApp.rpg.characterViewer.SkillTreeFragment"
         android:label="SkillTreeFragment"/>
 
 

@@ -4,12 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.example.bikinggame.gui.ZoomPanLayout
+    <com.mainApp.rpg.gui.ZoomPanLayout
         android:id="@+id/zoomContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </com.example.bikinggame.gui.ZoomPanLayout>
+    </com.mainApp.rpg.gui.ZoomPanLayout>
 
     <TextView
         android:id="@+id/skillPointsCount"

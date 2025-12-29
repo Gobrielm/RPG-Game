@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/nav_class_picker"
-        android:name="com.example.bikinggame.characterCreation.ClassFragment"
+        android:name="com.mainApp.rpg.characterCreation.ClassFragment"
         android:label="Create your Character"
         tools:layout="@layout/fragment_class" >
         <action
@@ -18,7 +18,7 @@
 
     <fragment
         android:id="@+id/nav_skills_picker"
-        android:name="com.example.bikinggame.characterCreation.SubClassFragment"
+        android:name="com.mainApp.rpg.characterCreation.SubClassFragment"
         android:label="Pick your Sub Class"
         tools:layout="@layout/fragment_melee_sub_classes" >
         <action
@@ -28,7 +28,7 @@
 
     <fragment
         android:id="@+id/nav_stats_preview"
-        android:name="com.example.bikinggame.characterCreation.StatsFragment"
+        android:name="com.mainApp.rpg.characterCreation.StatsFragment"
         android:label="Stats:"
         tools:layout="@layout/fragment_stats_preview">
     </fragment>

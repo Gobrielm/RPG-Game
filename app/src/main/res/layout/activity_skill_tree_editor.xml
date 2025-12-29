@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.example.bikinggame.gui.PointEditorView
+    <com.mainApp.rpg.gui.PointEditorView
         android:id="@+id/pointEditor"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

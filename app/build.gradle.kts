@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.bikinggame"
+    namespace = "com.mainApp.rpg"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.bikinggame"
+        applicationId = "com.mainApp.rpg"
         minSdk = 28
         targetSdk = 36
         versionCode = 1
@@ -27,6 +27,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -84,6 +85,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.android.gms:play-services-auth:21.4.0")
+    implementation("com.google.android.play:integrity:1.6.0")
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)

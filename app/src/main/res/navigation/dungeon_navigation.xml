@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/regular_room"
-        android:name="com.example.bikinggame.dungeonExploration.RegularRoomFragment"
+        android:name="com.mainApp.rpg.dungeonExploration.RegularRoomFragment"
         android:label="Dungeon"
         tools:layout="@layout/fragment_regular_room" >
 
@@ -19,21 +19,21 @@
 
     <fragment
         android:id="@+id/rest_room"
-        android:name="com.example.bikinggame.dungeonExploration.RestRoomFragment"
+        android:name="com.mainApp.rpg.dungeonExploration.RestRoomFragment"
         android:label="Dungeon"
         tools:layout="@layout/fragment_rest_room" >
     </fragment>
 
     <fragment
         android:id="@+id/treasure_room"
-        android:name="com.example.bikinggame.dungeonExploration.TreasureRoomFragment"
+        android:name="com.mainApp.rpg.dungeonExploration.TreasureRoomFragment"
         android:label="Dungeon"
         tools:layout="@layout/fragment_treasure_room" >
     </fragment>
 
     <fragment
         android:id="@+id/finish_screen"
-        android:name="com.example.bikinggame.dungeonExploration.DungeonFinishFragment"
+        android:name="com.mainApp.rpg.dungeonExploration.DungeonFinishFragment"
         android:label="DungeonFinishFragment"
         tools:layout="@layout/fragment_dungeon_finish"/>
 

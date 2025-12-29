@@ -21,28 +21,31 @@
             android:name=".dungeonExploration.DungeonExplorationActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false"
-            android:label="@string/title_activity_main"
             android:theme="@style/Theme.BikingGame.NoActionBar" />
         <activity
             android:name=".characterCreation.CharacterCreationActivity"
             android:exported="false"
-            android:label="@string/title_activity_character_creation"
             android:theme="@style/Theme.BikingGame.NoActionBar" />
         <activity
             android:name=".homepage.HomePage"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.BikingGame.NoActionBar" />
         <activity
             android:name=".characterViewer.CharacterViewerActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.BikingGame.NoActionBar" />
         <activity
             android:name=".PasswordSetup"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.BikingGame.NoActionBar" />
         <activity
             android:name=".AccountCreation"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.BikingGame.NoActionBar" />
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.BikingGame.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
