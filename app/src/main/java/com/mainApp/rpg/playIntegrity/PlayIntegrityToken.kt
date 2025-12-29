@@ -41,21 +41,25 @@ object PlayIntegrityToken {
         }
     }
 
-    fun sha256(input: String): String? {
+    fun sha256(input: String): String {
         val digest = MessageDigest.getInstance("SHA-256")
-        return digest.digest(input.toByteArray(Charsets.UTF_8)).toString()
+        val hashBytes = digest.digest(input.toByteArray(Charsets.UTF_8))
+
+        return hashBytes.joinToString("") { "%02x".format(it) }
     }
 
-    fun canonicalJson(obj: JSONObject): String {
-        val sorted = TreeMap<String, Any?>()
+    fun canonicalJson(obj: JSONObject?): String {
+        if (obj == null) return ""
 
+        val sorted = TreeMap<String, Any?>()
         val keys = obj.keys()
+
         while (keys.hasNext()) {
             val key = keys.next()
             val value = obj.get(key)
 
             sorted[key] = when (value) {
-                is JSONObject -> canonicalJson(value)
+                is JSONObject -> JSONObject(canonicalJson(value))
                 is JSONArray -> canonicalJsonArray(value)
                 else -> value
             }
@@ -84,10 +88,15 @@ object PlayIntegrityToken {
         return result
     }
 
-    suspend fun getRequestToken(url: String, body: JSONObject = JSONObject()): String =
+    suspend fun getRequestToken(url: String, httpType: String, body: JSONObject? = null): String =
         suspendCancellableCoroutine { cont ->
 
-            val requestHash = sha256(url + canonicalJson(body))
+            val url = if (url.endsWith('/')) {
+                url.substring(0, url.length - 2)
+            } else {
+                url
+            }
+            val requestHash = sha256(httpType + url + canonicalJson(body))
 
             val request = StandardIntegrityManager
                 .StandardIntegrityTokenRequest

@@ -7,17 +7,15 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import com.mainApp.rpg.characterCreation.CharacterCreationActivity
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.mainApp.rpg.databinding.LoginScreenBinding
 import com.mainApp.rpg.gameState.loadGameState
 import com.mainApp.rpg.homepage.HomePage
-import com.mainApp.rpg.requests.getUserJson
-import com.mainApp.rpg.requests.makeGetRequest
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
 import com.mainApp.rpg.playIntegrity.PlayIntegrityToken
+import com.mainApp.rpg.requests.getUserToken
+import com.mainApp.rpg.requests.makeGetRequest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -49,9 +47,16 @@ class MainActivity : AppCompatActivity() {
 
     fun finishLoading() {
         val currentUser = Firebase.auth.currentUser
+
         if (currentUser != null) {
-            showLoadingScreen()
-            checkAccountHaveUsername()
+            // Only call after token is ready
+            currentUser.getIdToken(true)
+                .addOnSuccessListener {
+                    checkAccountHaveUsername()
+                }
+                .addOnFailureListener {
+                    unShowLoadingScreen()
+                }
         } else {
             unShowLoadingScreen()
         }
@@ -88,10 +93,10 @@ class MainActivity : AppCompatActivity() {
 
     fun checkAccountHaveUsername() {
         lifecycleScope.launch {
-            val json = getUserJson()
-            if (json == null) return@launch
+            val token = getUserToken()
+            if (token == null) return@launch
 
-            val res = makeGetRequest("https://bikinggamebackend.vercel.app/api/usernames", json.get("token") as String)
+            val res = makeGetRequest("https://bikinggamebackend.vercel.app/api/usernames", token)
 
             // None empty res will have username
             if (res.length() == 0) {

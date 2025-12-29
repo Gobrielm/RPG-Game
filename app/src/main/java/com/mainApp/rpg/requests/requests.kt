@@ -21,10 +21,13 @@ const val TAG = "REQUESTS"
 
 suspend fun makePostRequest(url: String, token: String, body: RequestBody): JSONObject {
     try {
+        val integrityToken = PlayIntegrityToken.getRequestToken(url, "GET")
+
         val request = Request.Builder()
             .url(url)
             .post(body)
-            .addHeader("firebaseToken", token)
+            .addHeader("firebasetoken", token)
+            .addHeader("integritytoken", integrityToken)
             .build()
 
         return makeRequestWithResponse(request)
@@ -36,10 +39,13 @@ suspend fun makePostRequest(url: String, token: String, body: RequestBody): JSON
 
 suspend fun makePutRequest(url: String, token: String, body: RequestBody) {
     try {
+        val integrityToken = PlayIntegrityToken.getRequestToken(url, "GET")
+
         val request = Request.Builder()
             .url(url)
             .put(body)
-            .addHeader("firebaseToken", token)
+            .addHeader("firebasetoken", token)
+            .addHeader("integritytoken", integrityToken)
             .build()
 
         makeRequestWithoutResponse(request)
@@ -50,10 +56,13 @@ suspend fun makePutRequest(url: String, token: String, body: RequestBody) {
 
 suspend fun makeDeleteRequest(url: String, token: String) {
     try {
+        val integrityToken = PlayIntegrityToken.getRequestToken(url, "GET")
+
         val request = Request.Builder()
             .url(url)
             .delete()
-            .addHeader("firebaseToken", token)
+            .addHeader("firebasetoken", token)
+            .addHeader("integritytoken", integrityToken)
             .build()
 
         makeRequestWithoutResponse(request)
@@ -64,11 +73,13 @@ suspend fun makeDeleteRequest(url: String, token: String) {
 
 suspend fun makeGetRequest(url: String, token: String): JSONObject {
     try {
+        val integrityToken = PlayIntegrityToken.getRequestToken(url, "GET")
+
         val request = Request.Builder()
             .url(url)
             .get()
-            .addHeader("firebaseToken", token)
-            .addHeader("integrityToken", PlayIntegrityToken.getRequestToken(url, null))
+            .addHeader("firebasetoken", token)
+            .addHeader("integritytoken", integrityToken)
             .build()
 
         return makeRequestWithResponse(request)
@@ -191,10 +202,6 @@ suspend fun getUserName(): String? {
         return body
     }
     return null
-}
-
-fun logRes(json: JSONObject) {
-    Log.d("HTTPS Request", json.toString())
 }
 
 fun logResErr(request: Request, response: Response) {
