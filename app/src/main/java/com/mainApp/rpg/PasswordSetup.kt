@@ -166,6 +166,8 @@ class PasswordSetup : AppCompatActivity() {
 
     fun createUsername() {
         val username = binding.usernameText.text.toString()
+
+        // TODO: Check if username should be allowed
         if (username.length < 6) {
             lifecycleScope.launch {
                 binding.usernameExplainText.text = "Username too short ( > 6 characters)"
