@@ -10,7 +10,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:contentDescription="Go Back Button"
-        android:src="@android:drawable/btn_dialog"
+        android:src="@android:drawable/ic_menu_revert"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -110,7 +110,7 @@
         android:id="@+id/closeListButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:text="Close"
+        android:text="X"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/equipmentList">

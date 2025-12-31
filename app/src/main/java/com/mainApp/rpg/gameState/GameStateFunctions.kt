@@ -7,6 +7,7 @@ import com.mainApp.rpg.homepage.inventory.PlayerInventory
 import com.mainApp.rpg.homepage.inventory.PlayerInventory.playerCharacters
 import com.mainApp.rpg.playerCharacter.PlayerCharacter
 import com.mainApp.rpg.requests.getUserJson
+import com.mainApp.rpg.requests.getUserToken
 import com.mainApp.rpg.requests.makeGetRequest
 import com.mainApp.rpg.requests.makePutRequest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -22,6 +23,7 @@ fun saveLocally(context: Context) {
     savePlayerCharactersLocally(context)
     savePlayerEquipmentLocally(context)
     savePointsLocally(context)
+    saveUsernameLocally(context)
     saveTimeStampLocally(context)
     saveDeepestRoomLocally(context)
 }
@@ -116,7 +118,7 @@ suspend fun saveTimeStamp() {
     val body = jsonObject.toString().toRequestBody("application/json".toMediaTypeOrNull())
 
     makePutRequest(
-        "https://bikinggamebackend.vercel.app/api/timestamps/",
+        "https://bikinggamebackend.vercel.app/api/timestamps",
         userData.get("token") as String,
         body
     )
@@ -208,6 +210,19 @@ fun savePointsLocally(context: Context) {
     }
 }
 
+fun saveUsernameLocally(context: Context) {
+    val filename = "username"
+    val username = PlayerInventory.getUsername()
+    try {
+        context.openFileOutput(filename, Context.MODE_PRIVATE).use {
+            it.write(username.toByteArray())
+        }
+        saveTimeStampLocally(context)
+    } catch (err: Exception) {
+        Log.d("$TAG: saveUsernameLocally", err.toString())
+    }
+}
+
 /**
  * Gets a save from server if valid else pulls locally
  */
@@ -258,7 +273,7 @@ suspend fun loadServerTimeStamp(): Calendar {
     if (userData == null) return calendar
 
     val res = makeGetRequest(
-        "https://bikinggamebackend.vercel.app/api/timestamps/",
+        "https://bikinggamebackend.vercel.app/api/timestamps",
         userData.get("token") as String
     )
     if (!res.has("data")) {
@@ -283,6 +298,7 @@ suspend fun loadLocalGameState(context: Context) {
     loadDeepestRoomLocally(context)
     loadPlayerEquipmentLocally(context)
     loadPointsLocally(context)
+    loadUsernameLocally(context)
 
     playerCharacters.forEach { (id, _) ->
         saveCharacter(id)
@@ -367,10 +383,25 @@ fun loadPointsLocally(context: Context) {
     PlayerInventory.setCoins(points.toInt())
 }
 
+fun loadUsernameLocally(context: Context) {
+    val filename = "username"
+    var username = ""
+    try {
+        context.openFileInput(filename).bufferedReader().useLines { lines ->
+            username = (lines.elementAt(0) as String)
+        }
+
+    } catch (err: Exception) {
+        Log.d("PointsStorage", err.toString())
+    }
+    PlayerInventory.setUsername(username)
+}
+
 suspend fun loadServerGameState(context: Context) {
     loadPlayerCharacters()
     loadPlayerEquipment()
     loadPoints()
+    loadUsername()
 
     savePlayerCharactersLocally(context)
     savePlayerEquipmentLocally(context)
@@ -443,4 +474,15 @@ suspend fun loadPoints() {
     }
     val points: Int = res.get("data") as Int
     PlayerInventory.setCoins(points)
+}
+
+suspend fun loadUsername() {
+    val token = getUserToken()
+    if (token == null) return
+    val res = makeGetRequest("https://bikinggamebackend.vercel.app/api/username", token)
+    if (!res.has("data")) {
+        return
+    }
+    val username: String = res.get("data") as String
+    PlayerInventory.setUsername(username)
 }

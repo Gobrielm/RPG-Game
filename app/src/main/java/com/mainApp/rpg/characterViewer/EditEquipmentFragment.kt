@@ -1,6 +1,7 @@
 package com.mainApp.rpg.characterViewer
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,11 +42,7 @@ class EditEquipmentFragment: Fragment() {
 
         binding.equipmentList.layoutManager = LinearLayoutManager(context)
 
-        binding.equipmentList.adapter = InventoryManager(inventoryList, ::selectedEquipment) { holder, item ->
-            holder.imageButton.setImageResource(item.imageResId)
-            holder.imageButton.scaleType = ImageView.ScaleType.CENTER_CROP
-            holder.text.text = item.text
-        }
+        reRenderEquipmentList()
 
         binding.backButton.setOnClickListener {
             val navController = findNavController()
@@ -62,7 +59,7 @@ class EditEquipmentFragment: Fragment() {
             EquipmentSlot.OFF_HAND to binding.offHandButton, EquipmentSlot.RING to binding.ringButton
         )
 
-        map.forEach { slot, button ->
+        map.forEach { (slot, button) ->
             button.setOnClickListener { openEquipmentList(slot) }
         }
 
@@ -89,14 +86,19 @@ class EditEquipmentFragment: Fragment() {
             binding.offHandButton to R.drawable.offhandslot, binding.ringButton to R.drawable.ringslot
         )
 
+        val equippedImageMap = mapOf(
+            binding.helmetButton to R.drawable.helmetslotequipped, binding.neckButton to R.drawable.neckslotequipped,
+            binding.chestButton to R.drawable.chestslotequipped, binding.mainHandButton to R.drawable.mainhandslotequipped,
+            binding.offHandButton to R.drawable.offhandslotequipped, binding.ringButton to R.drawable.ringslotequipped
+        )
+
         val characterID = viewModel.getSelectedCharacterID()!!
         val character = PlayerInventory.getCharacter(characterID)!!
 
-        buttonMap.forEach { slot, button ->
+        buttonMap.forEach { (slot, button) ->
             val equipment = character.currentEquipment[slot.ordinal]
             if (equipment != null) {
-                // TODO: Get image from Equipment probably
-                button.setImageResource(R.drawable.truck)
+                button.setImageResource(equippedImageMap[button]!!)
             } else {
                 button.setImageResource(defaultImageMap[button]!!)
             }
@@ -112,7 +114,11 @@ class EditEquipmentFragment: Fragment() {
 
         equipmentToChooseFrom = PlayerInventory.getAvailableEquipment(slot)
 
-        inventoryList.add(Item(R.drawable.nothing, "Unequip Item"))
+        val playerCharacter = PlayerInventory.getCharacter(viewModel.getSelectedCharacterID()!!)!!
+        val equipmentCanRemove = playerCharacter.currentEquipment[slot.ordinal]
+        if (equipmentCanRemove != null) {
+            inventoryList.add(Item(R.drawable.nothing, "Unequip ${equipmentCanRemove.name}"))
+        }
 
         val defaultImageMap = mapOf(
             EquipmentSlot.HEAD to R.drawable.helmetslot, EquipmentSlot.NECK to R.drawable.neckslot,
@@ -121,9 +127,18 @@ class EditEquipmentFragment: Fragment() {
         )
 
         equipmentToChooseFrom.forEach { (equipment, amount) ->
-            if (amount > 0) {
+            if (amount > 0 && equipment.id != (equipmentCanRemove?.id ?: -1)) {
                 inventoryList.add(Item(defaultImageMap[equipment.slot]!!, equipment.toString() + "   x${amount}"))
             }
+        }
+        reRenderEquipmentList()
+    }
+
+    fun reRenderEquipmentList() {
+        binding.equipmentList.adapter = InventoryManager(inventoryList, ::selectedEquipment) { holder, item ->
+            holder.imageButton.setImageResource(item.imageResId)
+            holder.imageButton.scaleType = ImageView.ScaleType.CENTER_CROP
+            holder.text.text = item.text
         }
     }
 
@@ -141,14 +156,14 @@ class EditEquipmentFragment: Fragment() {
 
         if (character == null) return
 
+
         // Represents first item being X
-        if (ind == 0) {
+        val offset = if (character.currentEquipment[slotOpen!!.ordinal] != null) 1 else 0
+
+        if (ind == 0 && offset == 1) {
             unassignEquipment(character)
-
         } else {
-
-            // -1 b/c everything was pushed one back for X
-            val pieceOfEquipment = equipmentToChooseFrom[ind - 1].first
+            val pieceOfEquipment = equipmentToChooseFrom[ind - offset].first
 
             unassignEquipment(character)
 

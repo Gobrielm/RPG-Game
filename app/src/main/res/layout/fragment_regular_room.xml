@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/bg_color">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/enemy_ui1_container"
@@ -26,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#00000000"
-            android:visibility="visible"/>
+            android:visibility="visible" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -81,7 +82,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#00000000"
-            android:visibility="visible"/>
+            android:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -128,6 +129,7 @@
         android:id="@+id/hitDescriptionText"
         android:layout_width="100dp"
         android:layout_height="50dp"
+        android:textColor="@color/text_color"
 
         android:layout_marginStart="10dp"
         android:autoSizeMaxTextSize="24sp"
@@ -135,14 +137,15 @@
         android:autoSizeStepGranularity="1sp"
         android:autoSizeTextType="uniform"
         android:textAlignment="center"
-        app:layout_constraintStart_toEndOf="@+id/attackAnimation"
         app:layout_constraintBottom_toBottomOf="@+id/attackAnimation"
+        app:layout_constraintStart_toEndOf="@+id/attackAnimation"
         app:layout_constraintTop_toTopOf="@+id/attackAnimation" />
 
     <TextView
         android:id="@+id/damageAmountText"
         android:layout_width="100dp"
         android:layout_height="50dp"
+        android:textColor="@color/text_color"
 
         android:layout_marginStart="10dp"
         android:autoSizeMaxTextSize="24sp"
@@ -150,14 +153,15 @@
         android:autoSizeStepGranularity="1sp"
         android:autoSizeTextType="uniform"
         android:textAlignment="center"
-        app:layout_constraintEnd_toStartOf="@+id/attackAnimation"
         app:layout_constraintBottom_toBottomOf="@+id/attackAnimation"
+        app:layout_constraintEnd_toStartOf="@+id/attackAnimation"
         app:layout_constraintTop_toTopOf="@+id/attackAnimation" />
 
     <TextView
         android:id="@+id/centeredText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/text_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

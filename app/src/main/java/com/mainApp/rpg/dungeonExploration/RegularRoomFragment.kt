@@ -5,8 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import com.mainApp.rpg.R
 import com.mainApp.rpg.databinding.DungeonCharacterUiBinding
 import com.mainApp.rpg.databinding.FragmentRegularRoomBinding
 import com.mainApp.rpg.enemy.EnemyCharacter
@@ -348,7 +350,7 @@ class RegularRoomFragment : Fragment() {
     }
 
     fun resetHighlights(container: DungeonCharacterUiBinding) {
-        container.nameTextView.setTextColor(0xFF000000.toInt())
+        container.nameTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_color))
     }
 
     fun updateStatusEffectsOnMainGui(enemy: EnemyCharacter, container: DungeonCharacterUiBinding) {

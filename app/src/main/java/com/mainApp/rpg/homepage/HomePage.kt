@@ -2,8 +2,10 @@ package com.mainApp.rpg.homepage
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.mainApp.rpg.MainActivity
 import com.mainApp.rpg.R
@@ -13,6 +15,12 @@ import com.mainApp.rpg.databinding.ActivityHomePageBinding
 import com.mainApp.rpg.dungeonPrep.DungeonPrepActivity
 import com.mainApp.rpg.homepage.inventory.PlayerInventory
 import com.google.firebase.auth.FirebaseAuth
+import com.mainApp.rpg.gameState.TAG
+import com.mainApp.rpg.requests.getUserJson
+import com.mainApp.rpg.requests.makeDeleteRequest
+import com.mainApp.rpg.requests.makeGetRequest
+import com.mainApp.rpg.requests.makePostRequest
+import kotlinx.coroutines.launch
 
 
 class HomePage : AppCompatActivity() {
@@ -36,6 +44,8 @@ class HomePage : AppCompatActivity() {
         viewPager.currentItem = currentItem
 
         setPoints(PlayerInventory.getCoins().toString())
+
+        binding.username.text = PlayerInventory.getUsername()
 
         onBackPressedDispatcher.addCallback(this,
             object : OnBackPressedCallback(true) {
@@ -64,8 +74,26 @@ class HomePage : AppCompatActivity() {
 
     fun logOut() {
         FirebaseAuth.getInstance().signOut()
+        goToLoginScreen()
+    }
+
+    fun goToLoginScreen() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
+    }
+
+    fun deleteAccount() {
+        lifecycleScope.launch {
+            FirebaseAuth.getInstance().signOut()
+            deleteAccountReq()
+            goToLoginScreen()
+        }
+    }
+
+    suspend fun deleteAccountReq() {
+        val userData = getUserJson()
+        if (userData == null) return
+        makeDeleteRequest("https://bikinggamebackend.vercel.app/api", userData.get("token") as String)
     }
 
     fun setPoints(points: String) {

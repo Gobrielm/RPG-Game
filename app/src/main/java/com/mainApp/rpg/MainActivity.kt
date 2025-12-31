@@ -42,8 +42,14 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        PlayIntegrityToken.createTokenProvider(this, ::finishLoading)
+        PlayIntegrityToken.createTokenProvider(this, ::finishLoading, ::finishLoadingLogError)
     }
+
+    fun finishLoadingLogError(exception: Exception) {
+        Log.e(TAG, exception.toString())
+        finishLoading()
+    }
+
 
     fun finishLoading() {
         val currentUser = Firebase.auth.currentUser
@@ -52,10 +58,11 @@ class MainActivity : AppCompatActivity() {
             // Only call after token is ready
             currentUser.getIdToken(true)
                 .addOnSuccessListener {
-                    checkAccountHaveUsername()
+                    finishLoadingUser()
                 }
                 .addOnFailureListener {
-                    unShowLoadingScreen()
+                    // Only time it would fail would be if not connected to internet, so let them still log in
+                    finishLoadingUser()
                 }
         } else {
             unShowLoadingScreen()
@@ -70,10 +77,7 @@ class MainActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithEmailAndPassword:success")
-                    lifecycleScope.launch {
-                        tryLoadGameState()
-                        goToHomePage()
-                    }
+                    finishLoading()
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithEmailAndPassword:failure", task.exception)
@@ -91,25 +95,6 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    fun checkAccountHaveUsername() {
-        lifecycleScope.launch {
-            val token = getUserToken()
-            if (token == null) return@launch
-
-            val res = makeGetRequest("https://bikinggamebackend.vercel.app/api/usernames", token)
-
-            // None empty res will have username
-            if (res.length() == 0) {
-                val intent = Intent(baseContext, PasswordSetup::class.java)
-                intent.putExtra("usernameSetup", true)
-                startActivity(intent)
-            } else {
-                tryLoadGameState()
-                goToHomePage()
-            }
-        }
-    }
-
     fun showLoadingScreen() {
         binding.fragmentContainer.visibility = View.VISIBLE
         binding.mainContent.visibility = View.GONE
@@ -118,6 +103,13 @@ class MainActivity : AppCompatActivity() {
     fun unShowLoadingScreen() {
         binding.fragmentContainer.visibility = View.GONE
         binding.mainContent.visibility = View.VISIBLE
+    }
+
+    fun finishLoadingUser() {
+        lifecycleScope.launch {
+            tryLoadGameState()
+            goToHomePage()
+        }
     }
 
     suspend fun tryLoadGameState() {

@@ -12,6 +12,7 @@ object PlayerInventory {
     val playerEquipment: MutableMap<Int, Int> = mutableMapOf()
     val usedPlayerEquipment: MutableMap<Int, Int> = mutableMapOf()
     private var coins: Int = 0
+    private var username: String = ""
 
     fun addCharacter(character: PlayerCharacter) {
         playerCharacters[character.id] = character
@@ -40,11 +41,18 @@ object PlayerInventory {
         return coins
     }
 
+    fun getUsername(): String {
+        return username
+    }
+    fun setUsername(pUsername: String) {
+        username = pUsername
+    }
+
     fun getAvailableEquipment(slot: EquipmentSlot): ArrayList<Pair<Equipment, Int>> {
         val a = ArrayList<Pair<Equipment, Int>>()
-        playerEquipment.forEach { id, amount ->
-            val equipment = Equipment.getEquipment(id)
-            if (equipment?.slot == slot && hasEquipment(equipment.id)) {
+        playerEquipment.forEach { (id, _) ->
+            val equipment = Equipment.getEquipment(id)!!
+            if (equipment.slot == slot && hasEquipment(equipment.id)) {
                 val actualAmount = getAmountOfEquipment(equipment.id)
                 a.add(Pair(equipment, actualAmount))
             }
@@ -53,7 +61,7 @@ object PlayerInventory {
     }
     fun hasEquipment(id: Int): Boolean {
         if (playerEquipment.contains(id)) {
-            return playerEquipment[id]!! - usedPlayerEquipment[id]!! > 0
+            return (playerEquipment[id]!! - usedPlayerEquipment[id]!!) > 0
         }
         return false
     }

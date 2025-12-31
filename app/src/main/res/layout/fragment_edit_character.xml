@@ -12,6 +12,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:text="PLACEHOLDER"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -30,6 +31,7 @@
         android:autoSizeTextType="uniform"
         android:text="Ak2"
 
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/statsPreview" />
 
@@ -47,6 +49,7 @@
         android:autoSizeTextType="uniform"
         android:text="Ak4"
 
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mv2Button" />
 
@@ -63,6 +66,7 @@
         android:autoSizeTextType="uniform"
         android:text="Atk1"
 
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -79,6 +83,7 @@
         android:autoSizeTextType="uniform"
         android:text="Ak3"
 
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mv1Button" />
 
@@ -90,6 +95,7 @@
         android:layout_marginTop="124dp"
         android:layout_marginEnd="48dp"
         android:text="Equipment"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toStartOf="@+id/skillsButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mv3Button" />
@@ -101,7 +107,27 @@
         android:layout_marginTop="124dp"
         android:layout_marginEnd="72dp"
         android:text="Skill Tree"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mv4Button" />
+
+    <Button
+        android:id="@+id/shieldButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="160dp"
+        android:layout_marginTop="31dp"
+        android:layout_marginEnd="160dp"
+        android:text="Shield"
+
+        android:autoSizeMaxTextSize="18sp"
+        android:autoSizeMinTextSize="8sp"
+        android:autoSizeStepGranularity="1sp"
+        android:autoSizeTextType="uniform"
+        android:textColor="@color/white"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mv4Button" />
 
     <ImageButton
@@ -124,24 +150,6 @@
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/deleteCharacter" />
-
-    <Button
-        android:id="@+id/shieldButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="160dp"
-        android:layout_marginTop="31dp"
-        android:layout_marginEnd="160dp"
-        android:text="Shield"
-
-        android:autoSizeMaxTextSize="18sp"
-        android:autoSizeMinTextSize="8sp"
-        android:autoSizeStepGranularity="1sp"
-        android:autoSizeTextType="uniform"
-
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mv4Button" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/selectorContainer"

@@ -166,10 +166,19 @@ class EditCharacterFragment: Fragment() {
         inventoryList.clear()
         attacksToChooseFrom.forEach { (attack, isReassigned) ->
             var text = attack.toString()
-            if (isReassigned) text = "(Reassigned) $text"
+            var imgID = when (attack.type) {
+                Attack.AttackTypes.PHY -> R.drawable.melee
+                Attack.AttackTypes.RAN -> R.drawable.ranged
+                Attack.AttackTypes.MAG -> R.drawable.magic
+            }
+
+            if (isReassigned) {
+                text = "(Reassigned) $text"
+                imgID = R.drawable.reassign
+            }
             inventoryList.add(
                 ItemWID(attack.id,
-                    Item(R.drawable.truck, text)
+                    Item(imgID, text)
                 )
             )
         }

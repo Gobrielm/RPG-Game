@@ -11,10 +11,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.mainApp.rpg.databinding.FragmentHomePageBinding
 import com.mainApp.rpg.gameState.loadPoints
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class HomePageFragment : Fragment() {
     private lateinit var binding: FragmentHomePageBinding
+    private var deleteAccountClicked: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,8 +35,18 @@ class HomePageFragment : Fragment() {
             openDungeonScreen()
         }
         binding.logOutButton.setOnClickListener {
+            openLogOutPanel()
+        }
+        binding.logOutConfirmButton.setOnClickListener {
             (requireActivity() as HomePage).logOut()
         }
+        binding.deleteAccountButton.setOnClickListener {
+            clickDeleteAccount()
+        }
+        binding.backButton.setOnClickListener {
+            closeLogOutPanel()
+        }
+
         lifecycleScope.launch {
             loadPoints()
         }
@@ -52,5 +64,27 @@ class HomePageFragment : Fragment() {
 
     fun openDungeonScreen() {
         (requireActivity() as HomePage).openDungeonPrepScreen()
+    }
+
+    fun openLogOutPanel() {
+        binding.logOutPanel.visibility = View.VISIBLE
+    }
+
+    fun closeLogOutPanel() {
+        binding.logOutPanel.visibility = View.GONE
+    }
+
+    fun clickDeleteAccount() {
+        if (deleteAccountClicked) {
+            (requireActivity() as HomePage).deleteAccount()
+        } else {
+            deleteAccountClicked = true
+            binding.logOutConfirmButton.text = "Confirm Deletion"
+            lifecycleScope.launch {
+                delay(1000)
+                deleteAccountClicked = false
+                binding.logOutConfirmButton.text = "Delete Account"
+            }
+        }
     }
 }

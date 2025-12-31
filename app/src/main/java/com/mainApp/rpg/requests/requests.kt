@@ -21,7 +21,7 @@ const val TAG = "REQUESTS"
 
 suspend fun makePostRequest(url: String, token: String, body: RequestBody): JSONObject {
     try {
-        val integrityToken = PlayIntegrityToken.getRequestToken(url, "GET")
+        val integrityToken = PlayIntegrityToken.getRequestToken(url, "POST")
 
         val request = Request.Builder()
             .url(url)
@@ -39,7 +39,7 @@ suspend fun makePostRequest(url: String, token: String, body: RequestBody): JSON
 
 suspend fun makePutRequest(url: String, token: String, body: RequestBody) {
     try {
-        val integrityToken = PlayIntegrityToken.getRequestToken(url, "GET")
+        val integrityToken = PlayIntegrityToken.getRequestToken(url, "PUT")
 
         val request = Request.Builder()
             .url(url)
@@ -56,7 +56,7 @@ suspend fun makePutRequest(url: String, token: String, body: RequestBody) {
 
 suspend fun makeDeleteRequest(url: String, token: String) {
     try {
-        val integrityToken = PlayIntegrityToken.getRequestToken(url, "GET")
+        val integrityToken = PlayIntegrityToken.getRequestToken(url, "DELETE")
 
         val request = Request.Builder()
             .url(url)

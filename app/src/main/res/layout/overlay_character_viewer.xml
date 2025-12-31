@@ -9,29 +9,27 @@
     <View
         android:id="@+id/topbar"
         android:layout_width="wrap_content"
-        android:layout_height="84dp"
-        android:background="#65624D98"
-        android:layout_gravity="top">
-    </View>
+        android:layout_height="55dp"
+        android:layout_gravity="top"
+        android:background="#65624D98"/>
 
     <ImageButton
         android:id="@+id/backButton"
-        android:layout_width="84dp"
-        android:layout_height="84dp"
-        android:src="@android:drawable/ic_menu_revert"
-        android:layout_gravity="top|start">
+        android:layout_width="55dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|start"
+        android:src="@android:drawable/btn_dialog">
 
     </ImageButton>
-
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment_character_viewer"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
+        android:layout_gravity="top"
+        android:layout_marginTop="55dp"
         app:defaultNavHost="true"
-        app:navGraph="@navigation/character_viewer_navigation"
-        android:layout_marginTop="84dp" />
+        app:navGraph="@navigation/character_viewer_navigation" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

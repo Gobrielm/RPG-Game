@@ -8,9 +8,11 @@ import android.view.View
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -294,7 +296,7 @@ class DungeonExplorationActivity: AppCompatActivity() {
     }
 
     fun resetHighlights(container: DungeonCharacterUiBinding) {
-        container.nameTextView.setTextColor(0xFF000000.toInt())
+        container.nameTextView.setTextColor(ContextCompat.getColor(this, R.color.text_color))
     }
 
     fun updateStatusEffectsOnMainGui(character: PlayerCharacter, container: DungeonCharacterUiBinding) {
@@ -346,15 +348,14 @@ class DungeonExplorationActivity: AppCompatActivity() {
 
         if (!playerCharacter.canChooseAttack(attack)) {
             lifecycleScope.launch {
-                binding.characterUi.centeredText.text = "Need "
+                var statNeeded = attack.statCost!!.first.toString()
+                statNeeded = statNeeded.removePrefix("Base")
+                binding.characterUi.centeredText.text = "Insufficient $statNeeded"
                 delay(1000)
-
             }
-            // TODO: Show err msg
             return
         }
 
-        // TODO: If it is a friendly attack then choose target here
         if (attack.friendlyAttack) {
             attackedChosen = attack
             allowChoosingTarget()

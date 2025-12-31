@@ -15,9 +15,12 @@ import com.mainApp.rpg.requests.makePostRequest
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.mainApp.rpg.requests.getUserToken
+import com.mainApp.rpg.requests.makeGetRequest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 
@@ -33,36 +36,22 @@ class PasswordSetup : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.CreateAccount.setOnClickListener {
-            createAccount(
-                binding.CreateAccountEmail.text.toString(),
-                binding.CreateAccountPassword.text.toString()
-            )
-        }
+            lifecycleScope.launch {
+                createAccount(
+                    binding.CreateAccountEmail.text.toString(),
+                    binding.CreateAccountPassword.text.toString(),
+                    binding.usernameText.text.toString()
+                )
+            }
 
-        binding.confirmUsernameButton.setOnClickListener {
-            createUsername()
         }
 
         binding.goBackButton.setOnClickListener {
             goToSignInPage()
         }
-
-        val isOnlySettingUsername = intent.getBooleanExtra("usernameSetup", false)
-        if (isOnlySettingUsername) {
-            binding.usernameLayout.visibility = View.VISIBLE
-            binding.CreateAccount.visibility = View.GONE
-            binding.CreateAccountPassword.visibility = View.GONE
-            binding.CreateAccountEmail.visibility = View.GONE
-            binding.goBackButton.visibility = View.GONE
-        }
     }
 
-    fun createAccount(email: String, password: String) {
-        val currentUser = Firebase.auth.currentUser
-        if (currentUser != null) {
-            binding.errorMessage.text = "You are already Signed In."
-            return
-        }
+    suspend fun createAccount(email: String, password: String, username: String) {
         val isEmailValid: Boolean = setErrorMsgForEmail(email)
         if (!isEmailValid) {
             return
@@ -73,17 +62,18 @@ class PasswordSetup : AppCompatActivity() {
             return
         }
 
+        val statusPassword = checkUsernameValidity(username)
+        if (!statusPassword) return
+
+
+
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "createUserWithEmail:success")
                     initializeUser()
-                    binding.usernameLayout.visibility = View.VISIBLE
-                    binding.CreateAccount.visibility = View.GONE
-                    binding.CreateAccountPassword.visibility = View.GONE
-                    binding.CreateAccountEmail.visibility = View.GONE
-                    binding.goBackButton.visibility = View.GONE
+                    createUsername(username)
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)
@@ -139,7 +129,6 @@ class PasswordSetup : AppCompatActivity() {
 
 
     fun setErrorMsgForUser(error: ERR_PASSWORD) {
-
         val errorMsg: String = when(error) {
             ERR_PASSWORD.OK -> ""
             ERR_PASSWORD.TOO_SHORT -> "Password is too short."
@@ -158,23 +147,75 @@ class PasswordSetup : AppCompatActivity() {
         lifecycleScope.launch {
             val json = getUserJson()
             if (json == null) return@launch
-
             val emptyBody = "".toRequestBody("application/json".toMediaTypeOrNull())
             makePostRequest("https://bikinggamebackend.vercel.app/api/points", json.get("token") as String, emptyBody)
         }
     }
 
-    fun createUsername() {
-        val username = binding.usernameText.text.toString()
-
-        // TODO: Check if username should be allowed
+    suspend fun checkUsernameValidity(username: String): Boolean {
         if (username.length < 6) {
             lifecycleScope.launch {
-                binding.usernameExplainText.text = "Username too short ( > 6 characters)"
-                binding.usernameExplainText.setTextColor(0xFFFF0000.toInt())
+                binding.errorMessage.text = "Username too short ( > 6 characters)"
                 delay(3000)
-                binding.usernameExplainText.text = "Setup Username"
-                binding.usernameExplainText.setTextColor(0xFF000000.toInt())
+                binding.errorMessage.text = ""
+            }
+            return false
+        }
+
+        if (username.length > 12) {
+            lifecycleScope.launch {
+                binding.errorMessage.text = "Username too long ( < 12 characters)"
+                delay(3000)
+            }
+            return false
+        }
+
+        // No Firebase token
+        val res = makeGetRequest("https://bikinggamebackend.vercel.app/api/usernames/username-availability/$username", "")
+
+        if (!res.has("data")) {
+            lifecycleScope.launch {
+                binding.errorMessage.text = "Server Error"
+                delay(3000)
+                binding.errorMessage.text = ""
+            }
+            return false
+        } else {
+            if (res.has("message")) {
+                binding.errorMessage.text = res.get("message") as String
+            }
+            val isUnique = res.get("data") as Boolean
+            return isUnique
+        }
+    }
+
+    fun normalizeUsername(input: String): String {
+        return input
+            .trim()
+            .lowercase()
+            .replace(Regex("[^a-z0-9_]"), "") // allow letters, numbers, _
+    }
+
+    fun createUsername(username: String) {
+        val normalizeUsername = normalizeUsername(username)
+        if (normalizeUsername.length < 6) {
+            lifecycleScope.launch {
+                binding.errorMessage.text = "Username too short ( > 6 characters)"
+                binding.errorMessage.setTextColor(0xFFFF0000.toInt())
+                delay(3000)
+                binding.errorMessage.text = "Setup Username"
+                binding.errorMessage.setTextColor(0xFF000000.toInt())
+            }
+            return
+        }
+
+        if (normalizeUsername.length > 12) {
+            lifecycleScope.launch {
+                binding.errorMessage.text = "Username too long ( < 12 characters)"
+                binding.errorMessage.setTextColor(0xFFFF0000.toInt())
+                delay(3000)
+                binding.errorMessage.text = "Setup Username"
+                binding.errorMessage.setTextColor(0xFF000000.toInt())
             }
             return
         }
@@ -184,19 +225,18 @@ class PasswordSetup : AppCompatActivity() {
             if (json == null) return@launch
 
             val jsonObject = JSONObject()
-            jsonObject.put("username", username)
+            jsonObject.put("username", normalizeUsername)
 
             val usernameBody = jsonObject.toString().toRequestBody("application/json".toMediaTypeOrNull())
             val res = makePostRequest("https://bikinggamebackend.vercel.app/api/usernames/", json.get("token") as String, usernameBody)
 
-            Log.d("AAAA", res.toString())
             if (res.length() == 0) {
                 lifecycleScope.launch {
-                    binding.usernameExplainText.text = "Username is not unique"
-                    binding.usernameExplainText.setTextColor(0xFFFF0000.toInt())
+                    binding.errorMessage.text = "Username is not unique"
+                    binding.errorMessage.setTextColor(0xFFFF0000.toInt())
                     delay(3000)
-                    binding.usernameExplainText.text = "Setup Username"
-                    binding.usernameExplainText.setTextColor(0xFF000000.toInt())
+                    binding.errorMessage.text = "Setup Username"
+                    binding.errorMessage.setTextColor(0xFF000000.toInt())
                 }
             } else {
                 goToCharacterCreation()

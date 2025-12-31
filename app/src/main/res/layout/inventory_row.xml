@@ -16,7 +16,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="Sample text"
-        android:textSize="16sp"/>
+        android:textColor="@color/text_color"
+        android:textSize="16sp" />
 
 </LinearLayout>
 
